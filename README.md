@@ -22,3 +22,7 @@ To launch a demo project, following steps are requiered:
 4. Press the **publish** button
 
 > The robot should move to the **Target**, pick it up and drop it at the **TargetPlacement** location. Make sure all the GameObjects are assined in the used scripts (drag and drop the GameObject in the corresponding box).
+
+##TODO:
+* fix the grabbing offset
+* add the collision of the cube to MoveIt
