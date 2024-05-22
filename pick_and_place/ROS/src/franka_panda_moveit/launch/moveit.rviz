@@ -49,7 +49,7 @@ Visualization Manager:
       MoveIt_Allow_Sensor_Positioning: false
       MoveIt_Planning_Attempts: 100
       MoveIt_Planning_Time: 10
-      MoveIt_Use_Cartesian_Path: false
+      MoveIt_Use_Cartesian_Path: true
       MoveIt_Use_Constraint_Aware_IK: true
       MoveIt_Workspace:
         Center:
@@ -300,4 +300,4 @@ Window Geometry:
     collapsed: false
   Width: 994
   X: 2607
-  Y: 496
+  Y: 468

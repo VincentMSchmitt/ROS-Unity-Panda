@@ -1,0 +1,4 @@
+Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/lib/pkgconfig/ros_tcp_endpoint.pc
+Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/lib/python3.11/site-packages/ros_tcp_endpoint/__init__.py
+Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/share/ros_tcp_endpoint/cmake/ros_tcp_endpointConfig.cmake
+Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/share/ros_tcp_endpoint/cmake/ros_tcp_endpointConfig-version.cmake

@@ -3464,10 +3464,10 @@ MonoBehaviour:
   selectedJoint: 
   selectedIndex: 0
   control: 0
-  stiffness: 100000
-  damping: 9000
-  forceLimit: 3.402823e+38
-  speed: 30
+  stiffness: 10000
+  damping: 250
+  forceLimit: 1e+35
+  speed: 20
   torque: 100
   acceleration: 10
   highLightColor: {r: 1, g: 0, b: 0, a: 1}
