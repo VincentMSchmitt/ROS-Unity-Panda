@@ -8,8 +8,8 @@ public class JointTarget {
     public float targetPosition;
 }
 
+[DefaultExecutionOrder(-1000)]
 public class Startup : MonoBehaviour {
-    // Define target positions for each joint
     [SerializeField] public List<JointTarget> jointTargets = new List<JointTarget> {
         new JointTarget { jointName = "panda_link1", targetPosition = 0f },
         new JointTarget { jointName = "panda_link2", targetPosition = 0f },
@@ -20,8 +20,8 @@ public class Startup : MonoBehaviour {
         new JointTarget { jointName = "panda_link7", targetPosition = 90f }
     };
 
-    public float tolerance = 0.01f; // Tolerance for joint position comparison
-    public float checkInterval = 0.1f; // Interval in seconds between position checks
+    public float tolerance = 0.01f;
+    public float checkInterval = 0.1f;
 
     void Start() {
         ArticulationBody[] articulationChain = this.GetComponentsInChildren<ArticulationBody>();
@@ -29,10 +29,9 @@ public class Startup : MonoBehaviour {
     }
 
     IEnumerator MoveJointsToTarget(ArticulationBody[] articulationChain, List<JointTarget> jointTargets) {
-        // Iterate only from the second element up to the length of the targetPositions array
         for (int i = 1; i <= jointTargets.Count; ++i) {
             var currentDrive = articulationChain[i].xDrive;
-            currentDrive.target = jointTargets[i-1].targetPosition; // Use i-1 to correctly index targetPositions
+            currentDrive.target = jointTargets[i - 1].targetPosition;
             articulationChain[i].xDrive = currentDrive;
         }
 
@@ -44,11 +43,10 @@ public class Startup : MonoBehaviour {
 
         while (!allJointsAtTarget) {
             allJointsAtTarget = true;
-            // Iterate only from the second element up to the length of the targetPositions array
             for (int i = 1; i <= jointTargets.Count; ++i) {
                 if (articulationChain[i].jointPosition.dofCount > 0) {
                     float currentPosition = articulationChain[i].jointPosition[0];
-                    if (Mathf.Abs(currentPosition - jointTargets[i-1].targetPosition) > tolerance) { // Use i-1 to correctly index targetPositions
+                    if (Mathf.Abs(currentPosition - jointTargets[i - 1].targetPosition) > tolerance) {
                         allJointsAtTarget = false;
                         break;
                     }
@@ -61,5 +59,6 @@ public class Startup : MonoBehaviour {
         }
 
         Debug.Log("All specified joints have reached the target positions.");
+        EventManager.Instance.TriggerStartupComplete();
     }
 }
