@@ -2859,7 +2859,6 @@ GameObject:
   m_Component:
   - component: {fileID: 870599548}
   - component: {fileID: 870599549}
-  - component: {fileID: 870599550}
   m_Layer: 0
   m_Name: Trajectory Planner
   m_TagString: Untagged
@@ -2903,20 +2902,6 @@ MonoBehaviour:
   PoseAssignmentWait: 0.5
   tolerance: 0.1
   timeout: 2.5
---- !u!114 &870599550
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 870599546}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c58e3cadb6b00451294acb042ee95fd3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  boundingBoxColor: {r: 0.042241693, g: 1, b: 0, a: 1}
-  drawBoundingBox: 1
 --- !u!1 &871815405
 GameObject:
   m_ObjectHideFlags: 0
@@ -6937,6 +6922,67 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 4a46cf5d72d3e4b1db5f67fd05658628, type: 3}
   m_PrefabInstance: {fileID: 2076622586}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2104786025
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2104786028}
+  - component: {fileID: 2104786027}
+  - component: {fileID: 2104786026}
+  m_Layer: 0
+  m_Name: Collision Planner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2104786026
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2104786025}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c58e3cadb6b00451294acb042ee95fd3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  drawBoundingBox: 1
+  boundingBoxColor: {r: 1, g: 0, b: 0.9345741, a: 1}
+--- !u!114 &2104786027
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2104786025}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ae6da10e6238402ebc349472ac168bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sendCollisions: 1
+  rosTopicName: object_info
+--- !u!4 &2104786028
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2104786025}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.16088748, y: -0.23781693, z: -0.29303586}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2143028107
 GameObject:
   m_ObjectHideFlags: 8
@@ -7035,6 +7081,7 @@ SceneRoots:
   - {fileID: 1043489746}
   - {fileID: 1705005042}
   - {fileID: 870599548}
+  - {fileID: 2104786028}
   - {fileID: 1512409180}
   - {fileID: 1721075553}
   - {fileID: 1989135507}

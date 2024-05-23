@@ -1,20 +1,42 @@
+using System.Collections.Generic;
 using UnityEngine;
 using Unity.Robotics.ROSTCPConnector;
-using Unity.Robotics.ROSTCPConnector.ROSGeometry;
 using RosMessageTypes.Geometry;
 using RosMessageTypes.Std;
+using RosMessageTypes.FrankaPandaMoveit;
+using Unity.Robotics.ROSTCPConnector.ROSGeometry;
+
+using static RosConversions;
+using static GameObjectFilter;
 
 public class ObjectInfoPublisher : MonoBehaviour {
+
+    // Serielles Feld zur Steuerung, ob die Kollisionen gesendet werden sollen oder nicht
+    [SerializeField] private bool sendCollisions = true;
+
     // Name des ROS-Themas
     [SerializeField] private string rosTopicName = "object_info";
 
     // ROS Connector
     private ROSConnection ros;
 
+    private List<GameObject> trackedGameObjects;
+
     void Start() {
         // ROS Connector initialisieren
         ros = ROSConnection.GetOrCreateInstance();
         ros.RegisterPublisher<ObjectInfoMsg>(rosTopicName);
+    }
+
+    void Update() {
+        if (sendCollisions) {
+            trackedGameObjects = GameObjectFilter.GetAllGameObjectsWithTag("track");
+            // senden der einzelnen boxen
+            foreach (GameObject go in trackedGameObjects) {                
+                PublishObjectInfo(go);
+            }
+        }
+        
     }
 
     public void PublishObjectInfo(GameObject go) {
@@ -24,8 +46,8 @@ public class ObjectInfoPublisher : MonoBehaviour {
             // Erstelle eine neue ObjectInfoMsg
             ObjectInfoMsg msg = new ObjectInfoMsg {
                 name = objectInfo.name,
-                position = objectInfo.position.To<FLU>(),
-                rotation = objectInfo.rotation.To<FLU>(),
+                position = objectInfo.position,
+                rotation = objectInfo.rotation,
                 size = new Vector3Msg(objectInfo.size.x, objectInfo.size.y, objectInfo.size.z)
             };
 
@@ -50,12 +72,12 @@ public class ObjectInfoPublisher : MonoBehaviour {
             Vector3 size = renderer.bounds.size;
 
             // Konvertiere Unity-Koordinaten in ROS-Koordinaten (FLU)
-            PointMsg rosPosition = unityPosition.To<FLU>();
-            QuaternionMsg rosRotation = unityRotation.To<FLU>();
+            // TODO:Check if this works as intended
+            PointMsg rosPosition = RosConversions.To<FLU>(unityPosition);
+            QuaternionMsg rosRotation = RosConversions.To<FLU>(unityRotation);
 
             return (name, rosPosition, rosRotation, size);
         }
-
         return (null, new PointMsg(), new QuaternionMsg(), Vector3.zero);
     }
 }
