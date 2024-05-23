@@ -1,116 +1,61 @@
-using System.Collections.Generic;
 using UnityEngine;
+using Unity.Robotics.ROSTCPConnector;
+using Unity.Robotics.ROSTCPConnector.ROSGeometry;
+using RosMessageTypes.Geometry;
+using RosMessageTypes.Std;
 
-public class BoundingBoxDrawer : MonoBehaviour {
+public class ObjectInfoPublisher : MonoBehaviour {
+    // Name des ROS-Themas
+    [SerializeField] private string rosTopicName = "object_info";
 
-    // Serial field to control whether the bounding box should be drawn or not
-    [SerializeField] private bool drawBoundingBox = true;
-
-    // Serial field for setting the color of the bounding box
-    [SerializeField] private Color boundingBoxColor = Color.green;
-
-    private List<GameObject> trackedGameObjects;
+    // ROS Connector
+    private ROSConnection ros;
 
     void Start() {
-        // initialising list
-        trackedGameObjects = new List<GameObject>();
+        // ROS Connector initialisieren
+        ros = ROSConnection.GetOrCreateInstance();
+        ros.RegisterPublisher<ObjectInfoMsg>(rosTopicName);
     }
 
-    void Update() {
-        if (drawBoundingBox) {
-            // find all GameObjects with Tag "track"
-            trackedGameObjects = GameObjectFilter.GetAllGameObjectsWithTag("track");
+    public void PublishObjectInfo(GameObject go) {
+        var objectInfo = GetObjectInfo(go);
 
-            // draw bounding-boxs around the found GameObjects
-            foreach (GameObject go in trackedGameObjects) {
-                DrawBoundingBox(go);
-            }
+        if (objectInfo.name != null) {
+            // Erstelle eine neue ObjectInfoMsg
+            ObjectInfoMsg msg = new ObjectInfoMsg {
+                name = objectInfo.name,
+                position = objectInfo.position.To<FLU>(),
+                rotation = objectInfo.rotation.To<FLU>(),
+                size = new Vector3Msg(objectInfo.size.x, objectInfo.size.y, objectInfo.size.z)
+            };
+
+            // Nachricht veröffentlichen
+            ros.Publish(rosTopicName, msg);
         }
     }
 
-    void DrawBoundingBox(GameObject go) {
-        // get the renderer component of the GameObjects
+    public (string name, PointMsg position, QuaternionMsg rotation, Vector3 size) GetObjectInfo(GameObject go) {
+        // Hole das Renderer-Component des GameObjects
         Renderer renderer = go.GetComponent<Renderer>();
 
         if (renderer != null) {
-            // Calculate the corner points of the bounding box
-            Vector3 center = renderer.bounds.center;
-            Vector3 extents = renderer.bounds.extents;
-
-            Vector3 v3FrontTopLeft = new Vector3(center.x - extents.x, center.y + extents.y, center.z - extents.z);
-            Vector3 v3FrontTopRight = new Vector3(center.x + extents.x, center.y + extents.y, center.z - extents.z);
-            Vector3 v3FrontBottomLeft = new Vector3(center.x - extents.x, center.y - extents.y, center.z - extents.z);
-            Vector3 v3FrontBottomRight = new Vector3(center.x + extents.x, center.y - extents.y, center.z - extents.z);
-
-            Vector3 v3BackTopLeft = new Vector3(center.x - extents.x, center.y + extents.y, center.z + extents.z);
-            Vector3 v3BackTopRight = new Vector3(center.x + extents.x, center.y + extents.y, center.z + extents.z);
-            Vector3 v3BackBottomLeft = new Vector3(center.x - extents.x, center.y - extents.y, center.z + extents.z);
-            Vector3 v3BackBottomRight = new Vector3(center.x + extents.x, center.y - extents.y, center.z + extents.z);
-
-            // Draw the lines of the bounding box
-            Debug.DrawLine(v3FrontTopLeft, v3FrontTopRight, boundingBoxColor);
-            Debug.DrawLine(v3FrontTopRight, v3FrontBottomRight, boundingBoxColor);
-            Debug.DrawLine(v3FrontBottomRight, v3FrontBottomLeft, boundingBoxColor);
-            Debug.DrawLine(v3FrontBottomLeft, v3FrontTopLeft, boundingBoxColor);
-
-            Debug.DrawLine(v3BackTopLeft, v3BackTopRight, boundingBoxColor);
-            Debug.DrawLine(v3BackTopRight, v3BackBottomRight, boundingBoxColor);
-            Debug.DrawLine(v3BackBottomRight, v3BackBottomLeft, boundingBoxColor);
-            Debug.DrawLine(v3BackBottomLeft, v3BackTopLeft, boundingBoxColor);
-
-            Debug.DrawLine(v3FrontTopLeft, v3BackTopLeft, boundingBoxColor);
-            Debug.DrawLine(v3FrontTopRight, v3BackTopRight, boundingBoxColor);
-            Debug.DrawLine(v3FrontBottomRight, v3BackBottomRight, boundingBoxColor);
-            Debug.DrawLine(v3FrontBottomLeft, v3BackBottomLeft, boundingBoxColor);
-        }
-    }
-}
-
-
-public static class GameObjectFilter {
-    public static List<GameObject> GetAllGameObjectsWithTag(string tag) {
-        // Create a list to save the filtered GameObjects
-        List<GameObject> filteredGameObjects = new List<GameObject>();
-
-        // Find all GameObjects with the specified tag
-        GameObject[] gameObjectsWithTag = GameObject.FindGameObjectsWithTag(tag);
-
-        // Add the GameObjects found to the list
-        filteredGameObjects.AddRange(gameObjectsWithTag);
-
-        return filteredGameObjects;
-    }
-
-    public (string name, Vector3 position, Quaternion rotation, Vector3 size) GetObjectInfo(GameObject go) {
-        // get the renderer-component of the GameObjects
-        Renderer renderer = go.GetComponent<Renderer>();
-
-        if (renderer != null) {
-            // name
+            // Name des GameObjects
             string name = go.name;
-            // position in unity-coordinates
+
+            // Position in Unity-Koordinaten
             Vector3 unityPosition = go.transform.position;
-            // rotation in unity-coordinates
+            // Rotation in Unity-Koordinaten
             Quaternion unityRotation = go.transform.rotation;
-            // size of the GameObject
+            // Größe des GameObjects
             Vector3 size = renderer.bounds.size;
 
-            // convert the unity-coordinates in ROS-coordinates (FLU)
-            Vector3 rosPosition = UnityToROS(unityPosition);
-            Quaternion rosRotation = UnityToROS(unityRotation);
+            // Konvertiere Unity-Koordinaten in ROS-Koordinaten (FLU)
+            PointMsg rosPosition = unityPosition.To<FLU>();
+            QuaternionMsg rosRotation = unityRotation.To<FLU>();
 
             return (name, rosPosition, rosRotation, size);
         }
 
-            return (null, Vector3.zero, Quaternion.identity, Vector3.zero);
-        }
-
-        Vector3 UnityToROS(Vector3 unityPosition){
-            return new Vector3(unityPosition.z, unityPosition.x, unityPosition.y);
-        }
-
-        Quaternion UnityToROS(Quaternion unityRotation) {
-            return new Quaternion(unityRotation.z, unityRotation.x, unityRotation.y, -unityRotation.w);
-        }
+        return (null, new PointMsg(), new QuaternionMsg(), Vector3.zero);
     }
 }
