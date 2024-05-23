@@ -66,6 +66,7 @@ public class BoundingBoxDrawer : MonoBehaviour {
     }
 }
 
+
 public static class GameObjectFilter {
     public static List<GameObject> GetAllGameObjectsWithTag(string tag) {
         // Create a list to save the filtered GameObjects
@@ -78,5 +79,38 @@ public static class GameObjectFilter {
         filteredGameObjects.AddRange(gameObjectsWithTag);
 
         return filteredGameObjects;
+    }
+
+    public (string name, Vector3 position, Quaternion rotation, Vector3 size) GetObjectInfo(GameObject go) {
+        // get the renderer-component of the GameObjects
+        Renderer renderer = go.GetComponent<Renderer>();
+
+        if (renderer != null) {
+            // name
+            string name = go.name;
+            // position in unity-coordinates
+            Vector3 unityPosition = go.transform.position;
+            // rotation in unity-coordinates
+            Quaternion unityRotation = go.transform.rotation;
+            // size of the GameObject
+            Vector3 size = renderer.bounds.size;
+
+            // convert the unity-coordinates in ROS-coordinates (FLU)
+            Vector3 rosPosition = UnityToROS(unityPosition);
+            Quaternion rosRotation = UnityToROS(unityRotation);
+
+            return (name, rosPosition, rosRotation, size);
+        }
+
+            return (null, Vector3.zero, Quaternion.identity, Vector3.zero);
+        }
+
+        Vector3 UnityToROS(Vector3 unityPosition){
+            return new Vector3(unityPosition.z, unityPosition.x, unityPosition.y);
+        }
+
+        Quaternion UnityToROS(Quaternion unityRotation) {
+            return new Quaternion(unityRotation.z, unityRotation.x, unityRotation.y, -unityRotation.w);
+        }
     }
 }

@@ -1,0 +1,4 @@
+string name
+geometry_msgs/Point position
+geometry_msgs/Quaternion rotation
+geometry_msgs/Vector3 size
