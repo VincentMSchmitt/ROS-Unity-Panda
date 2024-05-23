@@ -2898,7 +2898,7 @@ MonoBehaviour:
   m_Target: {fileID: 1512409181}
   m_TargetPlacement: {fileID: 1721075554}
   m_PandaTCP: {fileID: 943947861}
-  JointAssignmentWait: 0.15
+  JointAssignmentWait: 0.05
   PoseAssignmentWait: 0.5
   tolerance: 0.1
   timeout: 2.5
@@ -3470,9 +3470,9 @@ MonoBehaviour:
   stiffness: 10000
   damping: 250
   forceLimit: 1000
-  speed: 20
+  speed: 5
   torque: 100
-  acceleration: 10
+  acceleration: 1
   highLightColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!114 &1019643829
 MonoBehaviour:
@@ -5605,7 +5605,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 850690186460591411, guid: 43bef545df3e344c4a7e089ca90c15a0, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.659
+      value: 0.666
       objectReference: {fileID: 0}
     - target: {fileID: 850690186460591411, guid: 43bef545df3e344c4a7e089ca90c15a0, type: 3}
       propertyPath: m_LocalPosition.y
