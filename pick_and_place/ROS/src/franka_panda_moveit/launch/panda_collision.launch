@@ -11,7 +11,7 @@
     <!-- MoveIt -->
     <include file="$(find franka_panda_moveit)/launch/demo.launch"/>
     <!-- Mover.py script -->
-    <node name="panda_mover" pkg="franka_panda_moveit" type="mover.py" args="--wait" output="screen"/>
+    <node name="panda_mover" pkg="franka_panda_moveit" type="mover.py" output="screen"/>
     <!-- collision_detector.py script -->
-    <node name="collision_detector" pkg="franka_panda_moveit" type="collision_detector.py" args="--wait" output="screen"/>
+    <node name="collision_detector" pkg="franka_panda_moveit" type="collision_detector.py" output="screen"/>
  </launch>

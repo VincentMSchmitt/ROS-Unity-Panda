@@ -20,9 +20,18 @@ class ObjectManager:
     def object_info_callback(self, data):
         object_name = data.name
 
-        # Remove the existing object with the same name
+        # Check if the object is already in the dictionary and if its position has changed
         if object_name in self.object_dict:
-            self.remove_object(object_name)
+            old_data = self.object_dict[object_name]
+            if (data.position.x == old_data.position.x and
+                data.position.y == old_data.position.y and
+                data.position.z == old_data.position.z):
+                # The position has not changed, do not update the object
+                return
+            else:
+                # Remove the existing object with the same name if position has changed
+                rospy.loginfo("Object " + object_name + " position has been updated.")
+                self.remove_object(object_name)
         
         # Add the new object
         self.add_object(data)
