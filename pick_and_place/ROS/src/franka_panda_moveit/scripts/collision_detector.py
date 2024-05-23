@@ -1,80 +1,74 @@
-# #!/usr/bin/env python
+#!/usr/bin/env python
 
-from __future__ import print_function
-
-import os
-import sys
-import copy
 import rospy
-import moveit_commander
-import moveit_msgs.msg
-import geometry_msgs.msg
-from math import pi, tau, dist, fabs, cos
-from std_msgs.msg import String
-from moveit_commander.conversions import pose_to_list
+import tf
+from moveit_commander import PlanningSceneInterface
 from franka_panda_moveit.msg import ObjectInfo
+from geometry_msgs.msg import PoseStamped
 
-class ObjectInfoListener:
+class ObjectManager:
     def __init__(self):
-        # Initialisiere den Node
         rospy.init_node('object_info_listener', anonymous=True)
 
-        # Erstelle ein Subscriber für das 'object_info' Thema
-        rospy.Subscriber('object_info', ObjectInfo, self.callback)
+        self.scene = PlanningSceneInterface()
+        self.object_dict = {}  # Dictionary to store object names and their information
 
-        # Speichere die empfangenen Informationen
-        self.objects_info = []
+        rospy.Subscriber('object_info', ObjectInfo, self.object_info_callback)
 
-    def callback(self, data):
-        rospy.loginfo(f"Received object info: {data}")
-        self.objects_info.append(data)
+        rospy.sleep(2)  # Allow some time for RViz to initialize
 
-        # Optional: speichere die Informationen in einer Datei
-        with open('object_info.txt', 'a') as file:
-            file.write(f"Name: {data.name}\n")
-            file.write(f"Position: x={data.position.x}, y={data.position.y}, z={data.position.z}\n")
-            file.write(f"Rotation: x={data.rotation.x}, y={data.rotation.y}, z={data.rotation.z}, w={data.rotation.w}\n")
-            file.write(f"Size: x={data.size.x}, y={data.size.y}, z={data.size.z}\n\n")
+    def object_info_callback(self, data):
+        object_name = data.name
 
-    def start_listening(self):
-        rospy.spin()
+        # Remove the existing object with the same name
+        if object_name in self.object_dict:
+            self.remove_object(object_name)
+        
+        # Add the new object
+        self.add_object(data)
 
-
-    # TODO: add functionality
-
-    def add_box(self, timeout=4):
-        box_name = self.box_name
+    def add_object(self, data, timeout=4):
         scene = self.scene
 
-        ## First, we will create a box in the planning scene between the fingers:
-        box_pose = geometry_msgs.msg.PoseStamped()
-        box_pose.header.frame_id = "panda_hand"
-        box_pose.pose.orientation.w = 1.0
-        box_pose.pose.position.z = 0.11  # above the panda_hand frame
-        box_name = "box"
-        scene.add_box(box_name, box_pose, size=(0.075, 0.075, 0.075))
+        # Create a PoseStamped message for the object
+        object_pose = PoseStamped()
+        object_pose.header.frame_id = "world"
+        object_pose.pose.position = data.position
+        object_pose.pose.orientation = data.rotation
 
-        self.box_name = box_name
-        return self.wait_for_state_update(box_is_known=True, timeout=timeout)
+        # Add the object to the planning scene
+        scene.add_box(data.name, object_pose, size=(data.size.x, data.size.y, data.size.z))
 
-    def remove_box(self, timeout=4):
-        box_name = self.box_name
+        self.object_dict[data.name] = data
+        return self.wait_for_state_update(object_name=data.name, object_is_known=True, timeout=timeout)
+
+    def remove_object(self, object_name, timeout=4):
         scene = self.scene
 
-        scene.remove_world_object(box_name)
+        scene.remove_world_object(object_name)
 
-        return self.wait_for_state_update(
-            box_is_attached=False, box_is_known=False, timeout=timeout
-        )
+        if object_name in self.object_dict:
+            del self.object_dict[object_name]
 
+        return self.wait_for_state_update(object_name=object_name, object_is_known=False, timeout=timeout)
 
+    def wait_for_state_update(self, object_name, object_is_known=False, timeout=4):
+        start = rospy.get_time()
+        seconds = rospy.get_time()
+        while (seconds - start < timeout) and not rospy.is_shutdown():
+            # Test if the object is in the scene
+            is_known = object_name in self.scene.get_known_object_names()
 
+            if object_is_known == is_known:
+                return True
 
-# ---------------------------------------------------------------------------------------------------------------------
+            rospy.sleep(0.1)
+            seconds = rospy.get_time()
+        return False
 
 if __name__ == '__main__':
     try:
-        listener = ObjectInfoListener()
-        listener.start_listening()
+        object_manager = ObjectManager()
+        rospy.spin()
     except rospy.ROSInterruptException:
         pass
