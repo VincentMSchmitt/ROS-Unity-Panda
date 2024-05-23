@@ -2893,13 +2893,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1452632f0b1a34187946162382b10361, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  k_JointAssignmentWait: 0.1
-  k_PoseAssignmentWait: 1
   m_RosServiceName: franka_panda_moveit
   m_FrankaPanda: {fileID: 1019643827}
   m_Target: {fileID: 1512409181}
   m_TargetPlacement: {fileID: 1721075554}
   m_PandaTCP: {fileID: 943947861}
+  JointAssignmentWait: 0.15
+  PoseAssignmentWait: 0.5
+  tolerance: 0.1
+  timeout: 2.5
 --- !u!1 &871815405
 GameObject:
   m_ObjectHideFlags: 0
@@ -3467,7 +3469,7 @@ MonoBehaviour:
   control: 0
   stiffness: 10000
   damping: 250
-  forceLimit: 1e+35
+  forceLimit: 1000
   speed: 20
   torque: 100
   acceleration: 10
@@ -5603,7 +5605,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 850690186460591411, guid: 43bef545df3e344c4a7e089ca90c15a0, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.573
+      value: -0.659
       objectReference: {fileID: 0}
     - target: {fileID: 850690186460591411, guid: 43bef545df3e344c4a7e089ca90c15a0, type: 3}
       propertyPath: m_LocalPosition.y
