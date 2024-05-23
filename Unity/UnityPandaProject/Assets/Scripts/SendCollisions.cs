@@ -31,7 +31,7 @@ public class ObjectInfoPublisher : MonoBehaviour {
         ros = ROSConnection.GetOrCreateInstance();
         ros.RegisterPublisher<ObjectInfoMsg>(rosTopicName);
         timeSinceLastPublish = 0.0f;
-        print("Ready to avioid collisions.")
+        print("Ready to avioid collisions.");
     }
 
     void Update() {
