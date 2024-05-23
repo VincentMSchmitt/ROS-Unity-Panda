@@ -6,7 +6,6 @@ using RosMessageTypes.Std;
 using RosMessageTypes.FrankaPandaMoveit;
 using Unity.Robotics.ROSTCPConnector.ROSGeometry;
 
-using static RosConversions;
 using static GameObjectFilter;
 
 public class ObjectInfoPublisher : MonoBehaviour {
@@ -83,8 +82,9 @@ public class ObjectInfoPublisher : MonoBehaviour {
 
             // Konvertiere Unity-Koordinaten in ROS-Koordinaten (FLU)
             // TODO:Check if this works as intended
-            PointMsg rosPosition = RosConversions.To<FLU>(unityPosition);
-            QuaternionMsg rosRotation = RosConversions.To<FLU>(unityRotation);
+            PointMsg rosPosition = unityPosition.To<FLU>();
+            QuaternionMsg rosRotation = unityRotation.To<FLU>();
+
 
             return (name, rosPosition, rosRotation, size);
         }

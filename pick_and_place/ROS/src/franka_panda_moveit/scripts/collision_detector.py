@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import rospy
-import tf
+import tf.transformations as tf
 from moveit_commander import PlanningSceneInterface
 from franka_panda_moveit.msg import ObjectInfo
 from geometry_msgs.msg import PoseStamped
@@ -34,7 +34,13 @@ class ObjectManager:
         object_pose = PoseStamped()
         object_pose.header.frame_id = "world"
         object_pose.pose.position = data.position
-        object_pose.pose.orientation = data.rotation
+
+        # Create a quaternion for a 90-degree rotation around the x-axis
+        q = tf.quaternion_from_euler(1.5708, 0, 0)  # 1.5708 radians = 90 degrees
+        object_pose.pose.orientation.x = q[0]
+        object_pose.pose.orientation.y = q[1]
+        object_pose.pose.orientation.z = q[2]
+        object_pose.pose.orientation.w = q[3]
 
         # Add the object to the planning scene
         scene.add_box(data.name, object_pose, size=(data.size.x, data.size.y, data.size.z))
