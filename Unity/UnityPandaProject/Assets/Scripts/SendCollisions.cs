@@ -17,26 +17,36 @@ public class ObjectInfoPublisher : MonoBehaviour {
     // Name des ROS-Themas
     [SerializeField] private string rosTopicName = "object_info";
 
+    // Serielles Feld zur Steuerung des Intervalls in Sekunden
+    [SerializeField] private float publishInterval = 1.0f;
+
     // ROS Connector
     private ROSConnection ros;
 
     private List<GameObject> trackedGameObjects;
 
+    private float timeSinceLastPublish;
+
     void Start() {
         // ROS Connector initialisieren
         ros = ROSConnection.GetOrCreateInstance();
         ros.RegisterPublisher<ObjectInfoMsg>(rosTopicName);
+        timeSinceLastPublish = 0.0f;
     }
 
     void Update() {
         if (sendCollisions) {
-            trackedGameObjects = GameObjectFilter.GetAllGameObjectsWithTag("track");
-            // senden der einzelnen boxen
-            foreach (GameObject go in trackedGameObjects) {                
-                PublishObjectInfo(go);
+            timeSinceLastPublish += Time.deltaTime;
+
+            if (timeSinceLastPublish >= publishInterval) {
+                trackedGameObjects = GameObjectFilter.GetAllGameObjectsWithTag("track");
+                // senden der einzelnen boxen
+                foreach (GameObject go in trackedGameObjects) {
+                    PublishObjectInfo(go);
+                }
+                timeSinceLastPublish = 0.0f;
             }
         }
-        
     }
 
     public void PublishObjectInfo(GameObject go) {
