@@ -73,10 +73,7 @@ class ObjectManager:
         return False
 
     def __del__(self):
-            # Remove all objects when the program is terminated
-            for object_name in list(self.object_dict.keys()):
-                self.remove_object(object_name)
-            rospy.loginfo("All objects have been removed.")
+        rospy.loginfo("Collision detection logging off.")
 
 if __name__ == '__main__':
     try:
