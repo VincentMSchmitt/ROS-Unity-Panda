@@ -51,10 +51,13 @@ public class FollowPlanner : MonoBehaviour {
 
     // Follower related
     [Tooltip("How long the follower will timeout before planing again")]
-    [SerializeField] float followerTimeout = 0.01f;
+    [SerializeField] float followerTimeout = 0.1f;
 
     [Tooltip("How close the robot will move to the target")]
     [SerializeField] float followDistance = 0.5f;
+
+    [Tooltip("Tolerance for detecting target position changes")]
+    [SerializeField] float positionTolerance = 0.01f;
 
     // Visualizer
     [Tooltip("Enable or disable trajectory visualization")]
@@ -70,6 +73,8 @@ public class FollowPlanner : MonoBehaviour {
     // z - Value assures that the gripper is always positioned above the m_Target cube before grasping.
     // y - Value is used to place the target facing the camera
     readonly Quaternion m_PickOrientation = Quaternion.Euler(0, 45, 180);
+    private Vector3 lastTargetPosition;
+    private bool targetPositionChanged = false;
     ArticulationBody[] m_JointArticulationBodies;
     ROSConnection m_Ros;    
     LineRenderer lineRenderer;
@@ -80,6 +85,9 @@ public class FollowPlanner : MonoBehaviour {
         // Get ROS connection static instance
         m_Ros = ROSConnection.GetOrCreateInstance();
         m_Ros.RegisterRosService<FollowerServiceRequest, FollowerServiceResponse>(rosServiceName);
+
+        // get the position of the target
+        lastTargetPosition = target.transform.position;
 
         // Get Revolute Joints
         m_JointArticulationBodies = new ArticulationBody[linkNames.Length];
@@ -105,6 +113,15 @@ public class FollowPlanner : MonoBehaviour {
         followToggle.onValueChanged.AddListener(OnFollowToggleChanged);
     }
 
+    void CheckTargetPosition() {
+    if (Vector3.Distance(lastTargetPosition, target.transform.position) > positionTolerance) {
+        targetPositionChanged = true;
+    }
+    else {
+        targetPositionChanged = false;
+    }
+}
+
     void OnFollowToggleChanged(bool isOn) {
         if (isOn) {
             // Start the coroutine to repeatedly call PublishJoints
@@ -122,8 +139,12 @@ public class FollowPlanner : MonoBehaviour {
 
     IEnumerator FollowRoutine() {
         while (true) {
-            PublishJoints();
-            yield return new WaitForSeconds(followerTimeout);
+            CheckTargetPosition();
+            if (targetPositionChanged) {
+                PublishJoints();
+                lastTargetPosition = target.transform.position;
+            }
+        yield return new WaitForSeconds(followerTimeout);
         }
     }
 
@@ -142,7 +163,6 @@ public class FollowPlanner : MonoBehaviour {
         Quaternion combinedRotation = Quaternion.Euler(target.transform.rotation.eulerAngles.x, target.transform.rotation.eulerAngles.y + 45, 180);
 
         request.target_pose = new PoseMsg {
-            // TODO: check if this works as intended
             position = (target.transform.position + Vector3.up * followDistance).To<FLU>(),
             orientation = combinedRotation.To<FLU>()
         };

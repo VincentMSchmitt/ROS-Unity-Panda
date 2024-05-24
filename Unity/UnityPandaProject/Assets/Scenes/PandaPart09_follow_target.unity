@@ -5691,8 +5691,9 @@ MonoBehaviour:
   jointAssignmentWait: 0.15
   poseAssignmentWait: 0.5
   timeout: 2.5
-  followerTimeout: 60
+  followerTimeout: 0.1
   followDistance: 0.25
+  positionTolerance: 0.01
   visualizeTrajectory: 1
   splineColor: {r: 0, g: 1, b: 0, a: 1}
   lineWidth: 0.005
