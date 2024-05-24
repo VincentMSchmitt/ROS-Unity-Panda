@@ -73,7 +73,7 @@ public class DistanceTrajectoryPlanner : MonoBehaviour {
     void Start() {
         // Get ROS connection static instance
         m_Ros = ROSConnection.GetOrCreateInstance();
-        m_Ros.RegisterRosService<FollowerRequest, FollowerResponse>(m_RosServiceName);
+        m_Ros.RegisterRosService<FollowerServiceRequest, FollowerServiceResponse>(m_RosServiceName);
 
         // Get Revolute Joints
         m_JointArticulationBodies = new ArticulationBody[LinkNames.Length];
@@ -114,7 +114,7 @@ public class DistanceTrajectoryPlanner : MonoBehaviour {
     ///     execute the trajectories in a coroutine.
     /// </summary>
     public void PublishJoints() {
-        var request = new FollowerRequest();
+        var request = new FollowerServiceRequest();
         request.joints_input = CurrentJointConfig();
 
         Quaternion combinedRotation = Quaternion.Euler(m_Target.transform.rotation.eulerAngles.x, m_Target.transform.rotation.eulerAngles.y + 45, 180);
@@ -124,10 +124,10 @@ public class DistanceTrajectoryPlanner : MonoBehaviour {
             orientation = combinedRotation.To<FLU>()
         };
 
-        m_Ros.SendServiceMessage<FollowerResponse>(m_RosServiceName, request, TrajectoryResponse);
+        m_Ros.SendServiceMessage<FollowerServiceResponse>(m_RosServiceName, request, TrajectoryResponse);
     }
 
-    void TrajectoryResponse(FollowerResponse response) {
+    void TrajectoryResponse(FollowerServiceResponse response) {
         if (response.trajectories.Length > 0) {
             StartCoroutine(ExecuteTrajectories(response));
         }
@@ -142,7 +142,7 @@ public class DistanceTrajectoryPlanner : MonoBehaviour {
     /// </summary>
     /// <param name="response"> FollowerRespone received from franka_panda_follower follower service running in ROS</param>
     /// <returns></returns>
-    IEnumerator ExecuteTrajectories(FollowerResponse response) {
+    IEnumerator ExecuteTrajectories(FollowerServiceResponse response) {
         lineRenderer.positionCount = 0;
 
         if (response.trajectories != null) {

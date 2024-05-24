@@ -32,6 +32,7 @@ To launch a demo project, following steps are requiered:
 
 ### TODO:
 * fix a bug where MoveIt ignores the floor and plans its trajectory through it
+* Update Services to pass *m_PickPoseOffset* varaible to mover.py / follower.py
 * containerise the entire project (Docker)
 * Add VR and AR with the Meta-SDK (Quest 3)
 * ~~fix the grabbing offset~~
