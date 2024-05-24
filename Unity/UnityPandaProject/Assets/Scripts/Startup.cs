@@ -8,7 +8,7 @@ public class JointTarget {
     public float targetPosition;
 }
 
-[DefaultExecutionOrder(-1000)]
+[DefaultExecutionOrder(-1000)] // make sure this gets called first
 public class Startup : MonoBehaviour {
     [SerializeField] public List<JointTarget> jointTargets = new List<JointTarget> {
         new JointTarget { jointName = "panda_link1", targetPosition = 0f },
@@ -34,7 +34,6 @@ public class Startup : MonoBehaviour {
             currentDrive.target = jointTargets[i - 1].targetPosition;
             articulationChain[i].xDrive = currentDrive;
         }
-
         yield return StartCoroutine(WaitUntilJointsReachTarget(articulationChain, jointTargets));
     }
 
@@ -52,7 +51,6 @@ public class Startup : MonoBehaviour {
                     }
                 }
             }
-
             if (!allJointsAtTarget) {
                 yield return new WaitForSeconds(checkInterval);
             }

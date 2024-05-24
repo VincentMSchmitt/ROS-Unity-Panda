@@ -16,10 +16,8 @@ from geometry_msgs.msg import Quaternion, Pose
 from std_msgs.msg import String
 from moveit_commander.conversions import pose_to_list
 
-#TODO: change to own service
 from franka_panda_moveit.srv import MoverService, MoverServiceRequest, MoverServiceResponse
 
-# TODO: add all joints for panda_arm group
 joint_names = ['panda_joint1', 'panda_joint2', 'panda_joint3', 'panda_joint4', 'panda_joint5', 'panda_joint6', 'panda_joint7']
 
 # Between Melodic and Noetic, the return type of plan() changed. moveit_commander has no __version__ variable, so checking the python version as a proxy
@@ -72,7 +70,6 @@ def plan_trajectory(move_group, destination_pose, start_joint_angles):
 def plan_pick_and_place(req):
     response = MoverServiceResponse()
 
-    #TODO: Chane to own move group name
     group_name = "panda_arm"
     move_group = moveit_commander.MoveGroupCommander(group_name)
 
@@ -124,9 +121,8 @@ def plan_pick_and_place(req):
 
 def moveit_server():
     moveit_commander.roscpp_initialize(sys.argv)
-    rospy.init_node('franka_panda_moveit_server') # TODO rename this
+    rospy.init_node('franka_panda_moveit_server')
 
-    # TODO: change name + change it in Unity too
     s = rospy.Service('franka_panda_moveit', MoverService, plan_pick_and_place)
     print("Ready to plan")
     rospy.spin()
