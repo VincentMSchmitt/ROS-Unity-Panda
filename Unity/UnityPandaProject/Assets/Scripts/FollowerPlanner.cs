@@ -8,10 +8,11 @@ using Unity.Robotics.ROSTCPConnector;
 using Unity.Robotics.ROSTCPConnector.ROSGeometry;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.UI;  // Für die UI-Komponenten
 
-public class DistanceTrajectoryPlanner : MonoBehaviour {
+public class FollowPlanner : MonoBehaviour {
     // Linknames of the used robot (only up to the point where the tool is attached) ----------------------------------
-    public static readonly string[] LinkNames = {
+    public static readonly string[] linkNames = {
         "world/panda_link0/panda_link1",
         "/panda_link2",
         "/panda_link3",
@@ -21,33 +22,41 @@ public class DistanceTrajectoryPlanner : MonoBehaviour {
         "/panda_link7"};
 
     // Serialized variables -------------------------------------------------------------------------------------------
+    // ROS related
     [Tooltip("The ROS servicename, which will be subscribed to")]
-    [SerializeField] string m_RosServiceName = "franka_panda_follower";
+    [SerializeField] string rosServiceName = "franka_panda_follower";
     
+    // GameObjects
     [Tooltip("The GameObject of the Franka Emika Panda")]
-    [SerializeField] GameObject m_FrankaPanda;
+    [SerializeField] GameObject panda;
 
     [Tooltip("The GameObject of the target")]
-    [SerializeField] GameObject m_Target;
+    [SerializeField] GameObject target;
 
     [Tooltip("Selection of the correct TCP is important")]
-    [SerializeField] GameObject m_PandaTCP;
+    [SerializeField] GameObject pandaTCP;
 
+    [Tooltip("Toggle to start/stop following the target")]
+    [SerializeField] Toggle followToggle;
+
+    // Joint Moving
     [Tooltip("How fast the robot will wait after moving all joints in the Simulation")]
-    [SerializeField] float JointAssignmentWait = 0.15f;
+    [SerializeField] float jointAssignmentWait = 0.15f;
 
     [Tooltip("How long the robot will wait until he moves to the next position")]
-    [SerializeField] float PoseAssignmentWait = 0.5f;
-
-    [Tooltip("How close the robot will move to the target")]
-    [SerializeField] float tolerance = 0.01f;
+    [SerializeField] float poseAssignmentWait = 0.5f;
 
     [Tooltip("After what time the robot will replan, if the target didn't reach the goal")]
     [SerializeField] float timeout = 2.5f;
 
-    [Tooltip("How close the robot will move to the target")]
-    [SerializeField] float FollowDistance = 0.5f;
+    // Follower related
+    [Tooltip("How long the follower will timeout before planing again")]
+    [SerializeField] float followerTimeout = 0.01f;
 
+    [Tooltip("How close the robot will move to the target")]
+    [SerializeField] float followDistance = 0.5f;
+
+    // Visualizer
     [Tooltip("Enable or disable trajectory visualization")]
     [SerializeField] bool visualizeTrajectory = true;
 
@@ -64,67 +73,81 @@ public class DistanceTrajectoryPlanner : MonoBehaviour {
     ArticulationBody[] m_JointArticulationBodies;
     ROSConnection m_Ros;    
     LineRenderer lineRenderer;
+    Coroutine followCoroutine;
 
     // Functions ------------------------------------------------------------------------------------------------------
-    /// <summary>
-    ///     Find all robot joints in Awake() and add them to the jointArticulationBodies array.
-    ///     Find left and right finger joints and assign them to their respective articulation body objects.
-    /// </summary>
     void Start() {
         // Get ROS connection static instance
         m_Ros = ROSConnection.GetOrCreateInstance();
-        m_Ros.RegisterRosService<FollowerServiceRequest, FollowerServiceResponse>(m_RosServiceName);
+        m_Ros.RegisterRosService<FollowerServiceRequest, FollowerServiceResponse>(rosServiceName);
 
         // Get Revolute Joints
-        m_JointArticulationBodies = new ArticulationBody[LinkNames.Length];
+        m_JointArticulationBodies = new ArticulationBody[linkNames.Length];
         var linkName = string.Empty;
-        for (var i = 0; i < LinkNames.Length; ++i) {
+        for (var i = 0; i < linkNames.Length; ++i) {
             // build link path
-            linkName += LinkNames[i];
+            linkName += linkNames[i];
             // gets Joints (Joint 1 - 7, because Joint 0 and Joint 8 are fixed Joints)
-            m_JointArticulationBodies[i] = m_FrankaPanda.transform.Find(linkName).GetComponent<ArticulationBody>();
+            m_JointArticulationBodies[i] = panda.transform.Find(linkName).GetComponent<ArticulationBody>();
             // Throw Assertion when no Joints are found
             Assert.IsNotNull(m_JointArticulationBodies[i]);
         }
 
         // Initialize Line Renderer
         lineRenderer = gameObject.AddComponent<LineRenderer>();
-        lineRenderer.startWidth = 0.01f;
-        lineRenderer.endWidth = 0.01f;
+        lineRenderer.startWidth = lineWidth;
+        lineRenderer.endWidth = lineWidth;
         lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
         lineRenderer.positionCount = 0;
+
+        // Subscribe to the Toggle's value change event
+        Assert.IsNotNull(followToggle, "FollowToggle is not assigned in the inspector.");
+        followToggle.onValueChanged.AddListener(OnFollowToggleChanged);
     }
 
-    /// <summary>
-    ///     Get the current values of the robot's joint angles.
-    /// </summary>
-    /// <returns>PandaMoveitJointsMsg</returns>
+    void OnFollowToggleChanged(bool isOn) {
+        if (isOn) {
+            // Start the coroutine to repeatedly call PublishJoints
+            Debug.Log("Start Following!");
+            followCoroutine = StartCoroutine(FollowRoutine());
+        } 
+        else {
+            // Stop the coroutine
+            if (followCoroutine != null) {
+                Debug.Log("Stop Following!");
+                StopCoroutine(followCoroutine);
+            }
+        }
+    }
+
+    IEnumerator FollowRoutine() {
+        while (true) {
+            PublishJoints();
+            yield return new WaitForSeconds(followerTimeout);
+        }
+    }
+
     PandaMoveitJointsMsg CurrentJointConfig() {
         var joints = new PandaMoveitJointsMsg();
-        for (var i = 0; i < LinkNames.Length; ++i) {
+        for (var i = 0; i < linkNames.Length; ++i) {
             joints.joints[i] = m_JointArticulationBodies[i].jointPosition[0];
         }
         return joints;
     }
 
-    /// <summary>
-    ///     Create a new MoverServiceRequest with the current values of the robot's joint angles,
-    ///     the target cube's current position and rotation, and the targetPlacement position and rotation.
-    ///     Call the MoverService using the ROSConnection and if a trajectory is successfully planned,
-    ///     execute the trajectories in a coroutine.
-    /// </summary>
     public void PublishJoints() {
         var request = new FollowerServiceRequest();
         request.joints_input = CurrentJointConfig();
 
-        Quaternion combinedRotation = Quaternion.Euler(m_Target.transform.rotation.eulerAngles.x, m_Target.transform.rotation.eulerAngles.y + 45, 180);
+        Quaternion combinedRotation = Quaternion.Euler(target.transform.rotation.eulerAngles.x, target.transform.rotation.eulerAngles.y + 45, 180);
 
         request.target_pose = new PoseMsg {
-            position = (m_Target.transform.position + Vector3.up * FollowDistance).To<FLU>(),
+            // TODO: check if this works as intended
+            position = (target.transform.position + Vector3.up * followDistance).To<FLU>(),
             orientation = combinedRotation.To<FLU>()
         };
 
-        m_Ros.SendServiceMessage<FollowerServiceResponse>(m_RosServiceName, request, TrajectoryResponse);
+        m_Ros.SendServiceMessage<FollowerServiceResponse>(rosServiceName, request, TrajectoryResponse);
     }
 
     void TrajectoryResponse(FollowerServiceResponse response) {
@@ -136,12 +159,6 @@ public class DistanceTrajectoryPlanner : MonoBehaviour {
         }
     }
 
-    /// <summary>
-    ///     Execute the returned trajectories from the FollowerService.
-    ///     Executing a single trajectory will iterate through every robot pose in the array while updating the joint values on the robot.
-    /// </summary>
-    /// <param name="response"> FollowerRespone received from franka_panda_follower follower service running in ROS</param>
-    /// <returns></returns>
     IEnumerator ExecuteTrajectories(FollowerServiceResponse response) {
         lineRenderer.positionCount = 0;
 
@@ -164,10 +181,10 @@ public class DistanceTrajectoryPlanner : MonoBehaviour {
                     }
 
                     // Add current TCP position to trajectory points
-                    trajectoryPoints.Add(m_PandaTCP.transform.position);
+                    trajectoryPoints.Add(pandaTCP.transform.position);
 
                     // Wait for robot to achieve pose for all joint assignments
-                    yield return new WaitForSeconds(JointAssignmentWait);
+                    yield return new WaitForSeconds(jointAssignmentWait);
                 }
 
                 // Wait until the TCP is directly above m_Target
@@ -185,13 +202,13 @@ public class DistanceTrajectoryPlanner : MonoBehaviour {
         float elapsedTime = 0.0f;
 
         while (true) {
-            Vector3 pandaPosition = m_PandaTCP.transform.position;
-            Vector3 targetPosition = m_Target.transform.position;
+            Vector3 pandaPosition = pandaTCP.transform.position;
+            Vector3 targetPosition = target.transform.position;
             
             // Check if the robot is close to target
             float distanceToTarget = Vector3.Distance(pandaPosition, targetPosition);
-            if (distanceToTarget <= FollowDistance) {
-                yield return new WaitForSeconds(PoseAssignmentWait);
+            if (distanceToTarget <= followDistance) {
+                yield return new WaitForSeconds(poseAssignmentWait);
                 yield break;
             }
 
@@ -200,17 +217,13 @@ public class DistanceTrajectoryPlanner : MonoBehaviour {
             if (elapsedTime >= timeout) {
                 Debug.LogWarning("Timeout reached while waiting for positioning over target. Replanning.");
                 PublishJoints();
-                yield return new WaitForSeconds(PoseAssignmentWait);
+                yield return new WaitForSeconds(poseAssignmentWait);
                 yield break;
             }
             yield return null;
         }
     }
 
-    /// <summary>
-    ///     Draws the trajectory spline in the scene.
-    /// </summary>
-    /// <param name="trajectoryPoints">List of trajectory points to draw</param>
     void DrawTrajectory(List<Vector3> trajectoryPoints) {
         lineRenderer.positionCount = trajectoryPoints.Count;
         lineRenderer.SetPositions(trajectoryPoints.ToArray());

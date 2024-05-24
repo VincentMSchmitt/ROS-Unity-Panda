@@ -27,31 +27,6 @@ if sys.version_info >= (3, 0):
 else:
     def planCompat(plan):
         return plan
-        
-"""
-    Given the start angles of the robot, plan a trajectory that ends at the destination pose.
-"""
-def plan_trajectory(move_group, destination_pose, start_joint_angles): 
-    current_joint_state = JointState()
-    current_joint_state.name = joint_names
-    current_joint_state.position = start_joint_angles
-
-    moveit_robot_state = RobotState()
-    moveit_robot_state.joint_state = current_joint_state
-    move_group.set_start_state(moveit_robot_state)
-
-    move_group.set_pose_target(destination_pose)
-    plan = move_group.plan()
-
-    if not plan:
-        exception_str = """
-            Trajectory could not be planned for a destination of {} with starting joint angles {}.
-            Please make sure target and destination are reachable by the robot.
-        """.format(destination_pose, destination_pose)
-        raise Exception(exception_str)
-
-    return planCompat(plan)
-
 
 """
     Creates a pick and place plan using the four states below.
@@ -117,6 +92,30 @@ def plan_pick_and_place(req):
     move_group.clear_pose_targets()
 
     return response
+
+"""
+    Given the start angles of the robot, plan a trajectory that ends at the destination pose.
+"""
+def plan_trajectory(move_group, destination_pose, start_joint_angles): 
+    current_joint_state = JointState()
+    current_joint_state.name = joint_names
+    current_joint_state.position = start_joint_angles
+
+    moveit_robot_state = RobotState()
+    moveit_robot_state.joint_state = current_joint_state
+    move_group.set_start_state(moveit_robot_state)
+
+    move_group.set_pose_target(destination_pose)
+    plan = move_group.plan()
+
+    if not plan:
+        exception_str = """
+            Trajectory could not be planned for a destination of {} with starting joint angles {}.
+            Please make sure target and destination are reachable by the robot.
+        """.format(destination_pose, destination_pose)
+        raise Exception(exception_str)
+
+    return planCompat(plan)
 
 
 def moveit_server():

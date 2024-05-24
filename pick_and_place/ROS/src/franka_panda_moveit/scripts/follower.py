@@ -29,33 +29,6 @@ else:
         return plan
         
 """
-    Given the start angles of the robot, plan a trajectory that ends at the destination pose.
-"""
-def plan_trajectory(move_group, destination_pose, start_joint_angles): 
-    current_joint_state = JointState()
-    current_joint_state.name = joint_names
-    current_joint_state.position = start_joint_angles
-
-    moveit_robot_state = RobotState()
-    moveit_robot_state.joint_state = current_joint_state
-    move_group.set_start_state(moveit_robot_state)
-    
-    # TODO: Send this with the message
-    destination_pose.position.z = -0.5;
-
-    move_group.set_pose_target(destination_pose)
-    plan = move_group.plan()
-
-    if not plan:
-        exception_str = """
-            Trajectory could not be planned for a destination of {} with starting joint angles {}.
-            Please make sure target and destination are reachable by the robot.
-        """.format(destination_pose, destination_pose)
-        raise Exception(exception_str)
-    return planCompat(plan)
-
-
-"""
     Creates a follow plan
 """
 def plan_follow(req):
@@ -66,25 +39,48 @@ def plan_follow(req):
 
     robot_joint_configuration = req.joints_input.joints
 
-    # follow - move gripper above the desired placement position
-    follow_pose = plan_trajectory(move_group, req.pick_pose, robot_joint_configuration)
+    # follow pose
+    follow_pose = plan_trajectory(move_group, req.target_pose, robot_joint_configuration)
 
-    # If trajectory planning worked for all pick and place stages, add plan to response
+    # Set the current state to the requested joint configuration
+    # move_group.target_pose(robot_joint_configuration)
+
+    # Plan the trajectory to the follow_pose
+    plan = move_group.plan()
+
     response.trajectories.append(follow_pose)
 
     move_group.clear_pose_targets()
 
     return response
 
+"""
+    Given the start angles of the robot, plan a trajectory that ends at the destination pose.
+"""
+def plan_trajectory(move_group, target_pose, joint_configuration):
 
-def moveit_server():
-    moveit_commander.roscpp_initialize(sys.argv)
-    rospy.init_node('franka_panda_moveit_server')
+    current_joint_state = JointState()
+    current_joint_state.name = joint_names
+    current_joint_state.position = joint_configuration
 
-    s = rospy.Service('franka_panda_follower', FollowerService, plan_follow)
-    print("Ready to plan")
-    rospy.spin()
+    moveit_robot_state = RobotState()
+    moveit_robot_state.joint_state = current_joint_state
+    move_group.set_start_state(moveit_robot_state)
 
+    move_group.set_pose_target(target_pose)
+    plan = move_group.plan()
+
+    if not plan:
+        exception_str = """
+            Trajectory could not be planned for a destination of {} with starting joint angles {}.
+            Please make sure target and destination are reachable by the robot.
+        """.format(target_pose, target_pose)
+        raise Exception(exception_str)
+
+    return planCompat(plan)
 
 if __name__ == "__main__":
-    moveit_server()
+    rospy.init_node('follower_service')
+    service = rospy.Service('franka_panda_follower', FollowerService, plan_follow)
+    rospy.loginfo("Service franka_panda_follower ready")
+    rospy.spin()
