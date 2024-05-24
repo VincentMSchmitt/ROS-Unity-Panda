@@ -32,9 +32,10 @@ To launch a demo project, following steps are requiered:
 
 ### TODO:
 * fix a bug where MoveIt ignores the floor and plans its trajectory through it
-* attach the target to the gripper to prevent the robot throwing the target (this is not a final fix)
+* plan according to the orientation of the target, not use a fixed one
 * containerise the entire project (Docker)
 * Add VR and AR with the Meta-SDK (Quest 3)
 * ~~fix the grabbing offset~~
 * ~~add visulization for the TCP path~~
 * ~~add the collision of the cube to MoveIt~~
+* ~~attach the target to the gripper to prevent the robot throwing the target (this is not a final fix)~~
