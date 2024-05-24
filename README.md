@@ -18,7 +18,7 @@ This repository consists of the following ROS-packages:
 
 ### Launching
 To launch a demo project, following steps are requiered:
-1. Run the unity-project **UnityPandaProject**
+1. Run the Unity project **UnityPandaProject**
 2. Navigte to `/ws_panda/pick_and_place_ROS/`
 2. Run the demo launchfile:
     ```
