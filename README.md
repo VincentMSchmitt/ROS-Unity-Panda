@@ -10,7 +10,7 @@ This repository contains all files to simulate the Franka Emika Panda robotic ar
 This repository consists of the following ROS-packages:
 * **franka_panda_description** (taken from [franka_panda_description](https://github.com/justagist/franka_panda_description "justagist's GitHub"), modified for my needs)
 * **franka_panda_moveit** (created with the Setup Assistant [Moveit Setup Assistant](https://github.com/moveit/moveit/tree/master/moveit_setup_assistant "Setup Assistant GitHub") from the franka_panda_description package, heavily modified)
-* **moveit_msgs** (taken from [MoveitMsg](https://github.com/moveit/moveit_msgst "MoveitMsg GitHub"))
+* **moveit_msgs** (taken from [MoveitMsg](https://github.com/moveit/moveit_msgs "MoveitMsg GitHub"))
 * **ros_tcp_endpoint** (taken from [Unity-Robotics-Hub](https://github.com/Unity-Technologies/ROS-TCP-Endpoint "Unity-Robotics-Hub"))
 
 > It also includes the Unity-Project used for experimenting with these packages. These are build from scratch, but for orientation 
