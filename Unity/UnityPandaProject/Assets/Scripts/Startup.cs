@@ -2,8 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-[System.Serializable]
-public class JointTarget {
+[System.Serializable] public class JointTarget {
     public string jointName;
     public float targetPosition;
 }
@@ -19,9 +18,8 @@ public class Startup : MonoBehaviour {
         new JointTarget { jointName = "panda_link6", targetPosition = 0f },
         new JointTarget { jointName = "panda_link7", targetPosition = 90f }
     };
-
-    public float tolerance = 0.01f;
-    public float checkInterval = 0.1f;
+    private float tolerance = 0.01f;
+    private float checkInterval = 0.1f;
 
     void Start() {
         ArticulationBody[] articulationChain = this.GetComponentsInChildren<ArticulationBody>();
@@ -55,7 +53,6 @@ public class Startup : MonoBehaviour {
                 yield return new WaitForSeconds(checkInterval);
             }
         }
-
         Debug.Log("All specified joints have reached the target positions.");
         EventManager.Instance.TriggerStartupComplete();
     }

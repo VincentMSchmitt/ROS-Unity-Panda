@@ -9,25 +9,15 @@ using Unity.Robotics.ROSTCPConnector.ROSGeometry;
 using static GameObjectFilter;
 
 public class ObjectInfoPublisher : MonoBehaviour {
-
-    // Serielles Feld zur Steuerung, ob die Kollisionen gesendet werden sollen oder nicht
     [SerializeField] private bool sendCollisions = true;
-
-    // Name des ROS-Themas
     [SerializeField] private string rosTopicName = "object_info";
-
-    // Serielles Feld zur Steuerung des Intervalls in Sekunden
     [SerializeField] private float publishInterval = 1.0f;
-
-    // ROS Connector
     private ROSConnection ros;
-
     private List<GameObject> trackedGameObjects;
-
     private float timeSinceLastPublish;
 
     void Start() {
-        // ROS Connector initialisieren
+        // ROS Connector init
         ros = ROSConnection.GetOrCreateInstance();
         ros.RegisterPublisher<ObjectInfoMsg>(rosTopicName);
         timeSinceLastPublish = 0.0f;
@@ -40,7 +30,8 @@ public class ObjectInfoPublisher : MonoBehaviour {
 
             if (timeSinceLastPublish >= publishInterval) {
                 trackedGameObjects = GameObjectFilter.GetAllGameObjectsWithTag("track");
-                // senden der einzelnen boxen
+                // send each box on their own
+                // TODO: pack them into one Message
                 foreach (GameObject go in trackedGameObjects) {
                     PublishObjectInfo(go);
                 }
@@ -53,42 +44,37 @@ public class ObjectInfoPublisher : MonoBehaviour {
         var objectInfo = GetObjectInfo(go);
 
         if (objectInfo.name != null) {
-            // Erstelle eine neue ObjectInfoMsg
             ObjectInfoMsg msg = new ObjectInfoMsg {
                 name = objectInfo.name,
                 position = objectInfo.position,
                 rotation = objectInfo.rotation,
                 size = new Vector3Msg(objectInfo.size.x, objectInfo.size.y, objectInfo.size.z)
             };
-
-            // Nachricht veröffentlichen
+            // publish msg
             ros.Publish(rosTopicName, msg);
         }
     }
 
     public (string name, PointMsg position, QuaternionMsg rotation, Vector3 size) GetObjectInfo(GameObject go) {
-        // Hole das Renderer-Component des GameObjects
+        // get renderer of the GameObject
         Renderer renderer = go.GetComponent<Renderer>();
 
         if (renderer != null) {
-            // Name des GameObjects
             string name = go.name;
-
-            // Position in Unity-Koordinaten
+            // Unity coordinates
             Vector3 unityPosition = go.transform.position;
-            // Rotation in Unity-Koordinaten
             Quaternion unityRotation = go.transform.rotation;
-            // Größe des GameObjects
             Vector3 size = renderer.bounds.size;
 
-            // Konvertiere Unity-Koordinaten in ROS-Koordinaten (FLU)
-            // TODO:Check if this works as intended
+            // convert Unity coordinates into ROS coordinates (FLU)
+            // TODO: This does not work as intended for some reason. For now the objects will be rotated
+            // on the ROS side by 90 Deg
             PointMsg rosPosition = unityPosition.To<FLU>();
             QuaternionMsg rosRotation = unityRotation.To<FLU>();
 
-
             return (name, rosPosition, rosRotation, size);
         }
+        // send empty message if no object renderer is found
         return (null, new PointMsg(), new QuaternionMsg(), Vector3.zero);
     }
 }

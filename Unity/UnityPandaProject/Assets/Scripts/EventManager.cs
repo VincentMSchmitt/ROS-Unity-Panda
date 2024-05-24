@@ -16,7 +16,7 @@ public class EventManager : MonoBehaviour {
 
     public event Action OnStartupComplete;
 
-    // Make sure, startup is completed befor doing anything else
+    // Make sure that startup is completed before doing anything else
     public void TriggerStartupComplete() {
         if (OnStartupComplete != null) {
             OnStartupComplete.Invoke();

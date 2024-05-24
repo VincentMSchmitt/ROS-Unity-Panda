@@ -2,26 +2,20 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class BoundingBoxDrawer : MonoBehaviour {
-    
-    // Serielles Feld zur Steuerung, ob die Bounding-Box gezeichnet werden soll oder nicht
     [SerializeField] private bool drawBoundingBox = true;
-
-    // Serielles Feld zur Einstellung der Farbe der Bounding-Box
     [SerializeField] private Color boundingBoxColor = Color.green;
-
     private List<GameObject> trackedGameObjects;
 
     void Start() {
-        // Initialisierung der Liste
         trackedGameObjects = new List<GameObject>();
     }
 
     void Update() {
         if (drawBoundingBox) {
-            // Finde alle GameObjects mit dem Tag "track"
+            // find all GameObjects with tag "track"
             trackedGameObjects = GameObjectFilter.GetAllGameObjectsWithTag("track");
 
-            // Zeichne Bounding-Boxen um die gefundenen GameObjects
+            // draw bounding-boxes for found GameObjects
             foreach (GameObject go in trackedGameObjects) {
                 DrawBoundingBox(go);
             }
@@ -29,11 +23,11 @@ public class BoundingBoxDrawer : MonoBehaviour {
     }
 
     void DrawBoundingBox(GameObject go) {
-        // Hole das Renderer-Component des GameObjects
+        // get renderer of the GameObject
         Renderer renderer = go.GetComponent<Renderer>();
 
         if (renderer != null) {
-            // Berechne die Eckpunkte der Bounding-Box
+            // calculate die corners of the bounding box
             Vector3 center = renderer.bounds.center;
             Vector3 extents = renderer.bounds.extents;
 
@@ -47,7 +41,7 @@ public class BoundingBoxDrawer : MonoBehaviour {
             Vector3 v3BackBottomLeft = new Vector3(center.x - extents.x, center.y - extents.y, center.z + extents.z);
             Vector3 v3BackBottomRight = new Vector3(center.x + extents.x, center.y - extents.y, center.z + extents.z);
 
-            // Zeichne die Linien der Bounding-Box
+            // draw
             Debug.DrawLine(v3FrontTopLeft, v3FrontTopRight, boundingBoxColor);
             Debug.DrawLine(v3FrontTopRight, v3FrontBottomRight, boundingBoxColor);
             Debug.DrawLine(v3FrontBottomRight, v3FrontBottomLeft, boundingBoxColor);

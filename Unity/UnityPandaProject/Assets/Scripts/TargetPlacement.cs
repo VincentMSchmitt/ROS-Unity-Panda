@@ -9,17 +9,11 @@ namespace Unity.Robotics.PickAndPlace {
     [RequireComponent(typeof(BoxCollider))]
 
     public class TargetPlacement : MonoBehaviour {
-
         public enum PlacementState {
             Outside,
             InsideFloating,
             InsidePlaced
         }
-
-        const string k_NameExpectedTarget = "Target";
-        static readonly int k_ShaderColorId = Shader.PropertyToID("_Color");
-        // The threshold that the Target's speed must be under to be considered "placed" in the target area
-        const float k_MaximumSpeedForStopped = 0.01f;
 
         [Tooltip("Target object expected by this placement area. Can be left blank if only one Target in scene")]
         [SerializeField] GameObject m_Target;
@@ -27,7 +21,10 @@ namespace Unity.Robotics.PickAndPlace {
         [Tooltip("Alpha value for any color set during state changes.")]
         [Range(0, 255)]
         [SerializeField] int m_ColorAlpha = 100;
-
+        const string k_NameExpectedTarget = "Target";
+        static readonly int k_ShaderColorId = Shader.PropertyToID("_Color");
+        // The threshold that the Target's speed must be under to be considered "placed" in the target area
+        const float k_MaximumSpeedForStopped = 0.01f;
         float m_ColorAlpha01 => m_ColorAlpha / 255f;
         MeshRenderer m_TargetMeshRenderer;
         MeshRenderer m_MeshRenderer;
@@ -46,7 +43,7 @@ namespace Unity.Robotics.PickAndPlace {
         // Start is called before the first frame update
         void Start()
         {
-            // Check for mis-configurations and disable if something has changed without this script being updated
+            // Check for misconfigurations and disable if something has changed without this script being updated
             // These are warnings because this script does not contain critical functionality
             if (m_Target == null) {
                 m_Target = GameObject.Find(k_NameExpectedTarget);

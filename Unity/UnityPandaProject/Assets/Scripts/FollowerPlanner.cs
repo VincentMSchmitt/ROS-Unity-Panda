@@ -11,7 +11,7 @@ using UnityEngine.Assertions;
 using UnityEngine.UI;  // Für die UI-Komponenten
 
 public class FollowPlanner : MonoBehaviour {
-    // Linknames of the used robot (only up to the point where the tool is attached) ----------------------------------
+    // Linknames of the used robot (only up to the point where the tool is attached)
     public static readonly string[] linkNames = {
         "world/panda_link0/panda_link1",
         "/panda_link2",
@@ -21,7 +21,6 @@ public class FollowPlanner : MonoBehaviour {
         "/panda_link6",
         "/panda_link7"};
 
-    // Serialized variables -------------------------------------------------------------------------------------------
     // ROS related
     [Tooltip("The ROS servicename, which will be subscribed to")]
     [SerializeField] string rosServiceName = "franka_panda_follower";
@@ -69,7 +68,7 @@ public class FollowPlanner : MonoBehaviour {
     [Tooltip("Width of the trajectory spline")]
     [SerializeField] float lineWidth = 0.01f;
 
-    // Other global variables -----------------------------------------------------------------------------------------
+    // Other global variables
     // z - Value assures that the gripper is always positioned above the m_Target cube before grasping.
     // y - Value is used to place the target facing the camera
     readonly Quaternion m_PickOrientation = Quaternion.Euler(0, 45, 180);
@@ -80,7 +79,6 @@ public class FollowPlanner : MonoBehaviour {
     LineRenderer lineRenderer;
     Coroutine followCoroutine;
 
-    // Functions ------------------------------------------------------------------------------------------------------
     void Start() {
         // Get ROS connection static instance
         m_Ros = ROSConnection.GetOrCreateInstance();
