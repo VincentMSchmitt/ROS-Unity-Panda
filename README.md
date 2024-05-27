@@ -1,4 +1,4 @@
-![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)
+![Maintenance](https://img.shields.io/badge/Maintained%3F-Yes-green.svg) ![Status](https://img.shields.io/badge/Status-Experimental-yellow?logoColor=yellow&logoSize=auto)
 
 # ROS-Unity-Panda
 This repository contains all files to simulate the Franka Emika Panda robotic arm-manipulator in Unity. It can be controlled using MoveIt and ROS-Noetic. This is being achived with the help of the ROS-TCP-Connector ROS-package from Unity-Robotics-Hub. It aims to recreate the *pick_and_place* tutorial from the Unity-Robotics-Hub as a starting point and adds functionality on that basis.
