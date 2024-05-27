@@ -7,65 +7,88 @@ public class AttachOnTouch : MonoBehaviour {
 
     private bool rightFingerTouching = false;
     private bool leftFingerTouching = false;
+    private bool isTransporting = false;
+    private bool isReleased = true;
     private GameObject targetObject = null;
+    private Rigidbody targetRigidbody = null;
 
-    private void Start() {
-        if (pandaRightFinger == null) {
-            pandaRightFinger = transform.Find("panda_rightfinger").gameObject;
-        }
+    // Singleton instance
+    public static AttachOnTouch Instance { get; private set; }
 
-        if (pandaLeftFinger == null) {
-            pandaLeftFinger = transform.Find("panda_leftfinger").gameObject;
-        }
-
-        if (pandaHand == null) {
-            pandaHand = transform.Find("panda_hand").gameObject;
+    private void Awake() {
+        if (Instance != null && Instance != this) {
+            Destroy(this.gameObject);
+        } else {
+            Instance = this;
         }
     }
 
     public void OnFingerTriggerEnter(GameObject target, Collider other) {
-        //Debug.Log("OnTriggerEnter called with: " + other.gameObject.name);
         if (other.gameObject == pandaRightFinger) {
             rightFingerTouching = true;
-        }
-        else if (other.gameObject == pandaLeftFinger) {
+        } else if (other.gameObject == pandaLeftFinger) {
             leftFingerTouching = true;
         }
 
-        // attach to panda_hand
         if (rightFingerTouching && leftFingerTouching) {
             AttachTargetToHand(target);
         }
     }
 
     public void OnFingerTriggerExit(GameObject target, Collider other) {
-        //Debug.Log("OnTriggerExit called with: " + other.gameObject.name);
-        if (other.gameObject == pandaRightFinger) {
-            rightFingerTouching = false;
-        }
-        else if (other.gameObject == pandaLeftFinger) {
-            leftFingerTouching = false;
-        }
+        if (!isTransporting) {
+            if (other.gameObject == pandaRightFinger) {
+                rightFingerTouching = false;
+            } else if (other.gameObject == pandaLeftFinger) {
+                leftFingerTouching = false;
+            }
 
-        // this should be an || but for consistancy this is ignored for now
-        if (!rightFingerTouching && !leftFingerTouching) {
-            DetachTargetFromHand();
+            if (!rightFingerTouching && !leftFingerTouching) {
+                DetachTargetFromHand();
+            }
         }
     }
 
     private void AttachTargetToHand(GameObject target) {
-        if (targetObject == null) {
+        if (targetObject == null && isReleased) {
             targetObject = target;
+            targetRigidbody = target.GetComponent<Rigidbody>();
+
+            if (targetRigidbody != null) {
+                targetRigidbody.isKinematic = true; // Disable physics
+            }
+
             target.transform.SetParent(pandaHand.transform);
             //Debug.Log("Target attached to panda hand.");
+            isTransporting = true; // Start transporting
+            isReleased = false; // set the release flag
         }
     }
 
     private void DetachTargetFromHand() {
         if (targetObject != null) {
+            if (targetRigidbody != null) {
+                targetRigidbody.isKinematic = false; // Enable physics
+            }
+
             targetObject.transform.SetParent(null);
             //Debug.Log("Target detached from panda hand.");
             targetObject = null;
+            targetRigidbody = null;
+            isTransporting = false; // Stop transporting
         }
+    }
+
+    // Static method to be called when the robot reaches its destination
+    public static void OnReachDestination() {
+        if (Instance != null && Instance.isTransporting) {
+            Instance.DetachTargetFromHand();
+        }
+    }
+
+    // Static method to be called when the robot reaches its destination
+    public static void newDestination() {
+        Instance.isTransporting = false;
+        Instance.isReleased = true;
     }
 }

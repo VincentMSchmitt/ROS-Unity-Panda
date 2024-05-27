@@ -1,6 +1,8 @@
 using UnityEngine;
 
 public class TargetTrigger : MonoBehaviour {
+
+    [SerializeField] private bool isEnabled = true;
     private AttachOnTouch attachOnTouch;
 
     private void Start() {
@@ -9,10 +11,8 @@ public class TargetTrigger : MonoBehaviour {
     }
 
     private void OnTriggerEnter(Collider other) {
-        attachOnTouch.OnFingerTriggerEnter(gameObject, other);
-    }
-
-    private void OnTriggerExit(Collider other) {
-        attachOnTouch.OnFingerTriggerExit(gameObject, other);
+        if (isEnabled) {
+            attachOnTouch.OnFingerTriggerEnter(gameObject, other);
+        }
     }
 }
