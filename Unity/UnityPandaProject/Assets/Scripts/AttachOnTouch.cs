@@ -57,14 +57,14 @@ public class AttachOnTouch : MonoBehaviour {
         if (targetObject == null) {
             targetObject = target;
             target.transform.SetParent(pandaHand.transform);
-            Debug.Log("Target attached to panda hand.");
+            //Debug.Log("Target attached to panda hand.");
         }
     }
 
     private void DetachTargetFromHand() {
         if (targetObject != null) {
             targetObject.transform.SetParent(null);
-            Debug.Log("Target detached from panda hand.");
+            //Debug.Log("Target detached from panda hand.");
             targetObject = null;
         }
     }
