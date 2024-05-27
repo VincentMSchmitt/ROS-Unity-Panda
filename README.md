@@ -1,3 +1,5 @@
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)]
+
 # ROS-Unity-Panda
 This repository contains all files to simulate the Franka Emika Panda robotic arm-manipulator in Unity. It can be controlled using MoveIt and ROS-Noetic. This is being achived with the help of the ROS-TCP-Connector ROS-package from Unity-Robotics-Hub. It aims to recreate the *pick_and_place* tutorial from the Unity-Robotics-Hub as a starting point and adds functionality on that basis.
 
@@ -31,12 +33,13 @@ To launch a demo project, following steps are requiered:
 > The robot should move to the **Target**, pick it up and drop it at the **TargetPlacement** location. Make sure all the GameObjects are assined in the used scripts (drag and drop the GameObject in the corresponding box).
 
 ### TODO:
-* fix a bug where MoveIt ignores the floor and plans its trajectory through it
-* Update Services to pass *m_PickPoseOffset* varaible to mover.py / follower.py
-* containerise the entire project (Docker)
-* Add VR and AR with the Meta-SDK (Quest 3)
-* ~~fix the grabbing offset~~
-* ~~add visulization for the TCP path~~
-* ~~add the collision of the cube to MoveIt~~
-* ~~attach the target to the gripper to prevent the robot throwing the target (this is not a final fix)~~
-* ~~plan according to the orientation of the target, not use a fixed one~~
+- [ ] fix a bug where MoveIt ignores the floor and plans its trajectory through it
+- [ ] Update Services to pass *m_PickPoseOffset* varaible to mover.py
+- [ ] containerise the entire project (Docker)
+- [ ] Add VR and AR with the Meta-SDK (Quest 3)
+- [x] ~~fix the grabbing offset~~
+- [x] ~~add visulization for the TCP path~~
+- [x] ~~add the collision of the cube to MoveIt~~
+- [x] ~~attach the target to the gripper to prevent the robot throwing the target (this is not a final fix)~~
+- [x] ~~plan according to the orientation of the target, not use a fixed one~~
+- [x] ~~optimize the grabbing algorithm to use the easier side to grab~~
