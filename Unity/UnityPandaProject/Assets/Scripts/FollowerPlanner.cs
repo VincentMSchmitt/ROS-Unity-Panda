@@ -158,7 +158,8 @@ public class FollowPlanner : MonoBehaviour {
         var request = new FollowerServiceRequest();
         request.joints_input = CurrentJointConfig();
 
-        Quaternion combinedRotation = Quaternion.Euler(target.transform.rotation.eulerAngles.x, target.transform.rotation.eulerAngles.y + 45, 180);
+        // combine the rotations (y from the target - x, z from the m_PickOrientation)
+        Quaternion combinedRotation = Quaternion.Euler(m_PickOrientation.eulerAngles.x, target.transform.rotation.eulerAngles.y + 45, m_PickOrientation.eulerAngles.z);
 
         request.target_pose = new PoseMsg {
             position = (target.transform.position + Vector3.up * followDistance).To<FLU>(),
