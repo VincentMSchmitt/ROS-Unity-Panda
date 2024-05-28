@@ -44,7 +44,6 @@ public class PandaKinematics {
         for (int i = 0; i < jointAngles.Length; ++i) {
             Matrix4x4 jointTransformation = CalculateJointTransformation(i, jointAngles[i]);
             endEffectorTransformation *= jointTransformation;
-            //Debug.Log($"Joint {i + 1} Transformation Matrix:\n{MatrixToString(jointTransformation)}");
         }
 
         // Adding the fixed transformation (Rotation around the z-axis by -45 degrees) for the panda_hand_joint
@@ -60,7 +59,7 @@ public class PandaKinematics {
     /// </summary>
     /// <param name="jointIndex"></param>
     /// <param name="jointAngle"></param>
-    /// <returns></returns>
+    /// <returns>Matrix4x4</returns>
     public static Matrix4x4 CalculateJointTransformation(int jointIndex, float jointAngle) {
         if (jointIndex < 0 || jointIndex >= DHParameters.Count) {
             Debug.LogError("Invalid joint index.");

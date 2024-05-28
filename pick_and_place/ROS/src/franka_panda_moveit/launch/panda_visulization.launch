@@ -12,4 +12,6 @@
     <include file="$(find franka_panda_moveit)/launch/demo.launch"/>
     <!-- Mover.py script -->
     <node name="panda_mover" pkg="franka_panda_moveit" type="mover.py" args="--wait" output="screen"/>
+    <!-- direct_kinematics.py script -->
+    <node name="direct_kinematics" pkg="franka_panda_moveit" type="direct_kinematics.py" args="--wait" output="screen"/>
  </launch>

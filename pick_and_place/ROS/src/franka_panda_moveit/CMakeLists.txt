@@ -37,6 +37,7 @@ catkin_install_python(PROGRAMS
   scripts/follower.py
   scripts/trajectory_subscriber.py
   scripts/collision_detector.py
+  scripts/direct_kinematics.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
