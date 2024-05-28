@@ -10,13 +10,13 @@ using System.Collections.Generic;
 [DefaultExecutionOrder(-1000)] // make sure this gets called first
 public class Startup : MonoBehaviour {
     [SerializeField] public List<JointTarget> jointTargets = new List<JointTarget> {
-        new JointTarget { jointName = "panda_link1", targetPosition = 0f },
-        new JointTarget { jointName = "panda_link2", targetPosition = 0f },
-        new JointTarget { jointName = "panda_link3", targetPosition = 0f },
-        new JointTarget { jointName = "panda_link4", targetPosition = 0f },
-        new JointTarget { jointName = "panda_link5", targetPosition = -90f },
-        new JointTarget { jointName = "panda_link6", targetPosition = 0f },
-        new JointTarget { jointName = "panda_link7", targetPosition = 90f }
+        new JointTarget { jointName = "panda_link1", targetPosition = 0   },
+        new JointTarget { jointName = "panda_link2", targetPosition = 0   },
+        new JointTarget { jointName = "panda_link3", targetPosition = 0   },
+        new JointTarget { jointName = "panda_link4", targetPosition = -90f},
+        new JointTarget { jointName = "panda_link5", targetPosition = 0   },
+        new JointTarget { jointName = "panda_link6", targetPosition = 90f },
+        new JointTarget { jointName = "panda_link7", targetPosition = 0   }
     };
     private float tolerance = 0.01f;
     private float checkInterval = 0.1f;

@@ -2902,6 +2902,8 @@ MonoBehaviour:
   PoseAssignmentWait: 0.5
   tolerance: 0.1
   timeout: 2.5
+  visualizeTrajectory: 0
+  attachOnTouch: 0
 --- !u!1 &871815405
 GameObject:
   m_ObjectHideFlags: 0
