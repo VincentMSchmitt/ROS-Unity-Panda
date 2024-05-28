@@ -3,3 +3,4 @@ geometry_msgs/Pose pick_pose
 geometry_msgs/Pose place_pose
 ---
 moveit_msgs/RobotTrajectory[] trajectories
+EndEffectorPositions[] end_effector_positions
