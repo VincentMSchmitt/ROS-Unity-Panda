@@ -7,7 +7,7 @@ Panels:
         - /MotionPlanning1
         - /MotionPlanning1/Scene Robot1
       Splitter Ratio: 0.5009174346923828
-    Tree Height: 425
+    Tree Height: 191
   - Class: rviz/Help
     Name: Help
   - Class: rviz/Views
@@ -40,7 +40,7 @@ Visualization Manager:
       Plane Cell Count: 10
       Reference Frame: <Fixed Frame>
       Value: true
-    - Acceleration_Scaling_Factor: 0.1
+    - Acceleration_Scaling_Factor: 1
       Class: moveit_rviz_plugin/MotionPlanning
       Enabled: true
       Move Group Namespace: ""
@@ -48,9 +48,9 @@ Visualization Manager:
       MoveIt_Allow_External_Program: false
       MoveIt_Allow_Replanning: false
       MoveIt_Allow_Sensor_Positioning: false
-      MoveIt_Planning_Attempts: 100
-      MoveIt_Planning_Time: 10
-      MoveIt_Use_Cartesian_Path: true
+      MoveIt_Planning_Attempts: 10
+      MoveIt_Planning_Time: 3
+      MoveIt_Use_Cartesian_Path: false
       MoveIt_Use_Constraint_Aware_IK: true
       MoveIt_Workspace:
         Center:
@@ -247,7 +247,7 @@ Visualization Manager:
         Show Robot Collision: false
         Show Robot Visual: false
       Value: true
-      Velocity_Scaling_Factor: 0.5
+      Velocity_Scaling_Factor: 1
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -282,23 +282,23 @@ Visualization Manager:
       Near Clip Distance: 0.009999999776482582
       Pitch: 0.779999852180481
       Target Frame: world
-      Yaw: 3.056818962097168
+      Yaw: 3.061819076538086
     Saved: ~
 Window Geometry:
   Displays:
-    collapsed: true
+    collapsed: false
   Height: 810
   Help:
     collapsed: false
-  Hide Left Dock: true
+  Hide Left Dock: false
   Hide Right Dock: false
   MotionPlanning:
-    collapsed: true
+    collapsed: false
   MotionPlanning - Trajectory Slider:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000100000000000002230000038afc0200000007fb000000100044006900730070006c006100790073000000002c000001aa000000e300fffffffb0000000800480065006c00700000000342000000bb0000007a00fffffffb0000000a00560069006500770073000000010c000000a4000000c600fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000374000001890000000000000000fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000001800000018fb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e006700000001d7000001df0000018700ffffff00000438000002e300000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd000000010000000000000223000002e3fc0200000007fb000000100044006900730070006c006100790073010000002c0000010e000000e300fffffffb0000000800480065006c00700000000342000000bb0000007a00fffffffb0000000a00560069006500770073000000010c000000a4000000c600fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000374000001890000000000000000fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000001800000018fb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e0067010000013b000001d40000018700ffffff00000214000002e300000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: false
   Width: 1080
   X: 2560
-  Y: 825
+  Y: 797

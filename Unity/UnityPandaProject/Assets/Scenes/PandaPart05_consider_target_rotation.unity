@@ -2913,6 +2913,7 @@ GameObject:
   m_Component:
   - component: {fileID: 867690914}
   - component: {fileID: 867690913}
+  - component: {fileID: 867690915}
   m_Layer: 0
   m_Name: Spline Drawer
   m_TagString: Untagged
@@ -2927,7 +2928,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 867690912}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d72eb18b9422b490295c74930c35d3ac, type: 3}
   m_Name: 
@@ -2949,6 +2950,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &867690915
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 867690912}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36a814f31fcdb4882b333e6c0112883a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  trajectoryPlanner: {fileID: 870599549}
+  splineRenderer: {fileID: 0}
 --- !u!1 &870599546
 GameObject:
   m_ObjectHideFlags: 0
@@ -3002,7 +3017,7 @@ MonoBehaviour:
   PoseAssignmentWait: 0.5
   tolerance: 0.025
   timeout: 2.5
-  visualizeTrajectory: 1
+  visualizeTrajectory: 0
 --- !u!1 &871815405
 GameObject:
   m_ObjectHideFlags: 0

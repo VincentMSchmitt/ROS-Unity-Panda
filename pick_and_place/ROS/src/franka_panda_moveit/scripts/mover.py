@@ -17,7 +17,6 @@ from std_msgs.msg import String
 from moveit_commander.conversions import pose_to_list
 
 from franka_panda_moveit.srv import MoverService, MoverServiceRequest, MoverServiceResponse
-from franka_panda_moveit.msg import EndEffectorPosition
 
 joint_names = ['panda_joint1', 'panda_joint2', 'panda_joint3', 'panda_joint4', 'panda_joint5', 'panda_joint6', 'panda_joint7']
 
@@ -44,6 +43,9 @@ else:
     https://github.com/ros-planning/moveit/blob/master/moveit_commander/src/moveit_commander/move_group.py
 """
 def plan_pick_and_place(req):
+    # for reference see:
+    # https://moveit.github.io/moveit_tutorials/doc/move_group_python_interface/move_group_python_interface_tutorial.html
+
     response = MoverServiceResponse()
 
     group_name = "panda_arm"
@@ -51,57 +53,62 @@ def plan_pick_and_place(req):
 
     current_robot_joint_configuration = req.joints_input.joints
 
-    # Pre grasp - position gripper directly above target object
-    pre_grasp_pose, pre_grasp_positions = plan_trajectory(move_group, req.pick_pose, current_robot_joint_configuration)
+    # plan the trajectory of the poses, if no points in the pose, return empty
+    # Pre grasp - position gripper directly above target object -----------------------------------
+    pre_grasp_pose = plan_trajectory(move_group, req.pick_pose, current_robot_joint_configuration)
     if not pre_grasp_pose.joint_trajectory.points:
-        return response, None # empty, no positions
+        return response # empty
     previous_ending_joint_angles = pre_grasp_pose.joint_trajectory.points[-1].positions
 
-    # Grasp - lower gripper so that fingers are on either side of object
+    # Grasp - lower gripper so that fingers are on either side of object --------------------------
     pick_pose = copy.deepcopy(req.pick_pose)
     pick_pose.position.z -= 0.05  # Static value coming from Unity, TODO: pass along with request
-    grasp_pose, grasp_positions = plan_trajectory(move_group, pick_pose, previous_ending_joint_angles)
+    grasp_pose = plan_trajectory(move_group, pick_pose, previous_ending_joint_angles)
     if not grasp_pose.joint_trajectory.points:
-        return response, None # empty, no positions
+        return response # empty
     previous_ending_joint_angles = grasp_pose.joint_trajectory.points[-1].positions
 
-    # Pick Up - raise gripper back to the pre grasp position
-    pick_up_pose, pick_up_positions = plan_trajectory(move_group, req.pick_pose, previous_ending_joint_angles)
+    # Pick Up - raise gripper back to the pre grasp position --------------------------------------
+    pick_up_pose = plan_trajectory(move_group, req.pick_pose, previous_ending_joint_angles)
     if not pick_up_pose.joint_trajectory.points:
-        return response, None # empty, no positions
+        return response # empty
     previous_ending_joint_angles = pick_up_pose.joint_trajectory.points[-1].positions
 
-    # Place - move gripper to desired placement position
-    place_pose, place_positions = plan_trajectory(move_group, req.place_pose, previous_ending_joint_angles)
+    # Place - move gripper to desired placement position ------------------------------------------
+    place_pose = plan_trajectory(move_group, req.place_pose, previous_ending_joint_angles)
     if not place_pose.joint_trajectory.points:
-        return response, None # empty, no positions
+        return response # empty
 
-    # If trajectory planning worked for all pick and place stages, add plan to response
+    # If trajectory planning worked for all pick and place stages, add plan to response -----------
     response.trajectories.append(pre_grasp_pose)
     response.trajectories.append(grasp_pose)
     response.trajectories.append(pick_up_pose)
     response.trajectories.append(place_pose)
 
+    # It is always good to clear your targets after planning with poses ---------------------------
     move_group.clear_pose_targets()
 
-    # Return the response and the end effector positions
-    return response, [pre_grasp_positions, grasp_positions, pick_up_positions, place_positions]
+    return response
 
 """
     Given the start angles of the robot, plan a trajectory that ends at the destination pose.
 """
-def plan_trajectory(move_group, destination_pose, start_joint_angles): 
+def plan_trajectory(move_group, destination_pose, start_joint_angles):
+    # save current states of the joints defined above
     current_joint_state = JointState()
     current_joint_state.name = joint_names
     current_joint_state.position = start_joint_angles
 
+    # set the start state with the current joint values
     moveit_robot_state = RobotState()
     moveit_robot_state.joint_state = current_joint_state
     move_group.set_start_state(moveit_robot_state)
 
+    # set the goal state and plan the trajectory
     move_group.set_pose_target(destination_pose)
     plan = move_group.plan()
 
+    # if planning fails, raise exeption
     if not plan:
         exception_str = """
             Trajectory could not be planned for a destination of {} with starting joint angles {}.
@@ -109,11 +116,7 @@ def plan_trajectory(move_group, destination_pose, start_joint_angles):
         """.format(destination_pose, destination_pose)
         raise Exception(exception_str)
 
-    # Extract end effector positions from the planned trajectory
-    positions = []
-    for point in plan.joint_trajectory.points:
-        positions.append(point.positions[-3:])  # Assuming last 3 values are X, Y, Z of end effector
-    return planCompat(plan), positions
+    return planCompat(plan)
 
 def moveit_server():
     moveit_commander.roscpp_initialize(sys.argv)
@@ -122,7 +125,6 @@ def moveit_server():
     s = rospy.Service('franka_panda_moveit', MoverService, plan_pick_and_place)
     print("Ready to plan")
     rospy.spin()
-
 
 if __name__ == "__main__":
     moveit_server()

@@ -1,6 +1,5 @@
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/include/franka_panda_moveit/PandaMoveitJoints.h
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/include/franka_panda_moveit/MoverService.h
-Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/include/franka_panda_moveit/EndEffectorPositions.h
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/include/franka_panda_moveit/MoverServiceRequest.h
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/include/franka_panda_moveit/ObjectInfo.h
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/include/franka_panda_moveit/FollowerServiceResponse.h
@@ -17,7 +16,6 @@ Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/lib/pkgconfig/fr
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/lib/python3.11/site-packages/franka_panda_moveit/__init__.py
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/lib/python3.11/site-packages/franka_panda_moveit/msg/__init__.py
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/lib/python3.11/site-packages/franka_panda_moveit/msg/_PandaMoveitJoints.py
-Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/lib/python3.11/site-packages/franka_panda_moveit/msg/_EndEffectorPositions.py
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/lib/python3.11/site-packages/franka_panda_moveit/msg/_PandaTrajectory.py
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/lib/python3.11/site-packages/franka_panda_moveit/msg/_ObjectInfo.py
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/lib/python3.11/site-packages/franka_panda_moveit/srv/_FollowerService.py
@@ -30,7 +28,6 @@ Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/share/franka_pan
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/share/roseus/ros/franka_panda_moveit/manifest.l
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/share/roseus/ros/franka_panda_moveit/msg/PandaTrajectory.l
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/share/roseus/ros/franka_panda_moveit/msg/PandaMoveitJoints.l
-Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/share/roseus/ros/franka_panda_moveit/msg/EndEffectorPositions.l
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/share/roseus/ros/franka_panda_moveit/msg/ObjectInfo.l
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/share/roseus/ros/franka_panda_moveit/srv/FollowerService.l
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/share/roseus/ros/franka_panda_moveit/srv/MoverService.l
@@ -41,8 +38,6 @@ Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/share/common-lis
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/share/common-lisp/ros/franka_panda_moveit/msg/PandaMoveitJoints.lisp
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/share/common-lisp/ros/franka_panda_moveit/msg/ObjectInfo.lisp
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/share/common-lisp/ros/franka_panda_moveit/msg/_package_PandaMoveitJoints.lisp
-Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/share/common-lisp/ros/franka_panda_moveit/msg/EndEffectorPositions.lisp
-Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/share/common-lisp/ros/franka_panda_moveit/msg/_package_EndEffectorPositions.lisp
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/share/common-lisp/ros/franka_panda_moveit/msg/_package_ObjectInfo.lisp
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/share/common-lisp/ros/franka_panda_moveit/srv/franka_panda_moveit-srv.asd
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/share/common-lisp/ros/franka_panda_moveit/srv/_package.lisp
@@ -53,7 +48,6 @@ Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/share/common-lis
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/share/gennodejs/ros/franka_panda_moveit/_index.js
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/share/gennodejs/ros/franka_panda_moveit/msg/_index.js
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/share/gennodejs/ros/franka_panda_moveit/msg/PandaMoveitJoints.js
-Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/share/gennodejs/ros/franka_panda_moveit/msg/EndEffectorPositions.js
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/share/gennodejs/ros/franka_panda_moveit/msg/PandaTrajectory.js
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/share/gennodejs/ros/franka_panda_moveit/msg/ObjectInfo.js
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/share/gennodejs/ros/franka_panda_moveit/srv/_index.js

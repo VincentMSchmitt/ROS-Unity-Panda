@@ -35,7 +35,7 @@ public class SplineDrawer : MonoBehaviour {
         List<Vector3> trajectoryPoints = new List<Vector3>();
 
         // Iterate through each trajectory plan returned
-        for (var poseIndex = 0; poseIndex < response.trajectories.Length; ++poseIndex) {
+        for (var poseIndex = 0; poseIndex < response.trajectories.Length; poseIndex++) {
             // Iterate through each robot pose in the trajectory plan
             foreach (var t in response.trajectories[poseIndex].joint_trajectory.points) {
                 var jointPositions = t.positions;
@@ -66,10 +66,10 @@ public class SplineDrawer : MonoBehaviour {
         }
 
         // Ensure the LineRenderer has enough points
-        //lineRenderer.positionCount = points.Count * 10; // Increase the number of points for a smoother spline
+        lineRenderer.positionCount = points.Count * 10; // Increase the number of points for a smoother spline
 
         // Generate interpolated points
-        //List<Vector3> interpolatedPoints = InterpolatePoints(points);
+        List<Vector3> interpolatedPoints = InterpolatePoints(points);
 
         // Set the positions in the LineRenderer
         lineRenderer.positionCount = points.Count;
