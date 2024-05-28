@@ -41,8 +41,7 @@ public class SplineDrawer : MonoBehaviour {
                 foreach (var t in response.trajectories[poseIndex].joint_trajectory.points) {
                     var jointPositions = t.positions;
 
-                    // Convert radians to degrees using lambda function
-                    //var result = jointPositions.Select(r => (float)r * Mathf.Rad2Deg).ToArray();
+                    // cast doubles to floats using lambda function
                     var result = jointPositions.Select(r => (float)r).ToArray();
 
                     // Calculate the end effector transformation
