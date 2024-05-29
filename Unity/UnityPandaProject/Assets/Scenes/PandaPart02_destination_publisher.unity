@@ -1484,10 +1484,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56a9b54176eeb4c3ebfc355b0fdf46d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_TopicName: /panda_joints
-  FrankaEmikaPanda: {fileID: 216977838}
-  m_Target: {fileID: 1512409181}
-  m_TargetPlacement: {fileID: 1721075554}
+  topicName: /panda_joints
+  panda: {fileID: 216977838}
+  target: {fileID: 1512409181}
+  targetPlacement: {fileID: 1721075554}
 --- !u!4 &870599548
 Transform:
   m_ObjectHideFlags: 0

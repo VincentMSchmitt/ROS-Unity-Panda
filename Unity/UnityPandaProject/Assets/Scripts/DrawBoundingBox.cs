@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Panda.Utility {
     /// <summary>
-    /// Draws bounding boxes around GameObjects tagged as "track".
+    /// Class for drawing bounding boxes around GameObjects tagged as "track".
     /// </summary>
     public class BoundingBoxDrawer : MonoBehaviour {
         [Tooltip("Toggle if the bounding boxes should be drawn.")]
@@ -14,9 +14,8 @@ namespace Panda.Utility {
         private List<GameObject> trackedGameObjects;
 
         /// <summary>
-        /// Called on the frame when a script is enabled just before any of the Update
-        /// methods are called the first time. Initialize a list to hold all the found
-        /// GameObjects.
+        /// Called on the frame when a script is enabled just before any of the Update methods are called the first
+        /// time. Initialize a list to hold all the found GameObjects.
         /// </summary>
         void Start() {
             trackedGameObjects = new List<GameObject>();
@@ -38,9 +37,6 @@ namespace Panda.Utility {
             }
         }
 
-        /// <summary>
-        /// Draws bounding boxes of the given GameObject.
-        /// </summary>
         void DrawBoundingBox(GameObject go) {
             // if renderer of GameObject is found
             if (go.TryGetComponent<Renderer>(out var renderer)) {

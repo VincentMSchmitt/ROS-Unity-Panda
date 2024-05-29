@@ -38,11 +38,6 @@ namespace Panda.Utility {
         /// </summary>
         void Start() {
             ArticulationBody[] articulationChain = this.GetComponentsInChildren<ArticulationBody>();
-
-            if (articulationChain.Length - 1 != jointTargets.Count) {
-                Debug.LogError("Mismatch between the number of articulation bodies and joint targets.");
-                return;
-            }
             StartCoroutine(MoveJointsToTarget(articulationChain, jointTargets));
         }
 

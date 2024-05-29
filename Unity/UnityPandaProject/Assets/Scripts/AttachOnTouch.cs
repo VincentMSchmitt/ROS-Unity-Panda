@@ -2,16 +2,15 @@ using UnityEngine;
 
 namespace Panda.Utility {
     /// <summary>
-    /// Class used to attach a target object to the robot's hand when touched by 
-    /// both fingers. This ensures that the target moves correctly with the robot.
-    /// To achieve this, the target is set to kinematic while transporting, disabling
-    /// the physics of the object. Note that this is a workaround to temporarily fix a
-    /// bug with the articulated bodies.
+    /// Class used to attach a target object to the robot's hand when touched by both fingers. This ensures that the
+    /// target moves correctly with the robot.To achieve this, the target is set to kinematic while transporting,
+    /// disabling the physics of the object. Note that this is a workaround to temporarily fix abug with the articulated
+    /// bodies.
     /// </summary>
     public class AttachOnTouch : MonoBehaviour {
-        public GameObject pandaRightFinger;
-        public GameObject pandaLeftFinger;
-        public GameObject pandaHand;
+        [SerializeField] GameObject pandaRightFinger;
+        [SerializeField] GameObject pandaLeftFinger;
+        [SerializeField] GameObject pandaHand;
 
         private bool rightFingerTouching = false;
         private bool leftFingerTouching = false;
@@ -24,10 +23,9 @@ namespace Panda.Utility {
         public static AttachOnTouch Instance { get; private set; }
 
         /// <summary>
-        /// Ensures only one instance of this class exists. If an instance exists
-        /// and it is not this instance, the current game object is destroyed to
-        /// enforce the singleton property. If no instance exists, this instance
-        /// is assigned to the static Instance property.
+        /// Ensures only one instance of this class exists. If an instance exists and it is not this instance, the
+        /// current game object is destroyed to enforce the singleton property. If no instance exists, this instance is
+        /// assigned to the static Instance property.
         /// </summary>
         private void Awake() {
             if (Instance != null && Instance != this) {
@@ -38,8 +36,7 @@ namespace Panda.Utility {
         }
 
         /// <summary>
-        /// Called when a finger collider enters the trigger zone. The call happens in
-        /// "TargetScript". 
+        /// Called when a finger collider enters the trigger zone. The call happens in "TargetScript". 
         /// </summary>
         /// <param name="other">The other collider involved in this collision.</param>
         public void OnFingerTriggerEnter(GameObject target, Collider other) {
@@ -55,8 +52,7 @@ namespace Panda.Utility {
         }
 
         /// <summary>
-        /// Called when a finger collider exits the trigger zone. Currently not called
-        /// anywere.
+        /// Called when a finger collider exits the trigger zone. Currently not called anywere.
         /// </summary>
         /// <param name="other">The other collider involved in this collision.</param>
         public void OnFingerTriggerExit(GameObject target, Collider other) {
@@ -73,10 +69,6 @@ namespace Panda.Utility {
             }
         }
 
-        /// <summary>
-        /// Attaches the target object to the robot's hand.
-        /// </summary>
-        /// <param name="target">The target object to attach.</param>
         private void AttachTargetToHand(GameObject target) {
             if (targetObject == null && isReleased) {
                 targetObject = target;
@@ -93,9 +85,6 @@ namespace Panda.Utility {
             }
         }
 
-        /// <summary>
-        /// Detaches the target object from the robot's hand.
-        /// </summary>
         private void DetachTargetFromHand() {
             if (targetObject != null) {
                 if (targetRigidbody != null) {
@@ -110,9 +99,6 @@ namespace Panda.Utility {
             }
         }
 
-        /// <summary>
-        /// Called when the robot reaches its destination.
-        /// </summary>
         public static void OnReachDestination() {
             if (Instance != null && Instance.isTransporting) {
                 Instance.DetachTargetFromHand();
