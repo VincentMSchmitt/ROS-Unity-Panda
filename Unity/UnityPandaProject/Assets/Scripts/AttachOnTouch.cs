@@ -1,94 +1,130 @@
 using UnityEngine;
 
-public class AttachOnTouch : MonoBehaviour {
-    public GameObject pandaRightFinger;
-    public GameObject pandaLeftFinger;
-    public GameObject pandaHand;
+namespace Panda.Utility {
+    /// <summary>
+    /// Class used to attach a target object to the robot's hand when touched by 
+    /// both fingers. This ensures that the target moves correctly with the robot.
+    /// To achieve this, the target is set to kinematic while transporting, disabling
+    /// the physics of the object. Note that this is a workaround to temporarily fix a
+    /// bug with the articulated bodies.
+    /// </summary>
+    public class AttachOnTouch : MonoBehaviour {
+        public GameObject pandaRightFinger;
+        public GameObject pandaLeftFinger;
+        public GameObject pandaHand;
 
-    private bool rightFingerTouching = false;
-    private bool leftFingerTouching = false;
-    private bool isTransporting = false;
-    private bool isReleased = true;
-    private GameObject targetObject = null;
-    private Rigidbody targetRigidbody = null;
+        private bool rightFingerTouching = false;
+        private bool leftFingerTouching = false;
+        private bool isTransporting = false;
+        private bool isReleased = true;
+        private GameObject targetObject = null;
+        private Rigidbody targetRigidbody = null;
 
-    // Singleton instance
-    public static AttachOnTouch Instance { get; private set; }
+        // Singleton instance
+        public static AttachOnTouch Instance { get; private set; }
 
-    private void Awake() {
-        if (Instance != null && Instance != this) {
-            Destroy(this.gameObject);
-        } else {
-            Instance = this;
+        /// <summary>
+        /// Ensures only one instance of this class exists. If an instance exists
+        /// and it is not this instance, the current game object is destroyed to
+        /// enforce the singleton property. If no instance exists, this instance
+        /// is assigned to the static Instance property.
+        /// </summary>
+        private void Awake() {
+            if (Instance != null && Instance != this) {
+                Destroy(this.gameObject);
+            } else {
+                Instance = this;
+            }
         }
-    }
 
-    public void OnFingerTriggerEnter(GameObject target, Collider other) {
-        if (other.gameObject == pandaRightFinger) {
-            rightFingerTouching = true;
-        } else if (other.gameObject == pandaLeftFinger) {
-            leftFingerTouching = true;
-        }
-
-        if (rightFingerTouching && leftFingerTouching) {
-            AttachTargetToHand(target);
-        }
-    }
-
-    public void OnFingerTriggerExit(GameObject target, Collider other) {
-        if (!isTransporting) {
+        /// <summary>
+        /// Called when a finger collider enters the trigger zone. The call happens in
+        /// "TargetScript". 
+        /// </summary>
+        /// <param name="other">The other collider involved in this collision.</param>
+        public void OnFingerTriggerEnter(GameObject target, Collider other) {
             if (other.gameObject == pandaRightFinger) {
-                rightFingerTouching = false;
+                rightFingerTouching = true;
             } else if (other.gameObject == pandaLeftFinger) {
-                leftFingerTouching = false;
+                leftFingerTouching = true;
             }
 
-            if (!rightFingerTouching && !leftFingerTouching) {
-                DetachTargetFromHand();
+            if (rightFingerTouching && leftFingerTouching) {
+                AttachTargetToHand(target);
             }
         }
-    }
 
-    private void AttachTargetToHand(GameObject target) {
-        if (targetObject == null && isReleased) {
-            targetObject = target;
-            targetRigidbody = target.GetComponent<Rigidbody>();
+        /// <summary>
+        /// Called when a finger collider exits the trigger zone. Currently not called
+        /// anywere.
+        /// </summary>
+        /// <param name="other">The other collider involved in this collision.</param>
+        public void OnFingerTriggerExit(GameObject target, Collider other) {
+            if (!isTransporting) {
+                if (other.gameObject == pandaRightFinger) {
+                    rightFingerTouching = false;
+                } else if (other.gameObject == pandaLeftFinger) {
+                    leftFingerTouching = false;
+                }
 
-            if (targetRigidbody != null) {
-                targetRigidbody.isKinematic = true; // Disable physics
+                if (!rightFingerTouching && !leftFingerTouching) {
+                    DetachTargetFromHand();
+                }
             }
-
-            target.transform.SetParent(pandaHand.transform);
-            //Debug.Log("Target attached to panda hand.");
-            isTransporting = true; // Start transporting
-            isReleased = false; // set the release flag
         }
-    }
 
-    private void DetachTargetFromHand() {
-        if (targetObject != null) {
-            if (targetRigidbody != null) {
-                targetRigidbody.isKinematic = false; // Enable physics
+        /// <summary>
+        /// Attaches the target object to the robot's hand.
+        /// </summary>
+        /// <param name="target">The target object to attach.</param>
+        private void AttachTargetToHand(GameObject target) {
+            if (targetObject == null && isReleased) {
+                targetObject = target;
+                targetRigidbody = target.GetComponent<Rigidbody>();
+
+                if (targetRigidbody != null) {
+                    targetRigidbody.isKinematic = true; // Disable physics
+                }
+
+                target.transform.SetParent(pandaHand.transform);
+                isTransporting = true; // Start transporting
+                isReleased = false; // set the release flag
+                //Debug.Log("Target attached to panda hand.");
             }
-
-            targetObject.transform.SetParent(null);
-            //Debug.Log("Target detached from panda hand.");
-            targetObject = null;
-            targetRigidbody = null;
-            isTransporting = false; // Stop transporting
         }
-    }
 
-    // Static method to be called when the robot reaches its destination
-    public static void OnReachDestination() {
-        if (Instance != null && Instance.isTransporting) {
-            Instance.DetachTargetFromHand();
+        /// <summary>
+        /// Detaches the target object from the robot's hand.
+        /// </summary>
+        private void DetachTargetFromHand() {
+            if (targetObject != null) {
+                if (targetRigidbody != null) {
+                    targetRigidbody.isKinematic = false; // Enable physics
+                }
+
+                targetObject.transform.SetParent(null);
+                targetObject = null;
+                targetRigidbody = null;
+                isTransporting = false; // Stop transporting
+                //Debug.Log("Target detached from panda hand.");
+            }
         }
-    }
 
-    // Static method to be called when the robot reaches its destination
-    public static void newDestination() {
-        Instance.isTransporting = false;
-        Instance.isReleased = true;
+        /// <summary>
+        /// Called when the robot reaches its destination.
+        /// </summary>
+        public static void OnReachDestination() {
+            if (Instance != null && Instance.isTransporting) {
+                Instance.DetachTargetFromHand();
+            }
+        }
+
+        /// <summary>
+        /// Resets the transporting and release flags when a new destination is set.
+        /// </summary>
+        public static void newDestination() {
+            Instance.isTransporting = false;
+            Instance.isReleased = true;
+        }
     }
 }

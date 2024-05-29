@@ -1,10 +1,13 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace Unity.Robotics.PickAndPlace {
+/*  
+    This program is taken from the Unity-Robotics-Hub pick and place tutorial. It was not
+    modified.
+    https://github.com/Unity-Technologies/Unity-Robotics-Hub/tree/main/tutorials/pick_and_place
+*/
 
+namespace Unity.Robotics.PickAndPlace {
     [RequireComponent(typeof(MeshRenderer))]
     [RequireComponent(typeof(BoxCollider))]
 
@@ -128,7 +131,6 @@ namespace Unity.Robotics.PickAndPlace {
             if (m_CurrentState == m_LastColoredState) {
                 return;
             }
-
             var mpb = new MaterialPropertyBlock();
             Color stateColor;
             switch (m_CurrentState) {
