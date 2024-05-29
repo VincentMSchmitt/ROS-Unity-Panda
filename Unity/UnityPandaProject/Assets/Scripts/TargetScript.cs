@@ -1,9 +1,11 @@
 using UnityEngine;
 
 namespace Panda.Utility {
+    [RequireComponent(typeof(AttachOnTouch))]
+
     /// <summary>
-    /// Handles triggering events when the target is touched by the robot's fingers.
-    /// This script should be attached to the target object.
+    /// Handles triggering events when the target is touched by the robot's fingers. This script must be attached to
+    /// the target object.
     /// </summary>
     public class TargetTrigger : MonoBehaviour {
         // Determines whether the trigger functionality is enabled
@@ -12,9 +14,8 @@ namespace Panda.Utility {
         private AttachOnTouch attachOnTouch;
 
         /// <summary>
-        /// Called on the frame when a script is enabled just before any of the Update
-        /// methods are called the first time.
-        /// Initializes the script by finding the AttachOnTouch component in the scene.
+        /// Called on the frame when a script is enabled just before any of the Update methods are called the first
+        /// time. Initializes the script by finding the AttachOnTouch component in the scene.
         /// </summary>
         private void Start() {
             // Find the AttachOnTouch component in the scene (or assign it manually)
@@ -27,8 +28,8 @@ namespace Panda.Utility {
         }
 
         /// <summary>
-        /// Called when another collider enters the trigger collider attached to this object.
-        /// This will call the function to attach the target to the robot.
+        /// Called when another collider enters the trigger collider attached to this object. This will call the
+        /// function to attach the target to the robot.
         /// </summary>
         /// <param name="other">The other collider involved in this collision.</param>
         private void OnTriggerEnter(Collider other) {

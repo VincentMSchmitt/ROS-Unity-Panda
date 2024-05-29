@@ -2,8 +2,7 @@ using System;
 using UnityEngine;
 
 /*  
-    This program is taken from the Unity-Robotics-Hub pick and place tutorial. It was not
-    modified.
+    This program is taken from the Unity-Robotics-Hub pick and place tutorial. It was only slightly modified.
     https://github.com/Unity-Technologies/Unity-Robotics-Hub/tree/main/tutorials/pick_and_place
 */
 
@@ -24,6 +23,7 @@ namespace Unity.Robotics.PickAndPlace {
         [Tooltip("Alpha value for any color set during state changes.")]
         [Range(0, 255)]
         [SerializeField] int m_ColorAlpha = 100;
+        
         const string k_NameExpectedTarget = "Target";
         static readonly int k_ShaderColorId = Shader.PropertyToID("_Color");
         // The threshold that the Target's speed must be under to be considered "placed" in the target area

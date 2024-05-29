@@ -10,22 +10,21 @@ using Panda.Utility;
 namespace Panda.Ros {
     public class ObjectInfoPublisher : MonoBehaviour {
         [Tooltip("If true, the object information will be sent for collision avoidance.")]
-        [SerializeField] public bool sendCollisions = true;
+        [SerializeField] bool sendCollisions = true;
 
         [Tooltip("The name of the ROS topic to publish the object information to.")]
-        [SerializeField] public string rosTopicName = "object_info";
+        [SerializeField] string rosTopicName = "object_info";
 
         [Tooltip("The interval (in seconds) at which to publish the object information.")]
-        [SerializeField] public float publishInterval = 1.0f;
+        [SerializeField] float publishInterval = 1.0f;
 
         private ROSConnection ros;
         private List<GameObject> trackedGameObjects;
         private float timeSinceLastPublish;
 
         /// <summary>
-        /// Called on the frame when a script is enabled just before any of the Update
-        /// methods are called the first time. Initialize the ROS connection and set up
-        /// the publisher.
+        /// Called on the frame when a script is enabled just before any of the Update methods are called the first
+        /// time. Initialize the ROS connection and set up the publisher.
         /// </summary>
         void Start() {
             // ROS Connector init
@@ -92,8 +91,8 @@ namespace Panda.Ros {
                 Vector3 size = renderer.bounds.size;
 
                 // convert Unity coordinates into ROS coordinates (FLU)
-                // TODO: This does not work as intended for some reason. For now
-                // the objects will be rotated by 90 Deg on the ROS side
+                // TODO: This does not work as intended for some reason. For now the objects will be rotated by 90 Deg
+                // on the ROS side
                 PointMsg rosPosition = unityPosition.To<FLU>();
                 QuaternionMsg rosRotation = unityRotation.To<FLU>();
 

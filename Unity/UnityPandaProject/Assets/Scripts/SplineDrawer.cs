@@ -29,16 +29,14 @@ namespace Panda.Utility {
         }
 
         /// <summary>
-        /// Draw the response as a spline. The response is of the type "moveit_msgs/
-        /// RobotTrajectory[]". This is an array which holds the joint states as floats.
-        /// Since there are no TCP positions send with the respone, forward kinematics of
-        /// the robot are used to calculate the TCP postion for every set of joint values.
-        /// floats
+        /// Draw the response as a spline. The response is of the type "moveit_msgs/RobotTrajectory[]". This is an
+        /// array which holds the joint states as floats. Since there are no TCP positions send with the respone,
+        /// forward kinematics of the robot are used to calculate the TCP postion for every set of joint values.
         /// </summary>
         /// <param name="response"> MoverServiceResponse received from franka_panda_moveit
         /// mover service running in ROS
         /// </param>
-        public static void DrawTrajectories(MoverServiceResponse response, ArticulationBody[] jointArticulationBodies) {
+        public static void DrawTrajectories(MoverServiceResponse response) {
             // List to store positions of each joint in the final trajectory
             List<Vector3> trajectoryPoints = new List<Vector3>();
 

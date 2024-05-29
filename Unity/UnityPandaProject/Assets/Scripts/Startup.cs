@@ -20,7 +20,7 @@ namespace Panda.Utility {
         /// <summary>
         /// List of joint targets defining the desired start positions.
         /// </summary>
-        [SerializeField] public List<JointTarget> jointTargets = new List<JointTarget> {
+        [SerializeField] List<JointTarget> jointTargets = new List<JointTarget> {
             new JointTarget { jointName = "panda_link1", targetPosition = 0   },
             new JointTarget { jointName = "panda_link2", targetPosition = 0   },
             new JointTarget { jointName = "panda_link3", targetPosition = 0   },
@@ -29,8 +29,8 @@ namespace Panda.Utility {
             new JointTarget { jointName = "panda_link6", targetPosition = 90f },
             new JointTarget { jointName = "panda_link7", targetPosition = 0   }
         };
-        private float tolerance = 0.01f;
-        private float checkInterval = 0.1f;
+        private readonly float tolerance = 0.01f;
+        private readonly float checkInterval = 0.1f;
 
         /// <summary>
         /// Called on the frame when a script is enabled just before any of the Update

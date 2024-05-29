@@ -7,10 +7,10 @@ namespace Panda.Utility {
     /// </summary>
     public class BoundingBoxDrawer : MonoBehaviour {
         [Tooltip("Toggle if the bounding boxes should be drawn.")]
-        [SerializeField] public bool drawBoundingBox = true;
+        [SerializeField] bool drawBoundingBox = true;
 
         [Tooltip("The color, that the bounding box will have.")]
-        [SerializeField] public Color boundingBoxColor = Color.green;
+        [SerializeField] Color boundingBoxColor = Color.green;
         private List<GameObject> trackedGameObjects;
 
         /// <summary>

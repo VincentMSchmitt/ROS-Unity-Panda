@@ -2,8 +2,7 @@ using UnityEngine;
 
 namespace Panda.Calculate {
     /// <summary>
-    /// Class for performing direct kinematics calculations for the Franka Emika Panda
-    /// nonstandard robotic arm manipulator (7DOF).
+    /// Class for performing direct kinematics calculations for the Franka Emika Panda nonstandard robotic arm (7DOF).
     /// </summary>
     public class PandaKinematics {
         static readonly float M_PI = Mathf.PI;
