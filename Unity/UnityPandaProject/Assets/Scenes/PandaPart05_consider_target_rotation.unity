@@ -2993,17 +2993,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1452632f0b1a34187946162382b10361, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_RosServiceName: franka_panda_moveit
-  m_FrankaPanda: {fileID: 1019643827}
-  m_Target: {fileID: 1512409181}
-  m_TargetPlacement: {fileID: 1721075554}
-  m_PandaTCP: {fileID: 616841389}
-  JointAssignmentWait: 0.05
-  PoseAssignmentWait: 0.5
+  rosServiceName: franka_panda_moveit
+  panda: {fileID: 1019643827}
+  target: {fileID: 1512409181}
+  targetPlacement: {fileID: 1721075554}
+  pandaTCP: {fileID: 616841389}
+  jointAssignmentWait: 0.15
+  poseAssignmentWait: 0.5
   tolerance: 0.025
   timeout: 2.5
   visualizeTrajectory: 0
-  attachOnTouch: 1
+  attachOnTouch: 0
 --- !u!1 &871815405
 GameObject:
   m_ObjectHideFlags: 0
@@ -5149,7 +5149,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5113255398182140587, guid: 3901759e6233748538fffdbc519c1a68, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.02602
+      value: 0.052
       objectReference: {fileID: 0}
     - target: {fileID: 5113255398182140587, guid: 3901759e6233748538fffdbc519c1a68, type: 3}
       propertyPath: m_LocalPosition.z
@@ -5201,6 +5201,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5601983281253769233, guid: 3901759e6233748538fffdbc519c1a68, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1512409188}
+    - targetCorrespondingSourceObject: {fileID: 5601983281253769233, guid: 3901759e6233748538fffdbc519c1a68, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1512409189}
   m_SourcePrefab: {fileID: 100100000, guid: 3901759e6233748538fffdbc519c1a68, type: 3}
 --- !u!1 &1512409181 stripped
 GameObject:
@@ -5240,7 +5243,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21664bd15be10477eb61b1762f798eb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isEnabled: 1
+  isEnabled: 0
+--- !u!114 &1512409189
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1512409181}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 827a80080533449819b9b327585dfa31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pandaRightFinger: {fileID: 943947861}
+  pandaLeftFinger: {fileID: 710034527}
+  pandaHand: {fileID: 1832729074}
 --- !u!1 &1525526295
 GameObject:
   m_ObjectHideFlags: 8

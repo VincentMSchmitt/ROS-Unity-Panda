@@ -2893,13 +2893,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1452632f0b1a34187946162382b10361, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_RosServiceName: franka_panda_moveit
-  m_FrankaPanda: {fileID: 1019643827}
-  m_Target: {fileID: 1512409181}
-  m_TargetPlacement: {fileID: 1721075554}
-  m_PandaTCP: {fileID: 1793854914}
-  JointAssignmentWait: 0.05
-  PoseAssignmentWait: 0.5
+  rosServiceName: franka_panda_moveit
+  panda: {fileID: 1019643827}
+  target: {fileID: 1512409181}
+  targetPlacement: {fileID: 1721075554}
+  pandaTCP: {fileID: 1793854914}
+  jointAssignmentWait: 0.075
+  poseAssignmentWait: 0.5
   tolerance: 0.1
   timeout: 2.5
   visualizeTrajectory: 0
@@ -4974,15 +4974,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5113255398182140587, guid: 3901759e6233748538fffdbc519c1a68, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.441
+      value: -0.5
       objectReference: {fileID: 0}
     - target: {fileID: 5113255398182140587, guid: 3901759e6233748538fffdbc519c1a68, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.029
+      value: 0.02
       objectReference: {fileID: 0}
     - target: {fileID: 5113255398182140587, guid: 3901759e6233748538fffdbc519c1a68, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.324
+      value: -0.25
       objectReference: {fileID: 0}
     - target: {fileID: 5113255398182140587, guid: 3901759e6233748538fffdbc519c1a68, type: 3}
       propertyPath: m_LocalRotation.w
@@ -5270,7 +5270,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 263.5, y: 196}
+  m_AnchoredPosition: {x: 85, y: 20}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1607962013
@@ -5611,7 +5611,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 850690186460591411, guid: 43bef545df3e344c4a7e089ca90c15a0, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.403
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 850690186460591411, guid: 43bef545df3e344c4a7e089ca90c15a0, type: 3}
       propertyPath: m_LocalPosition.y
@@ -5619,7 +5619,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 850690186460591411, guid: 43bef545df3e344c4a7e089ca90c15a0, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.281
+      value: -0.25
       objectReference: {fileID: 0}
     - target: {fileID: 850690186460591411, guid: 43bef545df3e344c4a7e089ca90c15a0, type: 3}
       propertyPath: m_LocalRotation.w

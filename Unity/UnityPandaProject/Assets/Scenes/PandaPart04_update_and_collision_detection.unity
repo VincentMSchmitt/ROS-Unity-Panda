@@ -3136,13 +3136,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1452632f0b1a34187946162382b10361, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_RosServiceName: franka_panda_moveit
-  m_FrankaPanda: {fileID: 1019643827}
-  m_Target: {fileID: 1512409181}
-  m_TargetPlacement: {fileID: 1721075554}
-  m_PandaTCP: {fileID: 616841389}
-  JointAssignmentWait: 0.05
-  PoseAssignmentWait: 0.5
+  rosServiceName: franka_panda_moveit
+  panda: {fileID: 1019643827}
+  target: {fileID: 1512409181}
+  targetPlacement: {fileID: 1721075554}
+  pandaTCP: {fileID: 616841389}
+  jointAssignmentWait: 0.15
+  poseAssignmentWait: 0.5
   tolerance: 0.01
   timeout: 2.5
   visualizeTrajectory: 0
