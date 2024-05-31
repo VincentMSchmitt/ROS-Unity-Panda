@@ -14,6 +14,10 @@ namespace Panda.Utility {
         [SerializeField] float lineWidth = 0.01f;
         private static LineRenderer lineRenderer;
 
+        /// <summary>
+        /// Initializes the LineRenderer component and sets its initial properties.
+        /// This method is called when the script instance is being loaded.
+        /// </summary>
         void Start() {
             if (lineRenderer == null) {
                 lineRenderer = gameObject.AddComponent<LineRenderer>();
@@ -50,11 +54,8 @@ namespace Panda.Utility {
                         // cast doubles to floats using lambda function
                         var result = jointPositions.Select(r => (float)r).ToArray();
 
-                        // Calculate the end effector transformation
-                        Matrix4x4 finalTransformation = PandaKinematics.ForwardKinematics(result);
-
-                        // Extract position from the final transformation matrix
-                        Vector3 tcpPosition = PandaKinematics.GetTCPPosition(finalTransformation);
+                        // Extract position from the EE transformation matrix
+                        Vector3 tcpPosition = PandaKinematics.GetTCPPosition(result);
                         //Debug.Log($"Pose Index: {poseIndex}, Position: {tcpPosition}");
 
                         // Add position to the trajectory points list
@@ -67,7 +68,12 @@ namespace Panda.Utility {
             DrawSpline(trajectoryPoints);
         }
 
+        /// <summary>
+        /// Draws a spline using the provided points.
+        /// </summary>
+        /// <param name="points">The points to draw the spline from.</param>
         private static void DrawSpline(List<Vector3> points) {
+            // If there are no points to draw, warn and return.
             if (points == null || points.Count == 0) {
                 Debug.LogWarning("No trajectory points to draw.");
                 return;
@@ -76,7 +82,8 @@ namespace Panda.Utility {
             // Set the positions in the LineRenderer
             lineRenderer.positionCount = points.Count;
             lineRenderer.SetPositions(points.ToArray());
-            //Debug.Log("Trajectories drawn.");
+            // Debug log for testing purposes
+            // Debug.Log("Trajectories drawn.");
         }
     }
 }

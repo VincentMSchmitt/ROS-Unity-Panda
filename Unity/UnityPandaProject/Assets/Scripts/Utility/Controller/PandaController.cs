@@ -15,56 +15,60 @@ namespace Panda.Utility.Controller {
         [SerializeField] float damping = 100f;      // TODO: find optimal parameter
         [Tooltip("degree/s")] public float speed = 30f;
         [Tooltip("degree/s^2")] public float acceleration = 10f;
-        [HideInInspector] public int selectedIndex;
+        [HideInInspector] public int selectedIndex = -1;
 
         [Tooltip("Color to highlight the currently selected join")]
         public Color highLightColor = new Color(1.0f, 0, 0, 1.0f);
 
         private ArticulationBody[] articulationChain;
         private List<int> selectableJoints = new();
-        private int previousIndex;
-        private int selectedJointsIndex;
+        private int oldIndex;
+        private int selectedJointsIndex = -1;
         private HighlightControl highlightControl;
 
         void Start() {
             articulationChain = this.GetComponentsInChildren<ArticulationBody>();
             for (int i = 0; i < articulationChain.Length; ++i) {
-                // articulationChain[i].gameObject.AddComponent<JointControl>();
-                if (true || articulationChain[i].jointType != ArticulationJointType.FixedJoint) {
-                    // add JointControl to each found gameObject
-                    articulationChain[i].gameObject.AddComponent<JointControl>();
+                articulationChain[i].gameObject.AddComponent<JointControl>();
+                if (articulationChain[i].jointType != ArticulationJointType.FixedJoint) {
                     selectableJoints.Add(i);
                 }
             }
             highlightControl = new(articulationChain, highLightColor);
-
-            SetSelectedJointIndex(1);
-            previousIndex = selectedIndex;
+            oldIndex = selectedIndex;
             highlightControl.StoreJointColors(selectedIndex);
-            Highlight(selectedIndex);
         }
 
         void Update() {
             highlightControl.color = highLightColor;
-            SetSelectedJointIndex(selectedIndex); // to make sure it is in the valid range
             // select joint with left and right arrow keys
             switch (true) {
                 case bool _ when Input.GetKeyDown(KeyCode.RightArrow):
-                    SetSelectedJointIndex(++selectedJointsIndex);
+                    selectedIndex = NextIndex();
                     Highlight(selectedIndex);
                     break;
                 case bool _ when Input.GetKeyDown(KeyCode.LeftArrow):
-                    SetSelectedJointIndex(--selectedJointsIndex);
+                    selectedIndex = PreviousIndex();
                     Highlight(selectedIndex);
                     break;
             }
             UpdateDirection(selectedIndex);
         }
 
-        void SetSelectedJointIndex(int index) {
-            index %= selectableJoints.Count;
+        private int NextIndex() {
             // keep index safely within the limits of the array
-            selectedIndex = selectableJoints[index];
+            selectedJointsIndex = (++selectedJointsIndex + selectableJoints.Count) % selectableJoints.Count;;
+            return selectableJoints[selectedJointsIndex];
+        }
+
+        private int PreviousIndex() {
+            if (selectedJointsIndex == -1) {
+                selectedJointsIndex = selectableJoints.Count - 1;
+            } 
+            else {
+                selectedJointsIndex = (--selectedJointsIndex + selectableJoints.Count) % selectableJoints.Count;;
+            }
+            return selectableJoints[selectedJointsIndex];
         }
 
         /// <summary>
@@ -81,13 +85,13 @@ namespace Panda.Utility.Controller {
             JointControl current = articulationChain[jointIndex].GetComponent<JointControl>();
             
             // if the index is updated, set rotation direction of previous jointInted to none, update previous index
-            if (previousIndex != jointIndex) {
-                JointControl previous = articulationChain[previousIndex].GetComponent<JointControl>();
+            if (oldIndex != jointIndex) {
+                JointControl previous = articulationChain[oldIndex].GetComponent<JointControl>();
                 previous.direction = RotationDirection.None;
-                previousIndex = jointIndex;
+                oldIndex = jointIndex;
             }
 
-            // if controltype changed, update it
+            // TODO: change this to make more sence
             if (current.controltype != control) {
                 UpdateControlType(current);
             }
@@ -106,12 +110,10 @@ namespace Panda.Utility.Controller {
             }
         }
 
-
         /// <summary>
         /// Update the selected joint in the inspector.
         /// </summary>
         /// <param name="selectedIndex">Index of the joint that should be displayed.</param>
-        // 
         void Highlight(int selectedIndex) {
             if (selectedIndex < 0 || selectedIndex >= articulationChain.Length) {
                 return;

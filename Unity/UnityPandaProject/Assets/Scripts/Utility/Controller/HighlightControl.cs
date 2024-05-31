@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace Panda.Utility.Controller {
     public class HighlightControl {
-
         private int storedColorIndex;
         private ArticulationBody[] articulationChain;
         private Color[] prevColor; // Stores original colors of the part being highlighted
@@ -44,11 +43,14 @@ namespace Panda.Utility.Controller {
         /// </summary>
         /// <param name="selectedIndex">Index of the link selected in the Articulation Chain</param>
         public void Highlight(int selectedIndex) {
-            if (selectedIndex < 0 || selectedIndex >= articulationChain.Length) {
+            if (selectedIndex >= articulationChain.Length) {
                 return;
             }
+
             ResetJointColors();
-            StoreJointColors(selectedIndex);
+            if (selectedIndex != -1) {
+               StoreJointColors(selectedIndex);
+            }
 
             // set the color of the selected join meshes to the highlight color
             Renderer[] rendererList = articulationChain[selectedIndex].transform.GetChild(1).GetComponentsInChildren<Renderer>();
