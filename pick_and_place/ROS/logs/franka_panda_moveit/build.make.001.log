@@ -1,31 +1,49 @@
-[  0%] Built target std_msgs_generate_messages_py
-[  0%] Built target moveit_msgs_generate_messages_py
-[  0%] Built target geometry_msgs_generate_messages_py
 [  0%] Built target sensor_msgs_generate_messages_py
-[  0%] Built target _franka_panda_moveit_generate_messages_check_deps_PandaMoveitJoints
-[  0%] Built target _franka_panda_moveit_generate_messages_check_deps_ObjectInfo
+[  0%] Built target std_msgs_generate_messages_py
+[  0%] Built target geometry_msgs_generate_messages_py
+[  0%] Built target moveit_msgs_generate_messages_py
 [  0%] Built target _franka_panda_moveit_generate_messages_check_deps_MoverService
-[  0%] Built target moveit_msgs_generate_messages_cpp
-[  0%] Built target _franka_panda_moveit_generate_messages_check_deps_PandaTrajectory
+[  0%] Built target _franka_panda_moveit_generate_messages_check_deps_PandaMoveitJoints
+[  0%] Built target _franka_panda_moveit_generate_messages_check_deps_PandaMoveitOffset
 [  0%] Built target std_msgs_generate_messages_cpp
+[  0%] Built target _franka_panda_moveit_generate_messages_check_deps_ObjectInfo
 [  0%] Built target geometry_msgs_generate_messages_cpp
-[  0%] Built target geometry_msgs_generate_messages_eus
-[  0%] Built target std_msgs_generate_messages_eus
-[  0%] Built target sensor_msgs_generate_messages_eus
-[  0%] Built target sensor_msgs_generate_messages_cpp
+[  0%] Built target _franka_panda_moveit_generate_messages_check_deps_PandaTrajectory
 [  0%] Built target _franka_panda_moveit_generate_messages_check_deps_FollowerService
-[  0%] Built target geometry_msgs_generate_messages_lisp
+[  0%] Built target std_msgs_generate_messages_eus
+[  0%] Built target moveit_msgs_generate_messages_cpp
 [  0%] Built target moveit_msgs_generate_messages_eus
+[  0%] Built target geometry_msgs_generate_messages_eus
+[  0%] Built target sensor_msgs_generate_messages_cpp
+[  0%] Built target sensor_msgs_generate_messages_eus
+[  0%] Built target geometry_msgs_generate_messages_lisp
 [  0%] Built target std_msgs_generate_messages_lisp
-[  0%] Built target geometry_msgs_generate_messages_nodejs
+[  0%] Built target sensor_msgs_generate_messages_lisp
 [  0%] Built target moveit_msgs_generate_messages_lisp
 [  0%] Built target moveit_msgs_generate_messages_nodejs
 [  0%] Built target std_msgs_generate_messages_nodejs
-[  0%] Built target sensor_msgs_generate_messages_lisp
-[ 10%] Built target sensor_msgs_generate_messages_nodejs
-[ 17%] Built target franka_panda_moveit_generate_messages_cpp
-[ 42%] Built target franka_panda_moveit_generate_messages_py
-[ 82%] Built target franka_panda_moveit_generate_messages_lisp
-[ 82%] Built target franka_panda_moveit_generate_messages_eus
-[100%] Built target franka_panda_moveit_generate_messages_nodejs
+[  0%] Built target geometry_msgs_generate_messages_nodejs
+[  0%] Built target sensor_msgs_generate_messages_nodejs
+[  6%] [34m[1mGenerating Python code from SRV franka_panda_moveit/MoverService[0m
+[  6%] [34m[1mGenerating Python code from SRV franka_panda_moveit/FollowerService[0m
+[  9%] [34m[1mGenerating C++ code from franka_panda_moveit/PandaMoveitOffset.msg[0m
+[ 12%] [34m[1mGenerating Python from MSG franka_panda_moveit/PandaMoveitOffset[0m
+[ 15%] [34m[1mGenerating C++ code from franka_panda_moveit/FollowerService.srv[0m
+[ 18%] [34m[1mGenerating EusLisp code from franka_panda_moveit/PandaMoveitOffset.msg[0m
+[ 21%] [34m[1mGenerating Lisp code from franka_panda_moveit/PandaMoveitOffset.msg[0m
+[ 24%] [34m[1mGenerating Javascript code from franka_panda_moveit/PandaMoveitOffset.msg[0m
+[ 27%] [34m[1mGenerating Lisp code from franka_panda_moveit/FollowerService.srv[0m
+[ 30%] [34m[1mGenerating C++ code from franka_panda_moveit/MoverService.srv[0m
+[ 33%] [34m[1mGenerating EusLisp code from franka_panda_moveit/FollowerService.srv[0m
+[ 36%] [34m[1mGenerating Javascript code from franka_panda_moveit/FollowerService.srv[0m
+[ 39%] [34m[1mGenerating EusLisp code from franka_panda_moveit/MoverService.srv[0m
+[ 42%] [34m[1mGenerating Lisp code from franka_panda_moveit/MoverService.srv[0m
+[ 45%] [34m[1mGenerating Javascript code from franka_panda_moveit/MoverService.srv[0m
+[ 63%] Built target franka_panda_moveit_generate_messages_lisp
+[ 63%] Built target franka_panda_moveit_generate_messages_cpp
+[ 69%] [34m[1mGenerating Python msg __init__.py for franka_panda_moveit[0m
+[ 69%] [34m[1mGenerating Python srv __init__.py for franka_panda_moveit[0m
+[ 81%] Built target franka_panda_moveit_generate_messages_eus
+[ 90%] Built target franka_panda_moveit_generate_messages_nodejs
+[100%] Built target franka_panda_moveit_generate_messages_py
 [100%] Built target franka_panda_moveit_generate_messages

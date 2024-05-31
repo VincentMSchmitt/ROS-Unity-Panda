@@ -128,6 +128,7 @@ This general process is always the same for launching different demos. There are
 - [ ] Containerise the entire project (Docker)
 - [ ] Add VR and AR with the Meta-SDK (Quest 3)
 - [ ] Fix the FK of the panda and the drawing of the 3D splines
+- [ ] Build an Interface for basic operation like `moveto()`, `moveto_grab()`, `moveto_place()` etc.
 - [x] ~~fix the grabbing offset~~
 - [x] ~~add visulization for the TCP path~~
 - [x] ~~add the collision of the cube to MoveIt~~
