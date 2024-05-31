@@ -3,8 +3,8 @@ using UnityEngine.Assertions;
 
 namespace Panda.Utility.Controller {
     public class JointControl : MonoBehaviour {
-        [InspectorReadOnly] public RotationDirection direction = RotationDirection.None;
-        [InspectorReadOnly] public ControlType controltype;
+        [HideInInspector] public RotationDirection direction = RotationDirection.None;
+        [HideInInspector] public ControlType controltype;
         [HideInInspector] public ArticulationBody joint;
         private Controller controller;
 
@@ -29,14 +29,14 @@ namespace Panda.Utility.Controller {
             // TODO: build and joint interface and dirive differen types of joints from that interface
             ArticulationDrive xDrive = joint.xDrive;
             switch (joint.jointType) {
+                case ArticulationJointType.FixedJoint:
+                    return;
                 case ArticulationJointType.RevoluteJoint:
                     xDrive.target = CalculateTarget(xDrive.target, num, joint.twistLock, xDrive.upperLimit, xDrive.lowerLimit);
                     break;
                 case ArticulationJointType.PrismaticJoint:
                     xDrive.target = CalculateTarget(xDrive.target, num, joint.linearLockX, xDrive.upperLimit, xDrive.lowerLimit);
                     break;
-                case ArticulationJointType.FixedJoint:
-                    return;
                 default:
                     Debug.LogAssertion("Tried to support unsupported type of joint: " + joint.jointType);
                     return;

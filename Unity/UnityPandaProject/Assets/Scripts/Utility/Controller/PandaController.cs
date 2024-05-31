@@ -1,8 +1,6 @@
 using System.Collections.Generic;
-using System.Linq;
-using Unity.Robotics;
+using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.Assertions;
 
 namespace Panda.Utility.Controller {
     public enum RotationDirection { None = 0, Positive = 1, Negative = -1 };
@@ -11,15 +9,15 @@ namespace Panda.Utility.Controller {
     public class Controller : MonoBehaviour {
         [InspectorReadOnly(hideInEditMode: true)] public string selectedJoint;
         public ControlType control = ControlType.PositionControl;
-        [SerializeField] float stiffness = 100000f; // TODO: find optimal parameter
+        [SerializeField] float stiffness = 10000f;  // TODO: find optimal parameter
         [SerializeField] float damping = 100f;      // TODO: find optimal parameter
-        [Tooltip("degree/s")] public float speed = 30f;
-        [Tooltip("degree/s^2")] public float acceleration = 10f;
+        [Tooltip("degree/s")] public float speed = 20;
         [HideInInspector] public int selectedIndex = -1;
 
         [Tooltip("Color to highlight the currently selected join")]
         public Color highLightColor = new Color(1.0f, 0, 0, 1.0f);
 
+        private static LineRenderer lineRenderer;
         private ArticulationBody[] articulationChain;
         private List<int> selectableJoints = new();
         private int oldIndex;
@@ -39,6 +37,12 @@ namespace Panda.Utility.Controller {
             highlightControl.StoreJointColors(selectedIndex);
         }
 
+        /// <summary>
+        /// Updates the state of the object based on user input.
+        /// </summary>
+        /// <remarks>
+        /// This method is called every frame. It handles user input to change the selected joint and update its direction.
+        /// </remarks>
         void Update() {
             highlightControl.color = highLightColor;
             // select joint with left and right arrow keys
@@ -91,7 +95,6 @@ namespace Panda.Utility.Controller {
                 oldIndex = jointIndex;
             }
 
-            // TODO: change this to make more sence
             if (current.controltype != control) {
                 UpdateControlType(current);
             }
@@ -118,9 +121,15 @@ namespace Panda.Utility.Controller {
             if (selectedIndex < 0 || selectedIndex >= articulationChain.Length) {
                 return;
             }
-            highlightControl.Highlight(selectedIndex);
+            
+            if (lineRenderer == null) {
+                lineRenderer = gameObject.AddComponent<LineRenderer>();
+                lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+            }
+            
+            highlightControl.Highlight(selectedIndex, lineRenderer);
             // TODO: Add enum for joints and display clean name
-            selectedJoint = articulationChain[selectedIndex].name + " (" + selectedIndex + ")";
+            selectedJoint = articulationChain[selectedIndex].name;
         }
 
         public void UpdateControlType(JointControl joint) {
@@ -133,11 +142,11 @@ namespace Panda.Utility.Controller {
             }
         }
 
-        public void OnGUI() {
-            GUIStyle centeredStyle = GUI.skin.GetStyle("Label");
-            centeredStyle.alignment = TextAnchor.UpperCenter;
-            GUI.Label(new Rect(Screen.width / 2 - 200, 10, 400, 20), "Press left/right arrow keys to select a robot joint.", centeredStyle);
-            GUI.Label(new Rect(Screen.width / 2 - 200, 30, 400, 20), "Press up/down arrow keys to move " + selectedJoint + ".", centeredStyle);
-        }
+        // public void OnGUI() {
+        //     GUIStyle centeredStyle = GUI.skin.GetStyle("Label");
+        //     centeredStyle.alignment = TextAnchor.UpperCenter;
+        //     GUI.Label(new Rect(Screen.width / 2 - 200, 10, 400, 20), "Press left/right arrow keys to select a robot joint.", centeredStyle);
+        //     GUI.Label(new Rect(Screen.width / 2 - 200, 30, 400, 20), "Press up/down arrow keys to move " + selectedJoint + ".", centeredStyle);
+        // }
     }
 }

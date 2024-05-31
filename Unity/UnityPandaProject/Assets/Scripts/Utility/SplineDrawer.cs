@@ -82,8 +82,6 @@ namespace Panda.Utility {
             // Set the positions in the LineRenderer
             lineRenderer.positionCount = points.Count;
             lineRenderer.SetPositions(points.ToArray());
-            // Debug log for testing purposes
-            // Debug.Log("Trajectories drawn.");
         }
     }
 }

@@ -1,13 +1,15 @@
-using Unity.Android.Types;
 using Unity.Robotics;
+using UnityEditor;
 using UnityEngine;
 
 namespace Panda.Utility.Controller {
+    [RequireComponent(typeof(JointLimitDisplay))]
     public class HighlightControl {
+
+        public Color color;
         private int storedColorIndex;
         private ArticulationBody[] articulationChain;
         private Color[] prevColor; // Stores original colors of the part being highlighted
-        public Color color;
 
         public HighlightControl(ArticulationBody[] articulationChain, Color color) {
             this.articulationChain = articulationChain;
@@ -42,7 +44,7 @@ namespace Panda.Utility.Controller {
         /// Highlights the color of the robot by changing the color of the part to a color set by the user in the inspector window
         /// </summary>
         /// <param name="selectedIndex">Index of the link selected in the Articulation Chain</param>
-        public void Highlight(int selectedIndex) {
+        public void Highlight(int selectedIndex, LineRenderer lineRenderer) {
             if (selectedIndex >= articulationChain.Length) {
                 return;
             }
@@ -57,6 +59,10 @@ namespace Panda.Utility.Controller {
             foreach (var mesh in rendererList) {
                 MaterialExtensions.SetMaterialColor(mesh.material, color);
             }
+
+            // clear old joint limits and draw new joint limits
+            JointLimitDisplay.ClearJointLimits(lineRenderer);
+            JointLimitDisplay.DrawJointLimits(selectedIndex, articulationChain, lineRenderer, color);
         }
     }
 }
