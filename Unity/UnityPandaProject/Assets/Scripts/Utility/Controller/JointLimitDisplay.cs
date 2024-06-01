@@ -111,7 +111,7 @@ namespace Panda.Utility.Controller {
             meshFilter.mesh = null;
 
             if (lineObject != null) {
-                GameObject.Destroy(lineObject);
+                Destroy(lineObject);
                 lineObject = null;
             }
         }
