@@ -4,21 +4,22 @@ namespace Panda.Utility.Controller {
     [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
     public class JointLimitDisplay : MonoBehaviour {
         private static int lineCount = 100;
-        private static float radius = 0.25f;
+        private static float radius = 0.5f;
+        private static float lineWidth = 0.01f;
+
+        private static GameObject lineObject;
+        private static MeshFilter staticMeshFilter;
 
         public static void DrawJointLimits(int selectedIndex, ArticulationBody[] articulationChain, MeshFilter meshFilter, Material material) {
-            // dont draw anything for Prismatic joints
+            // don't draw anything for Prismatic joints
             ArticulationBody articulationBody = articulationChain[selectedIndex];
             if (articulationBody.jointType == ArticulationJointType.PrismaticJoint) {
                 return;
             }
 
-            float lowerLimit = articulationChain[selectedIndex].xDrive.lowerLimit;
-            float upperLimit = articulationChain[selectedIndex].xDrive.upperLimit;
-
             // Convert limits to radians
-            lowerLimit = lowerLimit * Mathf.PI / 180;
-            upperLimit = upperLimit * Mathf.PI / 180;
+            float lowerLimit = articulationChain[selectedIndex].xDrive.lowerLimit * Mathf.PI / 180;
+            float upperLimit = articulationChain[selectedIndex].xDrive.upperLimit * Mathf.PI / 180;
 
             // Search recursively for the first child GameObject named "Connector"
             GameObject gameObject = articulationChain[selectedIndex].gameObject;
@@ -59,7 +60,6 @@ namespace Panda.Utility.Controller {
                     triangles[i * 3 + 1] = i + 1;   // current outer point on the circle
                     triangles[i * 3 + 2] = i + 2;   // next outer point on the circle
                 }
-
                 angle += delta;
             }
 
@@ -73,10 +73,55 @@ namespace Panda.Utility.Controller {
             // Set the color of the mesh
             MeshRenderer meshRenderer = meshFilter.GetComponent<MeshRenderer>();
             meshRenderer.material = material;
+
+            // Draw initial position line
+            UpdateJointPositionLine(selectedIndex, articulationChain, currentPosition, jointRotation, material);
+        }
+
+        public static void UpdateJointPositionLine(int selectedIndex, ArticulationBody[] articulationChain, Vector3 currentPosition, Quaternion jointRotation, Material material) {
+            if (lineObject == null) {
+                lineObject = new GameObject("CurrentPositionLine");
+                LineRenderer lineRenderer = lineObject.AddComponent<LineRenderer>();
+                lineRenderer.startWidth = lineWidth;
+                lineRenderer.endWidth = lineWidth;
+                lineRenderer.material = material;
+                lineRenderer.material.color = Color.blue;
+                lineRenderer.positionCount = 2;
+            }
+
+            LineRenderer lr = lineObject.GetComponent<LineRenderer>();
+
+            // handeling the start position (joint0)
+            if (articulationChain[selectedIndex].jointPosition.dofCount == 0) {
+                return;
+            }
+
+            float currentPositionAngle = articulationChain[selectedIndex].jointPosition[0] * Mathf.PI / 180;
+            float x = radius * Mathf.Cos(currentPositionAngle);
+            float z = radius * Mathf.Sin(currentPositionAngle);
+
+            Vector3 localPosition = new Vector3(x, 0, z);
+            Vector3 rotatedPosition = jointRotation * localPosition;
+
+            lr.SetPosition(0, currentPosition);
+            lr.SetPosition(1, currentPosition + rotatedPosition);
         }
 
         public static void ClearJointLimits(MeshFilter meshFilter) {
             meshFilter.mesh = null;
+
+            if (lineObject != null) {
+                GameObject.Destroy(lineObject);
+                lineObject = null;
+            }
+        }
+
+        public static void SetMeshFilter(MeshFilter meshFilter) {
+            staticMeshFilter = meshFilter;
+        }
+
+        public static MeshFilter GetMeshFilter() {
+            return staticMeshFilter;
         }
     }
 }

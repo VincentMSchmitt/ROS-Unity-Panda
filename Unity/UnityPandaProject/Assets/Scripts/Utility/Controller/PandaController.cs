@@ -1,12 +1,11 @@
 using System.Collections.Generic;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace Panda.Utility.Controller {
     public enum RotationDirection { None = 0, Positive = 1, Negative = -1 };
     public enum ControlType { PositionControl, Ros };
 
-    public class Controller : MonoBehaviour {
+    public class PandaController : MonoBehaviour {
         [InspectorReadOnly(hideInEditMode: true)] public string selectedJoint;
         public ControlType control = ControlType.PositionControl;
         [SerializeField] float stiffness = 10000f;  // TODO: find optimal parameter
@@ -18,7 +17,7 @@ namespace Panda.Utility.Controller {
         public Color highLightColor = new Color(1.0f, 0, 0, 1.0f);
         public Material material;
 
-        private MeshFilter meshFilter;
+        private static MeshFilter meshFilter;
         private ArticulationBody[] articulationChain;
         private List<int> selectableJoints = new();
         private int oldIndex;
@@ -33,9 +32,23 @@ namespace Panda.Utility.Controller {
                     selectableJoints.Add(i);
                 }
             }
-            highlightControl = new(articulationChain, highLightColor);
+            highlightControl = new HighlightControl(articulationChain, highLightColor);
             oldIndex = selectedIndex;
             highlightControl.StoreJointColors(selectedIndex);
+
+            if (meshFilter == null) {
+                GameObject highlightObject = new GameObject("HighlightMesh");
+                highlightObject.transform.SetParent(gameObject.transform);
+                meshFilter = highlightObject.AddComponent<MeshFilter>();
+                MeshRenderer meshRenderer = highlightObject.AddComponent<MeshRenderer>();
+                if (material == null) {
+                    Material newMaterial = new Material(Shader.Find("Standard"));
+                    meshRenderer.material = newMaterial;
+                } else {
+                    meshRenderer.material = material;
+                }
+                JointLimitDisplay.SetMeshFilter(meshFilter);
+            }
         }
 
         /// <summary>
@@ -58,6 +71,19 @@ namespace Panda.Utility.Controller {
                     break;
             }
             UpdateDirection(selectedIndex);
+
+            // Update the position line for the selected joint
+            if (selectedIndex >= 0 && selectedIndex < articulationChain.Length) {
+                Transform connectorTransform = articulationChain[selectedIndex].transform.Find("Connector");
+                if (connectorTransform != null) {
+                    Vector3 currentPosition = connectorTransform.position;
+                    Quaternion jointRotation = articulationChain[selectedIndex].transform.rotation;
+                    JointLimitDisplay.UpdateJointPositionLine(selectedIndex, articulationChain, currentPosition, jointRotation, material);
+                }
+                else {
+                    //Debug.Log($"Connector not found for the joint at index {selectedIndex}.");
+                }
+            }
         }
 
         private int NextIndex() {
@@ -122,22 +148,7 @@ namespace Panda.Utility.Controller {
             if (selectedIndex < 0 || selectedIndex >= articulationChain.Length) {
                 return;
             }
-            
-            if (meshFilter == null) {
-                GameObject highlightObject = new GameObject("HighlightMesh");
-                highlightObject.transform.SetParent(gameObject.transform);
-                meshFilter = highlightObject.AddComponent<MeshFilter>();
-                MeshRenderer meshRenderer = highlightObject.AddComponent<MeshRenderer>();
-                if (material == null) {
-                    Material newMaterial = new Material(Shader.Find("Standard"));
-                    newMaterial.SetInt("_Cull", (int)UnityEngine.Rendering.CullMode.Off); // Make the material double-sided
-                    meshRenderer.material = newMaterial;
-                } else {
-                    material.SetInt("_Cull", (int)UnityEngine.Rendering.CullMode.Off);      // Make the material double-sided
-                    meshRenderer.material = material;
-                }
-            }
-            
+
             highlightControl.Highlight(selectedIndex, meshFilter, material);
             selectedJoint = articulationChain[selectedIndex].name;
         }
@@ -151,12 +162,5 @@ namespace Panda.Utility.Controller {
                 joint.joint.xDrive = drive;
             }
         }
-
-        // public void OnGUI() {
-        //     GUIStyle centeredStyle = GUI.skin.GetStyle("Label");
-        //     centeredStyle.alignment = TextAnchor.UpperCenter;
-        //     GUI.Label(new Rect(Screen.width / 2 - 200, 10, 400, 20), "Press left/right arrow keys to select a robot joint.", centeredStyle);
-        //     GUI.Label(new Rect(Screen.width / 2 - 200, 30, 400, 20), "Press up/down arrow keys to move " + selectedJoint + ".", centeredStyle);
-        // }
     }
 }

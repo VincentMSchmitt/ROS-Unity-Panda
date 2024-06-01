@@ -3671,7 +3671,7 @@ MonoBehaviour:
   control: 0
   stiffness: 10000
   damping: 100
-  speed: 30
+  speed: 60
   selectedIndex: 0
   highLightColor: {r: 1, g: 0, b: 0, a: 1}
   material: {fileID: 2100000, guid: 2a316881e8fb7499da6a61c2401c6474, type: 2}
@@ -3946,7 +3946,7 @@ Transform:
   m_GameObject: {fileID: 1043489743}
   serializedVersion: 2
   m_LocalRotation: {x: 0.38268343, y: 0, z: 0, w: 0.92387956}
-  m_LocalPosition: {x: 0, y: 2, z: -1.5}
+  m_LocalPosition: {x: 0, y: 1.5, z: -0.9}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

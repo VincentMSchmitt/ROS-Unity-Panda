@@ -6,10 +6,10 @@ namespace Panda.Utility.Controller {
         [HideInInspector] public RotationDirection direction = RotationDirection.None;
         [HideInInspector] public ControlType controltype;
         [HideInInspector] public ArticulationBody joint;
-        private Controller controller;
+        private PandaController controller;
 
         private void Start() {
-            controller = (Controller)GetComponentInParent(typeof(Controller));
+            controller = (PandaController)GetComponentInParent(typeof(PandaController));
             joint = GetComponent<ArticulationBody>();
             controller.UpdateControlType(this);
         }
