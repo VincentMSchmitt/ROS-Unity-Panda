@@ -1,26 +1,20 @@
 using UnityEngine;
 
 namespace Panda.Utility.Controller {
+    [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
     public class JointLimitDisplay : MonoBehaviour {
         private static int lineCount = 100;
-        private static float radius = 0.1f;
-        private static float width = 0.01f;
+        private static float radius = 0.25f;
 
-        public static void DrawJointLimits(int selectedIndex, ArticulationBody[] articulationChain, LineRenderer lineRenderer, Color lineColor) {
+        public static void DrawJointLimits(int selectedIndex, ArticulationBody[] articulationChain, MeshFilter meshFilter, Material material) {
             // dont draw anything for Prismatic joints
             ArticulationBody articulationBody = articulationChain[selectedIndex];
             if (articulationBody.jointType == ArticulationJointType.PrismaticJoint) {
                 return;
             }
-            
+
             float lowerLimit = articulationChain[selectedIndex].xDrive.lowerLimit;
             float upperLimit = articulationChain[selectedIndex].xDrive.upperLimit;
-
-            lineRenderer.positionCount = lineCount;
-            lineRenderer.startWidth = width;
-            lineRenderer.startColor = lineColor;
-            lineRenderer.endColor = lineRenderer.startColor;
-            lineRenderer.loop = true;
 
             // Search recursively for the first child GameObject named "Connector"
             GameObject gameObject = articulationChain[selectedIndex].gameObject;
@@ -33,11 +27,20 @@ namespace Panda.Utility.Controller {
             // get the position of the link
             Vector3 currentPosition = connectorTransform.position;
 
-            // Set the line renderer positions
-            Vector3[] linePositions = new Vector3[lineCount];
+            // Set up the mesh vertices and triangles
+            Vector3[] vertices = new Vector3[lineCount + 1];    // +1 for the center point
+            int[] triangles = new int[lineCount * 3];           // each segment is a triangle
+
+            // Add the center point
+            vertices[0] = currentPosition;
+
             Quaternion jointRotation = articulationChain[selectedIndex].transform.rotation;
-            float theta = 2f * Mathf.PI / lineCount;
-            float angle = 0;
+            lowerLimit = lowerLimit * Mathf.PI / 180;
+            upperLimit = upperLimit * Mathf.PI / 180;
+
+            float angle = lowerLimit;
+            float delta = (upperLimit - lowerLimit) / lineCount;
+
             for (int i = 0; i < lineCount; ++i) {
                 float x = radius * Mathf.Cos(angle);
                 float z = radius * Mathf.Sin(angle);
@@ -46,14 +49,38 @@ namespace Panda.Utility.Controller {
                 Vector3 localPosition = new Vector3(x, 0, z);
                 Vector3 rotatedPosition = jointRotation * localPosition;
 
-                linePositions[i] = currentPosition + rotatedPosition;
-                angle += theta;
+                vertices[i + 1] = currentPosition + rotatedPosition;
+
+                // Create triangles
+                if (i < lineCount - 1) {
+                    triangles[i * 3] = 0;           // each triangular area begins with the central vertex
+                    triangles[i * 3 + 1] = i + 1;   // current outer point on the circle
+                    triangles[i * 3 + 2] = i + 2;   // next outer point on the circle
+                }
+                else {
+                    // Last triangle connects back to the first vertex
+                    triangles[i * 3] = 0;
+                    triangles[i * 3 + 1] = i + 1;   // last point of the circle
+                    triangles[i * 3 + 2] = 1;       // first point of the circle
+                }
+
+                angle += delta;
             }
-            lineRenderer.SetPositions(linePositions);
+
+            Mesh mesh = new Mesh();
+            mesh.vertices = vertices;
+            mesh.triangles = triangles;
+            mesh.RecalculateNormals();
+
+            meshFilter.mesh = mesh;
+
+            // Set the color of the mesh
+            MeshRenderer meshRenderer = meshFilter.GetComponent<MeshRenderer>();
+            meshRenderer.material = material;
         }
 
-        public static void ClearJointLimits(LineRenderer lineRenderer) {
-            lineRenderer.positionCount = 0;
+        public static void ClearJointLimits(MeshFilter meshFilter) {
+            meshFilter.mesh = null;
         }
     }
 }

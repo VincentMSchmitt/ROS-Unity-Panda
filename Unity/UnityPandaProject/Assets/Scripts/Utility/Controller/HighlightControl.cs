@@ -44,7 +44,7 @@ namespace Panda.Utility.Controller {
         /// Highlights the color of the robot by changing the color of the part to a color set by the user in the inspector window
         /// </summary>
         /// <param name="selectedIndex">Index of the link selected in the Articulation Chain</param>
-        public void Highlight(int selectedIndex, LineRenderer lineRenderer) {
+        public void Highlight(int selectedIndex, MeshFilter meshFilter, Material material) {
             if (selectedIndex >= articulationChain.Length) {
                 return;
             }
@@ -61,8 +61,18 @@ namespace Panda.Utility.Controller {
             }
 
             // clear old joint limits and draw new joint limits
-            JointLimitDisplay.ClearJointLimits(lineRenderer);
-            JointLimitDisplay.DrawJointLimits(selectedIndex, articulationChain, lineRenderer, color);
+            JointLimitDisplay.ClearJointLimits(meshFilter);
+            JointLimitDisplay.DrawJointLimits(selectedIndex, articulationChain, meshFilter, material);
         }
+    }
+}
+
+public static class MaterialExtensions {
+    public static Color GetMaterialColor(Renderer renderer) {
+        return renderer.material.color;
+    }
+
+    public static void SetMaterialColor(Material material, Color color) {
+        material.color = color;
     }
 }

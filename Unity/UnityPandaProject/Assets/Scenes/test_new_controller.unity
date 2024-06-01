@@ -3642,19 +3642,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   jointTargets:
   - jointName: panda_link1
-    targetPosition: 90
+    targetPosition: 0
   - jointName: panda_link2
     targetPosition: 0
   - jointName: panda_link3
     targetPosition: 0
   - jointName: panda_link4
-    targetPosition: -90
+    targetPosition: 0
   - jointName: panda_link5
     targetPosition: 0
   - jointName: panda_link6
-    targetPosition: 90
-  - jointName: panda_link7
     targetPosition: 0
+  - jointName: panda_link7
+    targetPosition: 45
 --- !u!114 &1019643832
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3671,9 +3671,10 @@ MonoBehaviour:
   control: 0
   stiffness: 10000
   damping: 100
-  speed: 20
+  speed: 30
   selectedIndex: 0
-  highLightColor: {r: 0, g: 0.5638194, b: 1, a: 1}
+  highLightColor: {r: 1, g: 0, b: 0, a: 1}
+  material: {fileID: 2100000, guid: 2a316881e8fb7499da6a61c2401c6474, type: 2}
 --- !u!1 &1025078440
 GameObject:
   m_ObjectHideFlags: 8
@@ -3945,7 +3946,7 @@ Transform:
   m_GameObject: {fileID: 1043489743}
   serializedVersion: 2
   m_LocalRotation: {x: 0.38268343, y: 0, z: 0, w: 0.92387956}
-  m_LocalPosition: {x: 0, y: 1.5, z: -1}
+  m_LocalPosition: {x: 0, y: 2, z: -1.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

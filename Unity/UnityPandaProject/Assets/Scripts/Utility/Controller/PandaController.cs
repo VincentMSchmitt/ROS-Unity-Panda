@@ -14,10 +14,11 @@ namespace Panda.Utility.Controller {
         [Tooltip("degree/s")] public float speed = 20;
         [HideInInspector] public int selectedIndex = -1;
 
-        [Tooltip("Color to highlight the currently selected join")]
+        [Tooltip("Color to highlight the currently selected joint")]
         public Color highLightColor = new Color(1.0f, 0, 0, 1.0f);
+        public Material material;
 
-        private static LineRenderer lineRenderer;
+        private MeshFilter meshFilter;
         private ArticulationBody[] articulationChain;
         private List<int> selectableJoints = new();
         private int oldIndex;
@@ -61,7 +62,7 @@ namespace Panda.Utility.Controller {
 
         private int NextIndex() {
             // keep index safely within the limits of the array
-            selectedJointsIndex = (++selectedJointsIndex + selectableJoints.Count) % selectableJoints.Count;;
+            selectedJointsIndex = (++selectedJointsIndex + selectableJoints.Count) % selectableJoints.Count;
             return selectableJoints[selectedJointsIndex];
         }
 
@@ -70,7 +71,7 @@ namespace Panda.Utility.Controller {
                 selectedJointsIndex = selectableJoints.Count - 1;
             } 
             else {
-                selectedJointsIndex = (--selectedJointsIndex + selectableJoints.Count) % selectableJoints.Count;;
+                selectedJointsIndex = (--selectedJointsIndex + selectableJoints.Count) % selectableJoints.Count;
             }
             return selectableJoints[selectedJointsIndex];
         }
@@ -88,7 +89,7 @@ namespace Panda.Utility.Controller {
             // get the JointControl component from every joint:
             JointControl current = articulationChain[jointIndex].GetComponent<JointControl>();
             
-            // if the index is updated, set rotation direction of previous jointInted to none, update previous index
+            // if the index is updated, set rotation direction of previous joint to none, update previous index
             if (oldIndex != jointIndex) {
                 JointControl previous = articulationChain[oldIndex].GetComponent<JointControl>();
                 previous.direction = RotationDirection.None;
@@ -122,13 +123,22 @@ namespace Panda.Utility.Controller {
                 return;
             }
             
-            if (lineRenderer == null) {
-                lineRenderer = gameObject.AddComponent<LineRenderer>();
-                lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+            if (meshFilter == null) {
+                GameObject highlightObject = new GameObject("HighlightMesh");
+                highlightObject.transform.SetParent(gameObject.transform);
+                meshFilter = highlightObject.AddComponent<MeshFilter>();
+                MeshRenderer meshRenderer = highlightObject.AddComponent<MeshRenderer>();
+                if (material == null) {
+                    Material newMaterial = new Material(Shader.Find("Standard"));
+                    newMaterial.SetInt("_Cull", (int)UnityEngine.Rendering.CullMode.Off); // Make the material double-sided
+                    meshRenderer.material = newMaterial;
+                } else {
+                    material.SetInt("_Cull", (int)UnityEngine.Rendering.CullMode.Off);      // Make the material double-sided
+                    meshRenderer.material = material;
+                }
             }
             
-            highlightControl.Highlight(selectedIndex, lineRenderer);
-            // TODO: Add enum for joints and display clean name
+            highlightControl.Highlight(selectedIndex, meshFilter, material);
             selectedJoint = articulationChain[selectedIndex].name;
         }
 
