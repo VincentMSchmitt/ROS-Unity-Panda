@@ -16,6 +16,10 @@ namespace Panda.Utility.Controller {
             float lowerLimit = articulationChain[selectedIndex].xDrive.lowerLimit;
             float upperLimit = articulationChain[selectedIndex].xDrive.upperLimit;
 
+            // Convert limits to radians
+            lowerLimit = lowerLimit * Mathf.PI / 180;
+            upperLimit = upperLimit * Mathf.PI / 180;
+
             // Search recursively for the first child GameObject named "Connector"
             GameObject gameObject = articulationChain[selectedIndex].gameObject;
             Transform connectorTransform = gameObject.transform.Find("Connector");
@@ -29,17 +33,15 @@ namespace Panda.Utility.Controller {
 
             // Set up the mesh vertices and triangles
             Vector3[] vertices = new Vector3[lineCount + 1];    // +1 for the center point
-            int[] triangles = new int[lineCount * 3];           // each segment is a triangle
+            int[] triangles = new int[(lineCount - 1) * 3];     // (lineCount - 1) segments each having 3 vertices
 
             // Add the center point
             vertices[0] = currentPosition;
 
             Quaternion jointRotation = articulationChain[selectedIndex].transform.rotation;
-            lowerLimit = lowerLimit * Mathf.PI / 180;
-            upperLimit = upperLimit * Mathf.PI / 180;
 
             float angle = lowerLimit;
-            float delta = (upperLimit - lowerLimit) / lineCount;
+            float delta = (upperLimit - lowerLimit) / (lineCount - 1);
 
             for (int i = 0; i < lineCount; ++i) {
                 float x = radius * Mathf.Cos(angle);
@@ -56,12 +58,6 @@ namespace Panda.Utility.Controller {
                     triangles[i * 3] = 0;           // each triangular area begins with the central vertex
                     triangles[i * 3 + 1] = i + 1;   // current outer point on the circle
                     triangles[i * 3 + 2] = i + 2;   // next outer point on the circle
-                }
-                else {
-                    // Last triangle connects back to the first vertex
-                    triangles[i * 3] = 0;
-                    triangles[i * 3 + 1] = i + 1;   // last point of the circle
-                    triangles[i * 3 + 2] = 1;       // first point of the circle
                 }
 
                 angle += delta;
