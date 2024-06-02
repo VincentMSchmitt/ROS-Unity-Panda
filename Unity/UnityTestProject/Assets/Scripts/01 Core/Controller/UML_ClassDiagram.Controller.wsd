@@ -1,0 +1,59 @@
+@startuml RobotController
+
+namespace Panda.Core.Controller {
+    class RobotController << (S,red) Singleton >> {
+        +Color selectedColor
+        -ArticulationBody[] articulationChain
+        -List<RobotJoint> joints
+        -int selectedJointIndex
+        -ISelectionObserver selectionObserver
+        -_singleton : Singleton
+
+        +getInstance() : Singelton
+        -singelton()
+    }
+
+    interface ISelectionObserver {
+        +void onJointSelected(IJointVisulization)
+    }
+
+    interface IJointVisulization {
+        -ArticulationBody joint
+
+        +void setSeletedColor(Color)
+    }
+
+    interface IMoveCommand {
+        +void moveClockwise(float)
+        +void moveCounterClockwise(float)
+    }
+
+    class SelectionObserver implements ISelectionObserver{
+        -IJointVisulization selectedJoint
+        -Color seletionColor
+        -Color color
+    
+        +void onJointSelected(IJointVisulization)
+        -void resetHighlight()
+        -void highlight(IJointVisulization)
+    }
+
+    class RobotJoint implements IMoveCommand, IJointVisulization {
+        -ArticulationBody joint
+        -bool isSelected
+        -Color selectedColor
+        -Color color
+
+        +void setSelcted(bool)
+        +void setSelectedColor(Color)
+        +void moveClockwise(float)
+        +void moveCounterClockwise(float)
+    }
+
+    ' Observer
+    RobotController "1" --> ISelectionObserver
+    RobotController "1..*" --> IMoveCommand
+    SelectionObserver --> IJointVisulization
+}
+
+@enduml

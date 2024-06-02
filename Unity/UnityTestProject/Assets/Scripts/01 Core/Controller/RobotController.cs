@@ -4,135 +4,67 @@ using UnityEngine;
 namespace Panda.Core.Controller {
     public enum RotationDirection { None = 0, Positive = 1, Negative = -1 };
     public enum ControlType { PositionControl, Ros };
-
     public class RobotController : MonoBehaviour {
-        [InspectorReadOnly(hideInEditMode: true)] public string selectedJoint;
-        public ControlType control = ControlType.PositionControl;
-        [SerializeField] float stiffness = 10000f;  // TODO: find optimal parameter
-        [SerializeField] float damping = 100f;      // TODO: find optimal parameter
-        [Tooltip("degree/s")] public float speed = 20;
-        [HideInInspector] public int selectedIndex = -1;
-
-        [Tooltip("Color to highlight the currently selected joint")]
-        public Color highLightColor = new Color(1.0f, 0, 0, 1.0f);
-        public Material material;
-
-        private static MeshFilter meshFilter;
+        public Color selectionColor;
         private ArticulationBody[] articulationChain;
-        private List<int> selectableJoints = new();
-        private int oldIndex;
-        private int selectedJointsIndex = -1;
-        private JointHighlight highlightControl;
+        private List<RobotJoint> joints;
+        private int selectedJointIndex;
+        private RobotJoint selectedJoint {
+            get { return joints[selectedJointIndex]; }
+        }
+        private ISelectionObserver selectionObserver;
+        private static RobotController _singleton;
 
+        public static RobotController GetInstance() {
+            if (_singleton == null) {
+                _singleton = new GameObject("RobotController").AddComponent<RobotController>();
+            }
+            return _singleton;
+        }
+
+        // Initialization and configuration
         void Start() {
-            articulationChain = this.GetComponentsInChildren<ArticulationBody>();
+            selectedJointIndex = -1;
+            joints = new();
+            articulationChain = GetComponentsInChildren<ArticulationBody>();
             for (int i = 0; i < articulationChain.Length; ++i) {
-                articulationChain[i].gameObject.AddComponent<JointControl>();
+                // articulationChain[i].gameObject.AddComponent<RobotJoint>();
+
                 if (articulationChain[i].jointType != ArticulationJointType.FixedJoint) {
-                    selectableJoints.Add(i);
+                    RobotJoint joint = new(articulationChain[i]);
+                    joints.Add(joint);
                 }
             }
-            highlightControl = new JointHighlight(articulationChain, highLightColor);
-            oldIndex = selectedIndex;
-            highlightControl.StoreJointColors(selectedIndex);
+            selectionObserver = new SelectionObserver(selectionColor);
         }
 
-        /// <summary>
-        /// Updates the state of the object based on user input.
-        /// </summary>
-        /// <remarks>
-        /// This method is called every frame. It handles user input to change the selected joint and update its direction.
-        /// </remarks>
+        // called every frame
         void Update() {
-            highlightControl.color = highLightColor;
-            // select joint with left and right arrow keys
+            selectionObserver.SetSelectionColor(selectionColor);
+            int oldJointIndex = selectedJointIndex;
             switch (true) {
                 case bool _ when Input.GetKeyDown(KeyCode.RightArrow):
-                    selectedIndex = NextIndex();
-                    Highlight(selectedIndex);
+                    IncreaseIndex();
                     break;
                 case bool _ when Input.GetKeyDown(KeyCode.LeftArrow):
-                    selectedIndex = PreviousIndex();
-                    Highlight(selectedIndex);
+                    DecreaseIndex();
                     break;
             }
-            UpdateDirection(selectedIndex);
+            if (oldJointIndex != selectedJointIndex) {
+                selectionObserver.OnJointSelected(selectedJoint);
+            }
         }
 
-        private int NextIndex() {
+        private void IncreaseIndex() {
             // keep index safely within the limits of the array
-            selectedJointsIndex = (++selectedJointsIndex + selectableJoints.Count) % selectableJoints.Count;
-            return selectableJoints[selectedJointsIndex];
+            selectedJointIndex = (++selectedJointIndex + joints.Count) % joints.Count;
         }
 
-        private int PreviousIndex() {
-            if (selectedJointsIndex == -1) {
-                selectedJointsIndex = selectableJoints.Count - 1;
-            } 
-            else {
-                selectedJointsIndex = (--selectedJointsIndex + selectableJoints.Count) % selectableJoints.Count;
-            }
-            return selectableJoints[selectedJointsIndex];
-        }
-
-        /// <summary>
-        /// Sets the direction of movement of the joint on every update
-        /// </summary>
-        /// <param name="jointIndex">Index of the link selected in the Articulation Chain</param>
-        private void UpdateDirection(int jointIndex) {
-            if (jointIndex < 0 || jointIndex >= articulationChain.Length) {
-                return;
-            }
-            float moveDirection = Input.GetAxis("Vertical"); // value is from -1 to 1
-            
-            // get the JointControl component from every joint:
-            JointControl current = articulationChain[jointIndex].GetComponent<JointControl>();
-            
-            // if the index is updated, set rotation direction of previous joint to none, update previous index
-            if (oldIndex != jointIndex) {
-                JointControl previous = articulationChain[oldIndex].GetComponent<JointControl>();
-                previous.direction = RotationDirection.None;
-                oldIndex = jointIndex;
-            }
-
-            if (current.controltype != control) {
-                UpdateControlType(current);
-            }
-
-            // set the rotation direction
-            switch (moveDirection) {
-                case > 0:
-                    current.direction = RotationDirection.Positive;
-                    break;
-                case < 0:
-                    current.direction = RotationDirection.Negative;
-                    break;
-                default:
-                    current.direction = RotationDirection.None;
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// Update the selected joint in the inspector.
-        /// </summary>
-        /// <param name="selectedIndex">Index of the joint that should be displayed.</param>
-        void Highlight(int selectedIndex) {
-            if (selectedIndex < 0 || selectedIndex >= articulationChain.Length) {
-                return;
-            }
-
-            highlightControl.Highlight(selectedIndex, meshFilter, material);
-            selectedJoint = articulationChain[selectedIndex].name;
-        }
-
-        public void UpdateControlType(JointControl joint) {
-            joint.controltype = control;
-            if (control == ControlType.PositionControl) {
-                ArticulationDrive drive = joint.joint.xDrive;
-                drive.stiffness = stiffness;
-                drive.damping = damping;
-                joint.joint.xDrive = drive;
+        private void DecreaseIndex() {
+            if (selectedJointIndex < 0) {
+                selectedJointIndex = joints.Count - 1;
+            } else {
+                selectedJointIndex = (--selectedJointIndex + joints.Count) % joints.Count;
             }
         }
     }
