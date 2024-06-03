@@ -20,5 +20,9 @@ namespace Panda.Core.Controller {
         public void SetSelectionColor(Color color) {
             selectionColor = color;
         }
+
+        public void ResetHighlight () {
+            selectedJoint?.ResetHighlight(previousColor);
+        }
     }
 }

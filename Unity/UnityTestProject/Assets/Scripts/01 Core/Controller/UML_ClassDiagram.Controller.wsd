@@ -6,53 +6,58 @@ namespace Panda.Core.Controller {
         -ArticulationBody[] articulationChain
         -List<RobotJoint> joints
         -int selectedJointIndex
+        -RobotJoint selectedJoint
         -ISelectionObserver selectionObserver
         -_singleton : Singleton
 
         +getInstance() : Singelton
-        -singelton()
+        +Sart()
+        +Update()
+        -void IncreaseIndex()
+        -void DecreaseIndex()
     }
 
     interface ISelectionObserver {
-        +void onJointSelected(IJointVisulization)
+        void OnJointSelected(IJointVisulization)
+        void SetSelectionColor(Color)
     }
 
     interface IJointVisulization {
-        -ArticulationBody joint
-
-        +void setSeletedColor(Color)
+        void Highlight(Color)
+        void ResetHighlight(Color[])
+        Color[] StoreJointColors()
     }
 
     interface IMoveCommand {
-        +void moveClockwise(float)
-        +void moveCounterClockwise(float)
+        void MoveClockwise(float)
+        void MoveCounterClockwise(float)
     }
 
     class SelectionObserver implements ISelectionObserver{
         -IJointVisulization selectedJoint
         -Color seletionColor
-        -Color color
+        -Color[] previousColor
     
-        +void onJointSelected(IJointVisulization)
-        -void resetHighlight()
-        -void highlight(IJointVisulization)
+        +SelectionObserver(Color)
+        +void OnJointSelected(IJointVisulization)
+        +void SetSelectionColor(Color)
     }
 
     class RobotJoint implements IMoveCommand, IJointVisulization {
         -ArticulationBody joint
         -bool isSelected
-        -Color selectedColor
-        -Color color
 
-        +void setSelcted(bool)
-        +void setSelectedColor(Color)
+        +void Highlight(Color)
+        +void ResetHighlight(Color[])
+        +Color[] StoreJointColors()
+        +Renderer[] GetVisualRenderers()
         +void moveClockwise(float)
         +void moveCounterClockwise(float)
     }
 
     ' Observer
-    RobotController "1" --> ISelectionObserver
-    RobotController "1..*" --> IMoveCommand
+    RobotController --> ISelectionObserver
+    RobotController --> IMoveCommand
     SelectionObserver --> IJointVisulization
 }
 

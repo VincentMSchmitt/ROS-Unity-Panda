@@ -1,35 +1,43 @@
 using System.Collections.Generic;
+using System.Runtime.Serialization.Configuration;
 using UnityEngine;
 
 namespace Panda.Core.Controller {
-    public enum RotationDirection { None = 0, Positive = 1, Negative = -1 };
-    public enum ControlType { PositionControl, Ros };
+    public enum ControlType { PositionControl, Moveit };
     public class RobotController : MonoBehaviour {
-        public Color selectionColor;
+        public ControlType controlType = ControlType.PositionControl;
+        public float speed = 50f;
+        public Color selectionColor = Color.red;
         private ArticulationBody[] articulationChain;
         private List<RobotJoint> joints;
-        private int selectedJointIndex;
+        private int selectedJointIndex = -1;
+        private ISelectionObserver selectionObserver;
+        private static RobotController instance;
         private RobotJoint selectedJoint {
             get { return joints[selectedJointIndex]; }
         }
-        private ISelectionObserver selectionObserver;
-        private static RobotController _singleton;
-
-        public static RobotController GetInstance() {
-            if (_singleton == null) {
-                _singleton = new GameObject("RobotController").AddComponent<RobotController>();
+        public static RobotController GetInstance {
+            get {
+                if (instance == null) {
+                    instance = FindObjectOfType<RobotController>();
+                    if (instance == null) {
+                        GameObject singletonObject = new();
+                        instance = singletonObject.AddComponent<RobotController>();
+                        singletonObject.name = typeof(RobotController).ToString() + " (Singleton)";
+                        
+                        // keep the singleton across scenes
+                        DontDestroyOnLoad(singletonObject);
+                    }
+                }
+                return instance;
             }
-            return _singleton;
         }
 
         // Initialization and configuration
-        void Start() {
-            selectedJointIndex = -1;
+        private void Start() {
             joints = new();
             articulationChain = GetComponentsInChildren<ArticulationBody>();
             for (int i = 0; i < articulationChain.Length; ++i) {
-                // articulationChain[i].gameObject.AddComponent<RobotJoint>();
-
                 if (articulationChain[i].jointType != ArticulationJointType.FixedJoint) {
                     RobotJoint joint = new(articulationChain[i]);
                     joints.Add(joint);
@@ -38,20 +46,45 @@ namespace Panda.Core.Controller {
             selectionObserver = new SelectionObserver(selectionColor);
         }
 
-        // called every frame
-        void Update() {
-            selectionObserver.SetSelectionColor(selectionColor);
-            int oldJointIndex = selectedJointIndex;
-            switch (true) {
-                case bool _ when Input.GetKeyDown(KeyCode.RightArrow):
-                    IncreaseIndex();
-                    break;
-                case bool _ when Input.GetKeyDown(KeyCode.LeftArrow):
-                    DecreaseIndex();
-                    break;
+        // called every frame 
+        private void Update() {
+            // check current controlType
+            UpadateControlType(controlType);
+
+            if (controlType == ControlType.PositionControl) {
+                // update color dynamicly while in play mode
+                selectionObserver.SetSelectionColor(selectionColor);
+                // Select the joints
+                int oldJointIndex = selectedJointIndex;
+                switch (true) {
+                    case bool _ when Input.GetKeyDown(KeyCode.RightArrow):
+                        IncreaseIndex();
+                        break;
+                    case bool _ when Input.GetKeyDown(KeyCode.LeftArrow):
+                        DecreaseIndex();
+                        break;
+                }
+                // new joint selected
+                if (oldJointIndex != selectedJointIndex) {
+                    selectionObserver.OnJointSelected(selectedJoint);
+                }
             }
-            if (oldJointIndex != selectedJointIndex) {
-                selectionObserver.OnJointSelected(selectedJoint);
+        }
+
+        // called every physics update
+        private void FixedUpdate() {
+            // at start, dont do antyhing
+            if (controlType != ControlType.PositionControl || selectedJointIndex < 0) {
+                return;
+            }
+            // Move the robot
+            switch (true) {
+                case bool _ when Input.GetKey(KeyCode.UpArrow):
+                        selectedJoint.MoveClockwise();
+                    break;
+                case bool _ when Input.GetKey(KeyCode.DownArrow):
+                        selectedJoint.MoveCounterClockwise();
+                    break;
             }
         }
 
@@ -65,6 +98,26 @@ namespace Panda.Core.Controller {
                 selectedJointIndex = joints.Count - 1;
             } else {
                 selectedJointIndex = (--selectedJointIndex + joints.Count) % joints.Count;
+            }
+        }
+
+        private void UpadateControlType(ControlType type) {
+            switch (type) {
+                case ControlType.PositionControl:
+                    foreach (RobotJoint joint in joints) {
+                        joint.SetDriveType(ArticulationDriveType.Target);
+                    }
+                    return;
+                case ControlType.Moveit:
+                    foreach (RobotJoint joint in joints) {
+                        joint.SetDriveType(ArticulationDriveType.Force);
+                        // TODO: find more elegant way
+                        selectionObserver.ResetHighlight();
+                    }
+                    return;
+                default:
+                    Debug.LogAssertion("Unsupported ControlType selected.");
+                    return;
             }
         }
     }
