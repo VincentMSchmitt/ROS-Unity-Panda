@@ -1,0 +1,81 @@
+@startuml TrajectoryPlanner
+
+' Patterns used:
+' * Singelton für ROSConnection
+' * Observer für Ereignisbehandlung
+' * Command Pattern für Bewegungsbefehle
+' * Strategy Pattern für Greifoperationen
+' * Factory Pattern für Trajektorienanfragen
+' * State Pattern für Roboterzustände
+
+
+namespace Panda.PickAndPlace {
+    class AttachOnTouch {
+    }
+
+    class TargetPlacement {
+        -GameObject targetObject
+        +void OnTriggerEnter(Collider other)
+    }
+
+    class ROSConnection  << (S,red) Singleton >> {
+        -static ROSConnection instance
+        -ROSConnection()
+        +static ROSConnection GetInstance()
+    }
+
+    class TrajectoryPlanner {
+        +static readonly string[] LinkNames
+    }
+
+    interface ICommand {
+        +void Execute()
+    }
+
+    class MoveCommand implements ICommand {
+
+    }
+
+    interface IGripperStrategy {
+        +void Execute(ArticulationBody leftGripper, ArticulationBody rightGripper)
+    }
+
+    class OpenGripperStrategy implements IGripperStrategy {
+        +void Execute(ArticulationBody leftGripper, ArticulationBody rightGripper)
+    }
+
+    class CloseGripperStrategy implements IGripperStrategy {
+        void Execute(ArticulationBody leftGripper, ArticulationBody rightGripper)
+    }
+
+    class TrajectoryRequestFactory {
+        +static MoverServiceRequest CreateRequest(PandaMoveitJointsMsg currentJoints, PoseMsg pickPose, PoseMsg placePose, float offset)
+    }
+
+    interface IRobotState {
+        +void Handle(TrajectoryPlanner planner)
+    }
+
+    class PreGraspState implements IRobotState {
+        +void Handle(TrajectoryPlanner planner)
+    }
+
+    class GraspState implements IRobotState {
+        +void Handle(TrajectoryPlanner planner)
+    }
+
+    AttachOnTouch <.. TrajectoryPlanner : Uses
+    TargetPlacement <.. TrajectoryPlanner : Uses
+    TrajectoryPlanner o-- ROSConnection : Singleton
+    TrajectoryPlanner o-- ICommand : Uses
+    TrajectoryPlanner o-- IGripperStrategy : Strategy
+    TrajectoryPlanner o-- IRobotState : State
+    MoveCommand <|-- ICommand
+    OpenGripperStrategy <|-- IGripperStrategy
+    CloseGripperStrategy <|-- IGripperStrategy
+    PreGraspState <|-- IRobotState
+    GraspState <|-- IRobotState
+    TrajectoryPlanner o-- TrajectoryRequestFactory : Uses
+}
+
+@enduml

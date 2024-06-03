@@ -14,7 +14,7 @@ namespace Panda.Core.Controller {
         private ISelectionObserver selectionObserver;
         private static RobotController instance;
         private RobotJoint selectedJoint {
-            get { return joints[selectedJointIndex]; }
+            get => joints[selectedJointIndex];
         }
         public static RobotController GetInstance {
             get {
@@ -119,6 +119,10 @@ namespace Panda.Core.Controller {
                     Debug.LogAssertion("Unsupported ControlType selected.");
                     return;
             }
+        }
+
+        public void SetControlTypeMoveit () {
+            controlType = ControlType.Moveit;
         }
     }
 }
