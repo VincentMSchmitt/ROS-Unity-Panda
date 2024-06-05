@@ -193,7 +193,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7428513713708413403, guid: 37ba8ccc27b514f65924024c6486e297, type: 3}
       propertyPath: m_Name
-      value: FrankaEmikaPanda
+      value: Panda
       objectReference: {fileID: 0}
     - target: {fileID: 8137614325530824524, guid: 37ba8ccc27b514f65924024c6486e297, type: 3}
       propertyPath: m_ParentAnchorRotation.w

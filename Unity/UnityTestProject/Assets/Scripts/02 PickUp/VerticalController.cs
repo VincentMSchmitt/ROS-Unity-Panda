@@ -4,7 +4,7 @@ namespace Panda.PickUp {
     public enum HandState { Fixed = 0, MovingUp = 1, MovingDown = -1 };
     public class VerticalController : MonoBehaviour {
         public HandState moveState = HandState.Fixed;
-        public float speed = 1.0f;
+        public float speed = 0.05f;
 
         private void FixedUpdate() {
             if (moveState != HandState.Fixed) {

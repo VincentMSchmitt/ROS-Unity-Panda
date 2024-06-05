@@ -1,6 +1,5 @@
 using RosMessageTypes.FrankaPandaMoveit;
 using RosMessageTypes.Geometry;
-using Unity.Robotics.ROSTCPConnector.ROSGeometry;
 
 namespace Panda.PickAndPlace {
     public class TrajectoryRequestFactory {

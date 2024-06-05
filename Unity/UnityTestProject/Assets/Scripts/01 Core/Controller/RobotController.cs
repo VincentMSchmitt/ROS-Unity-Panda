@@ -110,10 +110,10 @@ namespace Panda.Core.Controller {
                     return;
                 case ControlType.Moveit:
                     foreach (RobotJoint joint in joints) {
-                        joint.SetDriveType(ArticulationDriveType.Force);
-                        // TODO: find more elegant way
-                        selectionObserver.ResetHighlight();
+                        joint.SetDriveType(ArticulationDriveType.Force); 
                     }
+                    selectionObserver.ResetHighlight();
+                    selectedJointIndex = -1;
                     return;
                 default:
                     Debug.LogAssertion("Unsupported ControlType selected.");

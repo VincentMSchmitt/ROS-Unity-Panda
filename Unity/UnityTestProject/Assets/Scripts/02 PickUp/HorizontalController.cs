@@ -1,12 +1,14 @@
-﻿using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Panda.PickUp {
-    public enum GripState { Fixed = 0, Opening = -1, Closing = 1 };
+    public enum GripState { Fixed = 0, Opening = 1, Closing = -1 };
     public class HorizontalController : MonoBehaviour {
-        public FingerController[] fingerControllers;
+        public static float speed = 0.05f;
         public GripState gripState = GripState.Fixed;
         public static readonly string[] linkNames = { "panda_rightfinger", "panda_leftfinger" };
+        private FingerController[] fingerControllers;
+        public float grip;
+        public float gripSpeed = 3.0f;
 
         void Start() {
             fingerControllers = new FingerController[2];
@@ -43,6 +45,3 @@ namespace Panda.PickUp {
         }
     }
 }
-
-
-
