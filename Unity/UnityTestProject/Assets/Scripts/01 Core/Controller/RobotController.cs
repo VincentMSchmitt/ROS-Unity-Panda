@@ -80,10 +80,26 @@ namespace Panda.Core.Controller {
             // Move the robot
             switch (true) {
                 case bool _ when Input.GetKey(KeyCode.UpArrow):
-                        selectedJoint.MoveClockwise();
+                        if (selectedJoint.joint.jointType == ArticulationJointType.RevoluteJoint) {
+                            selectedJoint.MoveClockwise();
+                        }
+                        else if (selectedJoint.joint.jointType == ArticulationJointType.PrismaticJoint) {
+                            selectedJoint.MoveGripperOpen();
+                        }
+                        else {
+                            Debug.LogError("Tried to controll unsupported jointtype: " + selectedJoint.joint.jointType);
+                        }
                     break;
                 case bool _ when Input.GetKey(KeyCode.DownArrow):
-                        selectedJoint.MoveCounterClockwise();
+                        if (selectedJoint.joint.jointType == ArticulationJointType.RevoluteJoint) {
+                            selectedJoint.MoveCounterClockwise();
+                        }
+                        else if (selectedJoint.joint.jointType == ArticulationJointType.PrismaticJoint) {
+                            selectedJoint.MoveGripperClose();
+                        }
+                        else {
+                            Debug.LogError("Tried to controll unsupported jointtype: " + selectedJoint.joint.jointType);
+                        }
                     break;
             }
         }
@@ -96,7 +112,8 @@ namespace Panda.Core.Controller {
         private void DecreaseIndex() {
             if (selectedJointIndex < 0) {
                 selectedJointIndex = joints.Count - 1;
-            } else {
+            }
+            else {
                 selectedJointIndex = (--selectedJointIndex + joints.Count) % joints.Count;
             }
         }

@@ -694,7 +694,7 @@ GameObject:
   - component: {fileID: 6582188387421493182}
   - component: {fileID: 5855755463535859820}
   m_Layer: 0
-  m_Name: FrankaEmikaPanda
+  m_Name: FrankaEmikaPanda(updateForce)
   m_TagString: robot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

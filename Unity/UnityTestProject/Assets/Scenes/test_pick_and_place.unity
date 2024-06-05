@@ -944,6 +944,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5216909039836051435, guid: 4526a5b657ec04fcebb4f5c589040a39, type: 3}
+      propertyPath: m_XDrive.forceLimit
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5526698152275615656, guid: 4526a5b657ec04fcebb4f5c589040a39, type: 3}
+      propertyPath: m_XDrive.forceLimit
+      value: 10
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
