@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 namespace Panda.Core.Controller {
@@ -8,6 +9,30 @@ namespace Panda.Core.Controller {
         public RobotJoint(ArticulationBody joint) {
             this.joint = joint;
             StoreForce();
+        }
+
+        public float GetTarget() {
+            return joint.xDrive.target;
+        }
+
+        public IEnumerator MoveToTarget(float target, float speed) {
+            ArticulationDrive xDrive = joint.xDrive;
+            xDrive.target = target;
+            xDrive.targetVelocity *= speed;
+            joint.xDrive = xDrive;
+            while (!IsAtTarget(target)) {
+                yield break;
+            }
+
+        }
+     
+        private bool IsAtTarget(float target) {
+            if (joint.xDrive.target != target) {
+                return true;
+            }
+            else {
+                return false;
+            }
         }
 
         public void MoveClockwise() {

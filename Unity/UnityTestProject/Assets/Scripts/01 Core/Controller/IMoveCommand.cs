@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 namespace Panda.Core.Controller {
@@ -5,7 +6,9 @@ namespace Panda.Core.Controller {
         void SetDriveType (ArticulationDriveType type);
         void SetToMaxForce();
         void ResetForce();
-        ArticulationJointType JointType(); 
+        float GetTarget();
+        IEnumerator MoveToTarget(float target, float speed);
+        ArticulationJointType JointType();
     }
 
     public interface IJointCommand {

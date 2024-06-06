@@ -248,7 +248,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 527331692890621509, guid: 7daa541f7b9264095ba0316535664a4c, type: 3}
       propertyPath: m_XDrive.targetVelocity
-      value: 0
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 540572335584986776, guid: 7daa541f7b9264095ba0316535664a4c, type: 3}
       propertyPath: m_XDrive.damping
@@ -264,7 +264,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 540572335584986776, guid: 7daa541f7b9264095ba0316535664a4c, type: 3}
       propertyPath: m_XDrive.targetVelocity
-      value: 0
+      value: 180
       objectReference: {fileID: 0}
     - target: {fileID: 540572335584986776, guid: 7daa541f7b9264095ba0316535664a4c, type: 3}
       propertyPath: m_ParentAnchorRotation.y
@@ -356,7 +356,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5825138332452178904, guid: 7daa541f7b9264095ba0316535664a4c, type: 3}
       propertyPath: m_XDrive.targetVelocity
-      value: 0
+      value: 180
       objectReference: {fileID: 0}
     - target: {fileID: 5862287555298036010, guid: 7daa541f7b9264095ba0316535664a4c, type: 3}
       propertyPath: m_XDrive.damping
@@ -392,7 +392,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6958086929853426539, guid: 7daa541f7b9264095ba0316535664a4c, type: 3}
       propertyPath: m_XDrive.targetVelocity
-      value: 0
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 6958086929853426539, guid: 7daa541f7b9264095ba0316535664a4c, type: 3}
       propertyPath: m_ParentAnchorPosition.z
@@ -412,7 +412,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7455728094817556282, guid: 7daa541f7b9264095ba0316535664a4c, type: 3}
       propertyPath: m_XDrive.targetVelocity
-      value: 0
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 7911455299768880210, guid: 7daa541f7b9264095ba0316535664a4c, type: 3}
       propertyPath: m_XDrive.damping
@@ -428,7 +428,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7911455299768880210, guid: 7daa541f7b9264095ba0316535664a4c, type: 3}
       propertyPath: m_XDrive.targetVelocity
-      value: 0
+      value: 180
       objectReference: {fileID: 0}
     - target: {fileID: 8333924639321738986, guid: 7daa541f7b9264095ba0316535664a4c, type: 3}
       propertyPath: m_XDrive.damping
@@ -444,7 +444,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8333924639321738986, guid: 7daa541f7b9264095ba0316535664a4c, type: 3}
       propertyPath: m_XDrive.targetVelocity
-      value: 0
+      value: 150
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1325,7 +1325,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1737550582255476054, guid: a455a5cfef2dd4a11a91be8c9344c545, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.25
+      value: -0.031
       objectReference: {fileID: 0}
     - target: {fileID: 1737550582255476054, guid: a455a5cfef2dd4a11a91be8c9344c545, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1333,7 +1333,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1737550582255476054, guid: a455a5cfef2dd4a11a91be8c9344c545, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.25
+      value: 0.371
       objectReference: {fileID: 0}
     - target: {fileID: 1737550582255476054, guid: a455a5cfef2dd4a11a91be8c9344c545, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1561,14 +1561,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rosServiceName: franka_panda_moveit
-  panda: {fileID: 573100324}
   target: {fileID: 5601983281393112323}
   targetPlacement: {fileID: 492218398179278491}
   speed: 0.1
   poseAssignmentWait: 0.5
   upwardsOffset: 0.2
-  timeout: 2.5
-  ros: {fileID: 0}
 --- !u!1001 &7924717405596410226
 PrefabInstance:
   m_ObjectHideFlags: 0

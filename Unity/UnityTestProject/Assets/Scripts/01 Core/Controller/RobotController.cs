@@ -8,8 +8,7 @@ namespace Panda.Core.Controller {
         public ControlType controlType = ControlType.PositionControl;
         public float speed = 50f;
         public Color selectionColor = Color.red;
-        
-        private List<IMoveCommand> joints;
+        public List<IMoveCommand> joints { get; private set; }
         private ArticulationBody[] articulationChain;
         private int selectedJointIndex = -1;
         private ISelectionObserver selectionObserver;
@@ -32,6 +31,16 @@ namespace Panda.Core.Controller {
                 }
                 return instance;
             }
+        }
+
+        public List<float> GetRevoluteJointTargets() {
+            List<float> jointStates = new();
+            foreach (var joint in joints) {
+                if (joint.JointType() == ArticulationJointType.RevoluteJoint) {
+                    jointStates.Add(joint.GetTarget());
+                }
+            }
+            return jointStates;
         }
 
         public void SetControlTypeMoveit() {

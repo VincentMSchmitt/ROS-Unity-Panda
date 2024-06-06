@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 namespace Panda.Core.Controller {
@@ -13,6 +14,16 @@ namespace Panda.Core.Controller {
             }
             this.finger1 = finger1;
             this.finger2 = finger2;
+        }
+
+        public float GetTarget() {
+            // assume finger1 and finger2 have identical target
+            return finger1.joint.xDrive.target;
+        }
+
+        // TODO: this is not possible, only here for the interface to be implemented
+        public IEnumerator MoveToTarget(float target, float speed) {
+            throw new InvalidOperationException("This operation is not allowed.");
         }
 
         public void MoveGripperOpen() {
