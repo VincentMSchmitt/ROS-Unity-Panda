@@ -515,7 +515,7 @@ GameObject:
   - component: {fileID: 679095798}
   - component: {fileID: 679095797}
   m_Layer: 5
-  m_Name: Button3
+  m_Name: Button2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1024,9 +1024,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 6709045302455743402}
-        m_TargetAssemblyTypeName: Panda.PickAndPlace.TrajectoryPlanner, Assembly-CSharp
-        m_MethodName: PublishJoints
+      - m_Target: {fileID: 6709045302455743403}
+        m_TargetAssemblyTypeName: Panda.PickAndPlace.TrajectoryPlanner2, Assembly-CSharp
+        m_MethodName: SendPlanRequest
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1534,22 +1534,41 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3197658179165420327, guid: 471cd1809158344f2bae160cda6a0b2a, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4950120481682981668, guid: 471cd1809158344f2bae160cda6a0b2a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6709045302455743403}
   m_SourcePrefab: {fileID: 100100000, guid: 471cd1809158344f2bae160cda6a0b2a, type: 3}
---- !u!114 &6709045302455743402 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3197658179165420327, guid: 471cd1809158344f2bae160cda6a0b2a, type: 3}
+--- !u!1 &6709045302455743402 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4950120481682981668, guid: 471cd1809158344f2bae160cda6a0b2a, type: 3}
   m_PrefabInstance: {fileID: 6709045302455743401}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+--- !u!114 &6709045302455743403
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6709045302455743402}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1452632f0b1a34187946162382b10361, type: 3}
+  m_Script: {fileID: 11500000, guid: 4cd346f1973b142a1bc593588857667a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rosServiceName: franka_panda_moveit
+  panda: {fileID: 573100324}
+  target: {fileID: 5601983281393112323}
+  targetPlacement: {fileID: 492218398179278491}
+  speed: 0.1
+  poseAssignmentWait: 0.5
+  upwardsOffset: 0.2
+  timeout: 2.5
+  ros: {fileID: 0}
 --- !u!1001 &7924717405596410226
 PrefabInstance:
   m_ObjectHideFlags: 0

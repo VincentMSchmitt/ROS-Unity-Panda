@@ -8,15 +8,15 @@ namespace Panda.Core.Controller {
         public ControlType controlType = ControlType.PositionControl;
         public float speed = 50f;
         public Color selectionColor = Color.red;
-        private ArticulationBody[] articulationChain;
+        
         private List<IMoveCommand> joints;
+        private ArticulationBody[] articulationChain;
         private int selectedJointIndex = -1;
         private ISelectionObserver selectionObserver;
         private IMoveCommand selectedJoint {
             get => joints[selectedJointIndex];
         }
         private static RobotController instance;
-
         public static RobotController GetInstance {
             get {
                 if (instance == null) {
@@ -40,6 +40,11 @@ namespace Panda.Core.Controller {
 
         public void SetControlTypePositionControl() {
             GetInstance.controlType = ControlType.PositionControl;
+        }
+
+        // TODO: update this to work with interface
+        public ArticulationBody[] GetCurrentState() {
+            return articulationChain;
         }
 
         // Initialization and configuration
