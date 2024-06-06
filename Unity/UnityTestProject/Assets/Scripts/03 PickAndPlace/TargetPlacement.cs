@@ -6,18 +6,17 @@ namespace Panda.PickAndPlace {
     [RequireComponent(typeof(BoxCollider))]
     public class TargetPlacement : MonoBehaviour {
         public enum PlacementState { Outside, InsideFloating, InsidePlaced }
-
-        [Tooltip("Target object expected by this placement area. Can be left blank if only one Target in scene")]
         [SerializeField] GameObject target;
         
         [Tooltip("Alpha value for any color set during state changes.")]
         [Range(0, 255)]
         [SerializeField] int colorAlpha = 100;
-        
-        const string nameExpectedTarget = "Target";
-        const float maximumSpeedForStopped = 0.01f; // The threshold that the Target's speed must be under to be considered "placed" in the target area
+
         static readonly int shaderColorId = Shader.PropertyToID("_Color");
-        float colorAlpha01 => colorAlpha / 255f;
+        
+        private const string nameExpectedTarget = "Target";
+        private const float maximumSpeedForStopped = 0.01f; // The threshold that the Target's speed must be under to be considered "placed" in the target area
+        private float colorAlpha01 => colorAlpha / 255f;
         private MeshRenderer targetMeshRenderer;
         private MeshRenderer meshRenderer;
         private BoxCollider boxCollider;
@@ -134,7 +133,6 @@ namespace Panda.PickAndPlace {
                     stateColor = Color.magenta;
                     break;
             }
-
             stateColor.a = colorAlpha01;
             mpb.SetColor(shaderColorId, stateColor);
             meshRenderer.SetPropertyBlock(mpb);

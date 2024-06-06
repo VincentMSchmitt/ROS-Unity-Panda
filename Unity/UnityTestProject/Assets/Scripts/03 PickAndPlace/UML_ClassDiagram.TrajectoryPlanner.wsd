@@ -1,81 +1,105 @@
 @startuml TrajectoryPlanner
 
 ' Patterns used:
-' * Singelton für ROSConnection
-' * Observer für Ereignisbehandlung
-' * Command Pattern für Bewegungsbefehle
-' * Strategy Pattern für Greifoperationen
-' * Factory Pattern für Trajektorienanfragen
-' * State Pattern für Roboterzustände
+' * Singelton for ROSConnection
+' * Observer for Event handling
+' * Command Pattern for Movement commands
+' * Strategy Pattern for Gripping operations
+' * Factory Pattern for Trajectory requests
+' * State Pattern for Robot states
 
 
 namespace Panda.PickAndPlace {
-    class AttachOnTouch {
+    enum Poses {
+        PreGrasp
+        Grasp
+        PickUp
+        PrePlace
+        Place
     }
 
-    class TargetPlacement {
-        -GameObject targetObject
-        +void OnTriggerEnter(Collider other)
-    }
-
-    class ROSConnection  << (S,red) Singleton >> {
-        -static ROSConnection instance
-        -ROSConnection()
-        +static ROSConnection GetInstance()
+    enum PlacementState {
+        Outside
+        InsideFloating
+        InsidePlaced
     }
 
     class TrajectoryPlanner {
-        +static readonly string[] LinkNames
+        + string rosServiceName
+        + GameObject panda
+        + GameObject target
+        + GameObject targetPlacement
+        + GameObject pandaTCP
+        + float jointAssignmentWait
+        + float poseAssignmentWait
+        + float tolerance
+        + float upwardsOffset
+        + float timeout
+        + bool attachOnTouch
+        - {static} string[] linkNames
+        - Quaternion pickOrientation
+        - Vector3 pickPoseOffset
+        - float gripperOffset
+        - ArticulationBody[] jointArticulationBodies
+        - ArticulationBody leftGripper
+        - ArticulationBody rightGripper
+        - ROSConnection rosServiceName
+        - IGripperStrategy gripperStrategy
+        ' ---------------------------------------
+        + void PublishJoints()
+        - void Start()
+        - PandaMoveitJointsMsg CurrenctJointState()
+        - void TrajectoryResponseHandeler()
+        - IEnumerator TrajectoryResponse()
+        - void SetGripperStrategy()
+        - IEnumerator ExecuteTrajectories()
+        - IEnumerator WaitUntilPositionedOverTarget()
+    }
+
+    class TargetPlacement {
+    }
+
+    class ROSConnection  << (S,red) Singleton >> {
     }
 
     interface ICommand {
+        + void Execute()
+    }
+
+    interface IGripperStrategy {
         +void Execute()
     }
 
     class MoveCommand implements ICommand {
-
-    }
-
-    interface IGripperStrategy {
-        +void Execute(ArticulationBody leftGripper, ArticulationBody rightGripper)
+        - ArticulationBody[] jointArticulationBodies
+        - float[] targetPositions
+        ' ---------------------------------------
+        + void Execute()
     }
 
     class OpenGripperStrategy implements IGripperStrategy {
-        +void Execute(ArticulationBody leftGripper, ArticulationBody rightGripper)
+        +void Execute()
     }
 
     class CloseGripperStrategy implements IGripperStrategy {
-        void Execute(ArticulationBody leftGripper, ArticulationBody rightGripper)
+        void Execute()
     }
 
     class TrajectoryRequestFactory {
-        +static MoverServiceRequest CreateRequest(PandaMoveitJointsMsg currentJoints, PoseMsg pickPose, PoseMsg placePose, float offset)
+        + {static} MoverServiceRequest CreateRequest()
     }
-
-    interface IRobotState {
-        +void Handle(TrajectoryPlanner planner)
-    }
-
-    class PreGraspState implements IRobotState {
-        +void Handle(TrajectoryPlanner planner)
-    }
-
-    class GraspState implements IRobotState {
-        +void Handle(TrajectoryPlanner planner)
-    }
-
-    AttachOnTouch <.. TrajectoryPlanner : Uses
-    TargetPlacement <.. TrajectoryPlanner : Uses
-    TrajectoryPlanner o-- ROSConnection : Singleton
-    TrajectoryPlanner o-- ICommand : Uses
-    TrajectoryPlanner o-- IGripperStrategy : Strategy
-    TrajectoryPlanner o-- IRobotState : State
-    MoveCommand <|-- ICommand
-    OpenGripperStrategy <|-- IGripperStrategy
-    CloseGripperStrategy <|-- IGripperStrategy
-    PreGraspState <|-- IRobotState
-    GraspState <|-- IRobotState
-    TrajectoryPlanner o-- TrajectoryRequestFactory : Uses
 }
+
+namespace Panda.Core {
+    class AttachOnTouch {
+    }
+}
+
+TrajectoryPlanner --> ROSConnection : establishes connection
+TrajectoryPlanner --> AttachOnTouch : Attaches target
+TrajectoryPlanner --> TargetPlacement : Checks target pos
+TrajectoryPlanner --> ICommand : moves robot
+TrajectoryPlanner --> IGripperStrategy : Uses
+TrajectoryPlanner --> TrajectoryRequestFactory : creates request
 
 @enduml

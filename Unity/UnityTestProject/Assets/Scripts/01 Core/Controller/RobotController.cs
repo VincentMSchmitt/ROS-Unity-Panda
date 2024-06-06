@@ -34,6 +34,14 @@ namespace Panda.Core.Controller {
             }
         }
 
+        public void SetControlTypeMoveit() {
+            GetInstance.controlType = ControlType.Moveit;
+        }
+
+        public void SetControlTypePositionControl() {
+            GetInstance.controlType = ControlType.PositionControl;
+        }
+
         // Initialization and configuration
         private void Start() {
             joints = new();
@@ -157,7 +165,7 @@ namespace Panda.Core.Controller {
                 case ControlType.Moveit:
                     foreach (IMoveCommand joint in joints) {
                         joint.SetDriveType(ArticulationDriveType.Force);
-                        joint.ResetForce();
+                        //joint.ResetForce();
                     }
                     selectionObserver.ResetHighlight();
                     selectedJointIndex = -1;
