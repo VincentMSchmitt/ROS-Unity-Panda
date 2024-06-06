@@ -1,0 +1,133 @@
+@startuml RobotController
+
+namespace Panda.Core.Controller {
+    enum ControlType << (E,cyan) Enumeration >> {
+        PositionControl
+        Moveit
+    }
+
+    enum RotationDirection << (E,cyan) Enumeration >> {
+        Clockwise
+        CounterClockwise
+        Open
+        Close
+        Up
+        Down
+    }
+
+    class RobotController << (S,red) Singleton >> {
+        + ControlType controlType
+        + float speed 
+        + Color selectedColor
+        - ArticulationBody[] articulationChain
+        - List joints
+        - int selectedJointIndex
+        - RobotJoint selectedJoint
+        - ISelectionObserver selectionObserver 
+        - IMoveCommand selectedJoint
+        - {static} instance RobotController 
+        ' ---------------------------------------
+        + {static} RobotController GetInstance()
+        - void Sart()
+        - void Update()
+        - void FixedUpdate()
+        - void IncreaseIndex()
+        - void DecreaseIndex()
+        - void UpdateControlType()
+    }
+
+    interface ISelectionObserver {
+        void OnJointSelected()
+        void SetSelectionColor()
+        void ResetHighlight()
+    }
+
+    interface IJointVisulization {
+        void Highlight()
+        void ResetHighlight()
+        Color[] StoreJointColors()
+    }
+
+    interface IMoveCommand {
+        void SetDriveType()
+        void SetToMaxForce()
+        void ResetForce()
+        ArticulationJointType JointType()
+    }
+
+    interface IJointCommmand {
+        void moveClockwise()
+        void moveCounterClockwise()
+    }
+
+    interface IGripperCommmand {
+        void MoveGripperOpen()
+        void MoveGripperClose()
+    }
+
+    class MaterialExtensions << (C,yellow) >> {
+        + {static} Color GetMaterialColor(Renderer)
+        + {static} void SetMaterialColor(Material, Color)
+    }
+
+    class SelectionObserver implements ISelectionObserver{
+        - IJointVisulization selectedJoint
+        - Color seletionColor
+        - Color[] previousColor
+        ' ---------------------------------------
+        + SelectionObserver()
+        + void OnJointSelected()
+        + void SetSelectionColor()
+        + void ResetHighlight()
+    }
+
+    class RobotGripper implements IMoveCommand, IGripperCommmand, IJointVisulization {
+        - RobotJoint finger1
+        - RobotJoint finger2
+        ' ---------------------------------------
+        + RobotGripper()
+        + void MoveGripperOpen()
+        + void MoveGripperClose()
+        + void SetDriveType()
+        + void Highlight()
+        + void ResetHighlight()
+        + Color[] StoreJointColors()
+        + ArticulationJointType JointType()
+        + void SetToMaxForce()
+        + void ResetForce()
+        - void Move()
+        - float CalculateTarget()
+    }
+
+    class RobotJoint implements IMoveCommand, IJointCommmand, IJointVisulization {
+        - ArticulationBody joint
+        - float savedForce
+        ' ---------------------------------------
+        + RobotJoint()
+        + void MoveClockwise()
+        + void MoveCounterClockwise()
+        + void MoveUp()
+        + void MoveDown()
+        + void SetDriveType()
+        + ArticulationJointType JointType()
+        + void SetToMaxForce()
+        + void ResetForce()
+        + void StoreForce()
+        + void Highlight()
+        + void ResetHighlight()
+        + Color[] StoreJointColors()
+        - void Move()
+        - float CalculateTarget()
+        - Renderer[] GetVisualRenderers()
+    }
+
+    RobotController --> IMoveCommand : uses
+    RobotController --> IJointCommmand : uses
+    RobotController --> IGripperCommmand : uses
+    RobotController --> IJointVisulization : uses
+    RobotController --> ISelectionObserver : watches selected joint
+    RobotJoint --> MaterialExtensions : uses
+    RobotGripper --> RobotJoint : consists of two
+}
+
+@enduml

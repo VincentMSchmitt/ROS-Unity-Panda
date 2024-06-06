@@ -1,42 +1,63 @@
 using UnityEngine;
 
 namespace Panda.Core.Controller {
-    public enum RotationDirection { Clockwise = 1, CounterClockwise = -1, Open = 1, Close = -1 };
-    public partial class RobotJoint: IMoveCommand {
+    public partial class RobotJoint: IMoveCommand, IJointCommand {
         public ArticulationBody joint { get; private set; }
-        private ArticulationDrive xDrive;
+        private float savedForce;
 
         public RobotJoint(ArticulationBody joint) {
             this.joint = joint;
+            StoreForce();
         }
 
         public void MoveClockwise() {
-            Move(RotationDirection.Clockwise);
+            Move(MoveDirection.Clockwise);
         }
 
         public void MoveCounterClockwise() {
-            Move(RotationDirection.CounterClockwise);
+            Move(MoveDirection.CounterClockwise);
         }
 
-        public void MoveGripperOpen() {
-            Move(RotationDirection.Open);
+        public void MoveUp() {
+            Move(MoveDirection.Up);
         }
-        public void MoveGripperClose() {
-            Move(RotationDirection.Close);
+
+        public void MoveDown() {
+            Move(MoveDirection.Down);
         }
 
         public void SetDriveType (ArticulationDriveType type) {
-            xDrive = joint.xDrive;
+            ArticulationDrive xDrive = joint.xDrive;
             xDrive.driveType = type;
             joint.xDrive = xDrive;
         }
+
+        public ArticulationJointType JointType() {
+            return joint.jointType;
+        }
+
+        public void SetToMaxForce() {
+            ArticulationDrive xDrive = joint.xDrive;
+            xDrive.forceLimit = 3.402823e+38f;
+            joint.xDrive = xDrive;
+        }
+
+        public void ResetForce () {
+            ArticulationDrive xDrive = joint.xDrive;
+            xDrive.forceLimit = savedForce;
+            joint.xDrive = xDrive;
+        }
+
+        public void StoreForce() {
+            savedForce = joint.xDrive.forceLimit;
+        }
         
-        private void Move(RotationDirection direction) {
+        private void Move(MoveDirection direction) {
             // num is the value by which the target of the drive is to be changed in this update. It is based on the
             // direction of movement, the fixed delta time and the speed of the controller
             float num = 0.0f;
 
-            xDrive = joint.xDrive;
+            ArticulationDrive xDrive = joint.xDrive;
             // for differen joint type do different things
             switch (joint.jointType) {
                 case ArticulationJointType.FixedJoint:
@@ -46,8 +67,7 @@ namespace Panda.Core.Controller {
                     xDrive.target = CalculateTarget(xDrive.target, num, joint.twistLock, xDrive.upperLimit, xDrive.lowerLimit);
                     break;
                 case ArticulationJointType.PrismaticJoint:
-                    // these need a much slower speed
-                    num = (float)direction * Time.fixedDeltaTime * RobotController.GetInstance.speed/500;
+                    num = (float)direction * Time.fixedDeltaTime * RobotController.GetInstance.speed;
                     xDrive.target = CalculateTarget(xDrive.target, num, joint.linearLockX, xDrive.upperLimit, xDrive.lowerLimit);
                     break;
                 default:

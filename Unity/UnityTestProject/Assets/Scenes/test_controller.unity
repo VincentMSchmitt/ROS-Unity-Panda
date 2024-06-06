@@ -442,6 +442,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: FrankaEmikaPanda
       objectReference: {fileID: 0}
+    - target: {fileID: 5552001149150689013, guid: 7daa541f7b9264095ba0316535664a4c, type: 3}
+      propertyPath: controlType
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5825138332452178904, guid: 7daa541f7b9264095ba0316535664a4c, type: 3}
       propertyPath: m_XDrive.targetVelocity
       value: 180
@@ -457,6 +461,10 @@ PrefabInstance:
     - target: {fileID: 7911455299768880210, guid: 7daa541f7b9264095ba0316535664a4c, type: 3}
       propertyPath: m_XDrive.targetVelocity
       value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 8333924639321738986, guid: 7daa541f7b9264095ba0316535664a4c, type: 3}
+      propertyPath: m_XDrive.forceLimit
+      value: 3.402823e+38
       objectReference: {fileID: 0}
     - target: {fileID: 8333924639321738986, guid: 7daa541f7b9264095ba0316535664a4c, type: 3}
       propertyPath: m_XDrive.targetVelocity

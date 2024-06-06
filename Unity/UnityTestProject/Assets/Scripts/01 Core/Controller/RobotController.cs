@@ -1,21 +1,22 @@
 using System.Collections.Generic;
-using System.Runtime.Serialization.Configuration;
 using UnityEngine;
 
 namespace Panda.Core.Controller {
     public enum ControlType { PositionControl, Moveit };
+    public enum MoveDirection { Clockwise = 1, CounterClockwise = -1, Open = 1, Close = -1, Up = 1, Down = -1 };
     public class RobotController : MonoBehaviour {
         public ControlType controlType = ControlType.PositionControl;
         public float speed = 50f;
         public Color selectionColor = Color.red;
         private ArticulationBody[] articulationChain;
-        private List<RobotJoint> joints;
+        private List<IMoveCommand> joints;
         private int selectedJointIndex = -1;
         private ISelectionObserver selectionObserver;
-        private static RobotController instance;
-        private RobotJoint selectedJoint {
+        private IMoveCommand selectedJoint {
             get => joints[selectedJointIndex];
         }
+        private static RobotController instance;
+
         public static RobotController GetInstance {
             get {
                 if (instance == null) {
@@ -37,12 +38,22 @@ namespace Panda.Core.Controller {
         private void Start() {
             joints = new();
             articulationChain = GetComponentsInChildren<ArticulationBody>();
-            for (int i = 0; i < articulationChain.Length; ++i) {
+            
+            // add the revolute joints
+            // assume gripper are the last 2 elements
+            int i = 0;
+            for (;i < articulationChain.Length - 2; ++i) {
                 if (articulationChain[i].jointType != ArticulationJointType.FixedJoint) {
                     RobotJoint joint = new(articulationChain[i]);
                     joints.Add(joint);
                 }
             }
+
+            // add gripper
+            RobotJoint finger1 = new(articulationChain[i]);
+            RobotJoint finger2 = new(articulationChain[i+1]);
+            RobotGripper gripper = new(finger1, finger2);
+            joints.Add(gripper);
             selectionObserver = new SelectionObserver(selectionColor);
         }
 
@@ -66,7 +77,10 @@ namespace Panda.Core.Controller {
                 }
                 // new joint selected
                 if (oldJointIndex != selectedJointIndex) {
-                    selectionObserver.OnJointSelected(selectedJoint);
+                    IJointVisualization jointVisualization = selectedJoint as IJointVisualization;
+                    if (jointVisualization != null) {
+                        selectionObserver.OnJointSelected(jointVisualization);
+                    }
                 }
             }
         }
@@ -80,25 +94,39 @@ namespace Panda.Core.Controller {
             // Move the robot
             switch (true) {
                 case bool _ when Input.GetKey(KeyCode.UpArrow):
-                        if (selectedJoint.joint.jointType == ArticulationJointType.RevoluteJoint) {
-                            selectedJoint.MoveClockwise();
+                        if (selectedJoint.JointType() == ArticulationJointType.RevoluteJoint) {
+                            IJointCommand moveCommand = selectedJoint as IJointCommand;
+                            if (moveCommand != null) {
+                                moveCommand.MoveClockwise();
+                            }
                         }
-                        else if (selectedJoint.joint.jointType == ArticulationJointType.PrismaticJoint) {
-                            selectedJoint.MoveGripperOpen();
+                        // assume the only joints in this robot that are prismatic is the gripper
+                        else if (selectedJoint.JointType() == ArticulationJointType.PrismaticJoint) {
+                            IGripperCommand gripperCommand = selectedJoint as IGripperCommand;
+                            if (gripperCommand != null) {
+                                gripperCommand.MoveGripperOpen();
+                            }
                         }
                         else {
-                            Debug.LogError("Tried to controll unsupported jointtype: " + selectedJoint.joint.jointType);
+                            Debug.LogError("Tried to controll unsupported jointtype: " + selectedJoint.JointType());
                         }
                     break;
                 case bool _ when Input.GetKey(KeyCode.DownArrow):
-                        if (selectedJoint.joint.jointType == ArticulationJointType.RevoluteJoint) {
-                            selectedJoint.MoveCounterClockwise();
+                        if (selectedJoint.JointType() == ArticulationJointType.RevoluteJoint) {
+                            IJointCommand moveCommand = selectedJoint as IJointCommand;
+                            if (moveCommand != null) {
+                                moveCommand.MoveCounterClockwise();
+                            }
                         }
-                        else if (selectedJoint.joint.jointType == ArticulationJointType.PrismaticJoint) {
-                            selectedJoint.MoveGripperClose();
+                        // assume the only joints in this robot that are prismatic is the gripper
+                        else if (selectedJoint.JointType() == ArticulationJointType.PrismaticJoint) {
+                            IGripperCommand gripperCommand = selectedJoint as IGripperCommand;
+                            if (gripperCommand != null) {
+                                gripperCommand.MoveGripperClose();
+                            }
                         }
                         else {
-                            Debug.LogError("Tried to controll unsupported jointtype: " + selectedJoint.joint.jointType);
+                            Debug.LogError("Tried to controll unsupported jointtype: " + selectedJoint.JointType());
                         }
                     break;
             }
@@ -121,13 +149,15 @@ namespace Panda.Core.Controller {
         private void UpadateControlType(ControlType type) {
             switch (type) {
                 case ControlType.PositionControl:
-                    foreach (RobotJoint joint in joints) {
+                    foreach (IMoveCommand joint in joints) {
                         joint.SetDriveType(ArticulationDriveType.Target);
+                        joint.SetToMaxForce();
                     }
                     return;
                 case ControlType.Moveit:
-                    foreach (RobotJoint joint in joints) {
-                        joint.SetDriveType(ArticulationDriveType.Force); 
+                    foreach (IMoveCommand joint in joints) {
+                        joint.SetDriveType(ArticulationDriveType.Force);
+                        joint.ResetForce();
                     }
                     selectionObserver.ResetHighlight();
                     selectedJointIndex = -1;
@@ -136,10 +166,6 @@ namespace Panda.Core.Controller {
                     Debug.LogAssertion("Unsupported ControlType selected.");
                     return;
             }
-        }
-
-        public void SetControlTypeMoveit () {
-            controlType = ControlType.Moveit;
         }
     }
 }
