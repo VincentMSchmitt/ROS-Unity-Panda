@@ -33,29 +33,6 @@ namespace Panda.Core.Controller {
             }
         }
 
-        public List<float> GetRevoluteJointTargets() {
-            List<float> jointStates = new();
-            foreach (var joint in joints) {
-                if (joint.JointType() == ArticulationJointType.RevoluteJoint) {
-                    jointStates.Add(joint.GetTarget());
-                }
-            }
-            return jointStates;
-        }
-
-        public void SetControlTypeMoveit() {
-            GetInstance.controlType = ControlType.Moveit;
-        }
-
-        public void SetControlTypePositionControl() {
-            GetInstance.controlType = ControlType.PositionControl;
-        }
-
-        // TODO: update this to work with interface
-        public ArticulationBody[] GetCurrentState() {
-            return articulationChain;
-        }
-
         // Initialization and configuration
         private void Start() {
             joints = new();
@@ -152,6 +129,29 @@ namespace Panda.Core.Controller {
                         }
                     break;
             }
+        }
+
+        public List<float> GetRevoluteJointTargets() {
+            List<float> jointStates = new();
+            foreach (var joint in joints) {
+                if (joint.JointType() == ArticulationJointType.RevoluteJoint) {
+                    jointStates.Add(joint.GetTarget());
+                }
+            }
+            return jointStates;
+        }
+
+        public void SetControlTypeMoveit() {
+            GetInstance.controlType = ControlType.Moveit;
+        }
+
+        public void SetControlTypePositionControl() {
+            GetInstance.controlType = ControlType.PositionControl;
+        }
+
+        // TODO: update this to work with interface
+        public ArticulationBody[] GetCurrentState() {
+            return articulationChain;
         }
 
         private void IncreaseIndex() {

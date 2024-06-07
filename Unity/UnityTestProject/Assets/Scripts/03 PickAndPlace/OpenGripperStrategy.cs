@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using Panda.Core.Controller;
 using UnityEngine;
 
 namespace Panda.PickAndPlace {
@@ -9,6 +11,10 @@ namespace Panda.PickAndPlace {
             rightDrive.target = 0.04f;
             leftGripper.xDrive = leftDrive;
             rightGripper.xDrive = rightDrive;
+        }
+
+        public void Execute(List<IMoveCommand> gripperJoints) {
+            throw new System.NotImplementedException();
         }
     }
 }

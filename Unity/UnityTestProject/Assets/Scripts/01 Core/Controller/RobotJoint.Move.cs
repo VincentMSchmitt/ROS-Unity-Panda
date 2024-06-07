@@ -23,7 +23,6 @@ namespace Panda.Core.Controller {
             while (!IsAtTarget(target)) {
                 yield break;
             }
-
         }
      
         private bool IsAtTarget(float target) {

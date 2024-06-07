@@ -5,17 +5,19 @@ using System.Linq;
 using Unity.Robotics.ROSTCPConnector;
 using Unity.Robotics.ROSTCPConnector.ROSGeometry;
 using UnityEngine;
-
-using Panda.Core.Controller;
 using System;
 using System.Collections.Generic;
 
+using Panda.Core.Controller;
+using Panda.Core.Ros;
+
 namespace Panda.PickAndPlace {
+    enum Poses { PreGrasp, Grasp, PickUp, PrePlace, Place }
     public class TrajectoryPlanner2 : MonoBehaviour {
         public string rosServiceName = "franka_panda_moveit";
         [SerializeField] GameObject target;
         [SerializeField] GameObject targetPlacement;
-        // TODO: use this to set the speed to a % of the top speed available
+
         public float speed = 0.1f; // percentage of max speed
         public float poseAssignmentWait = 1f;
         public float upwardsOffset = 0.2f;
@@ -23,6 +25,7 @@ namespace Panda.PickAndPlace {
         private Vector3 pickPoseOffset => Vector3.up * upwardsOffset;
         private const float gripperOffset = 0.105f;
         private ROSConnection ros;
+        private IGripperStrategy gripperStrategy;
 
         private void Start() {
             // Create ROS connection singelton static instance
@@ -31,7 +34,7 @@ namespace Panda.PickAndPlace {
         }
 
         public void SendPlanRequest() {
-            var request = TrajectoryRequestFactory.CreateRequest(
+            var request = TrajectoryRequestFactory.CreatePickAndPlaceRequest(
                 CurrentJointState(),
                 new PoseMsg {
                     position = (target.transform.position + pickPoseOffset).To<FLU>(),
@@ -81,19 +84,22 @@ namespace Panda.PickAndPlace {
                         var jointPositions = point.positions;
                         var result = jointPositions.Select(r => (float)r * Mathf.Rad2Deg).ToArray();
 
-                        // List for couroutines for all joints
-                        List<Coroutine> coroutines = new List<Coroutine>();
+                        // couroutines for joints movements
+                        List<Coroutine> jointCoroutines = new List<Coroutine>();
                         for (int i = 0; i < jointPositions.Length; i++) {
-                            coroutines.Add(StartCoroutine(robotController.joints[i].MoveToTarget(result[i], speed)));
+                            jointCoroutines.Add(StartCoroutine(robotController.joints[i].MoveToTarget(result[i], speed)));
                         }
-
                         // wait, until every joint is where he is supposed to be
-                        foreach (var coroutine in coroutines) {
-                            yield return coroutine;
-                        }
+                        yield return StartCoroutine(WaitForAllCoroutines(jointCoroutines));
                     }
                     yield return new WaitForSeconds(poseAssignmentWait);
                 }
+            }
+        }
+
+        private IEnumerator WaitForAllCoroutines(List<Coroutine> coroutines) {
+            foreach (var coroutine in coroutines) {
+                yield return coroutine;
             }
         }
     }

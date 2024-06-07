@@ -21,9 +21,29 @@ namespace Panda.Core.Controller {
             return finger1.joint.xDrive.target;
         }
 
-        // TODO: this is not possible, only here for the interface to be implemented
         public IEnumerator MoveToTarget(float target, float speed) {
-            throw new InvalidOperationException("This operation is not allowed.");
+            // assume finger1 and finger2 have identical target
+            ArticulationDrive xDrive1 = finger1.joint.xDrive;
+            ArticulationDrive xDrive2 = finger2.joint.xDrive;
+            xDrive1.target = target;
+            xDrive2.target = target;
+            xDrive1.targetVelocity *= speed;
+            xDrive2.targetVelocity *= speed;
+            finger1.joint.xDrive = xDrive1;
+            finger2.joint.xDrive = xDrive2;
+            while (!IsAtTarget(target)) {
+                    yield break;
+            }
+        }
+     
+        private bool IsAtTarget(float target) {
+            if (finger1.joint.xDrive.target != target &&
+                finger2.joint.xDrive.target != target) {
+                return true;
+            }
+            else {
+                return false;
+            }
         }
 
         public void MoveGripperOpen() {
