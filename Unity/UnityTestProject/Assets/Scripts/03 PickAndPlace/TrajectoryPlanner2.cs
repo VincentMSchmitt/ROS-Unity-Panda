@@ -25,7 +25,6 @@ namespace Panda.PickAndPlace {
         private Vector3 pickPoseOffset => Vector3.up * upwardsOffset;
         private const float gripperOffset = 0.105f;
         private ROSConnection ros;
-        private IGripperStrategy gripperStrategy;
 
         private void Start() {
             // Create ROS connection singelton static instance
