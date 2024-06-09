@@ -29,6 +29,8 @@ namespace Panda.Core.Hud {
                 robotController.SetControlTypePositionControl();
                 
             }
+            if (GUILayout.Button("Settings")) {
+            }
             GUILayout.EndHorizontal();
         }
 
