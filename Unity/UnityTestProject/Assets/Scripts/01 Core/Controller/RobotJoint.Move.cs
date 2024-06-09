@@ -2,15 +2,7 @@ using System.Collections;
 using UnityEngine;
 
 namespace Panda.Core.Controller {
-    public partial class RobotJoint: IMoveCommand, IJointCommand {
-        public ArticulationBody joint { get; private set; }
-        private float savedForce;
-
-        public RobotJoint(ArticulationBody joint) {
-            this.joint = joint;
-            StoreForce();
-        }
-
+    public partial class RobotJoint: IMoveCommand {
         public float GetTarget() {
             return joint.xDrive.target;
         }
@@ -32,22 +24,6 @@ namespace Panda.Core.Controller {
             else {
                 return false;
             }
-        }
-
-        public void MoveClockwise() {
-            Move(MoveDirection.Clockwise);
-        }
-
-        public void MoveCounterClockwise() {
-            Move(MoveDirection.CounterClockwise);
-        }
-
-        public void MoveUp() {
-            Move(MoveDirection.Up);
-        }
-
-        public void MoveDown() {
-            Move(MoveDirection.Down);
         }
 
         public void SetDriveType (ArticulationDriveType type) {
@@ -76,7 +52,7 @@ namespace Panda.Core.Controller {
             savedForce = joint.xDrive.forceLimit;
         }
         
-        private void Move(MoveDirection direction) {
+        public void Move(MoveDirection direction) {
             // num is the value by which the target of the drive is to be changed in this update. It is based on the
             // direction of movement, the fixed delta time and the speed of the controller
             float num = 0.0f;

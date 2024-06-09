@@ -960,7 +960,7 @@ MonoBehaviour:
   rosServiceName: franka_panda_moveit
   target: {fileID: 5601983281393112323}
   targetPlacement: {fileID: 492218398179278491}
-  speed: 0.1
+  speed: 0.00001
   poseAssignmentWait: 0.5
   upwardsOffset: 0.2
 --- !u!1001 &7924717405596410226

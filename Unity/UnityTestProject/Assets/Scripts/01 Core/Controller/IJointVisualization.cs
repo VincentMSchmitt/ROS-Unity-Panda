@@ -6,4 +6,7 @@ namespace Panda.Core.Controller {
         public void ResetHighlight(Color[] colors);
         public Color[] StoreJointColors();
     }
+
+    public interface ICombinedInterface : IJointVisualization, IMoveCommand {
+    }
 }

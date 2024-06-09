@@ -19,7 +19,7 @@ namespace Panda.Core.Hud {
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("Plan")) {
                 robotController.SetControlTypeMoveit();
-                TrajectoryPlanner2 trajectoryPlanner = FindObjectOfType<TrajectoryPlanner2>();
+                TrajectoryPlanner trajectoryPlanner = FindObjectOfType<TrajectoryPlanner>();
                 if (trajectoryPlanner == null) {
                     throw new System.NullReferenceException("There is no Trajectory Planner in this scene.");
                 }
