@@ -40,16 +40,9 @@ def plan_follow(req):
     robot_joint_configuration = req.joints_input.joints
 
     # follow pose
-    follow_pose = plan_trajectory(move_group, req.target_pose, robot_joint_configuration)
-
-    # Set the current state to the requested joint configuration
-    # move_group.target_pose(robot_joint_configuration)
-
-    # Plan the trajectory to the follow_pose
+    target_pose = plan_trajectory(move_group, req.target_pose, robot_joint_configuration)
     plan = move_group.plan()
-
-    response.trajectories.append(follow_pose)
-
+    response.trajectories.append(target_pose)
     move_group.clear_pose_targets()
 
     return response

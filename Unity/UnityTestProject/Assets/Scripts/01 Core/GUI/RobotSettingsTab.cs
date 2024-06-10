@@ -1,5 +1,6 @@
 using UnityEngine;
 using Unity.Robotics.ROSTCPConnector;
+using System.Collections;
 
 namespace Panda.Core.Gui {
     public class RobotSettingsTab : MonoBehaviour, IHudTab {
@@ -15,7 +16,7 @@ namespace Panda.Core.Gui {
         void IHudTab.OnGUI(HudPanel hud) {            
             GUILayout.BeginVertical();
 
-            // draw the bounding boxes
+            // draw bounding boxes
             toggleBoundingBox = GUILayout.Toggle(toggleBoundingBox, "Draw bounding boxes");
             if (toggleBoundingBox) {
                 BoundingBoxDrawer.SetToogle(true);

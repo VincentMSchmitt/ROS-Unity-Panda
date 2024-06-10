@@ -53,5 +53,17 @@ namespace Panda.Core {
                 previousPoint = newPoint;
             }
         }
+
+        void OnGUI() {
+            if (toggleWorkingArea) {
+                GameObject target = GameObject.FindWithTag("target");
+                if (target == null) {
+                    GUIStyle style = new GUIStyle();
+                    style.fontSize = 24;
+                    style.normal.textColor = Color.red;
+                    GUI.Label(new Rect(10, 50, 500, 30), "No target detected", style);
+                }
+            }
+        }
     }
 }

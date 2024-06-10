@@ -57,6 +57,7 @@ def plan_pick_and_place(req):
     # Pre grasp - position gripper directly above target object -----------------------------------
     pre_grasp_pose = plan_trajectory(move_group, req.pick_pose, current_robot_joint_configuration)
     if not pre_grasp_pose.joint_trajectory.points:
+        rospy.logwarn("Pre grasp pose planning failed.")
         return response # empty
     previous_ending_joint_angles = pre_grasp_pose.joint_trajectory.points[-1].positions
 
@@ -67,18 +68,21 @@ def plan_pick_and_place(req):
     # print(f"pick pose position: {pick_pose.position.z}")
     grasp_pose = plan_trajectory(move_group, pick_pose, previous_ending_joint_angles)
     if not grasp_pose.joint_trajectory.points:
+        rospy.logwarn("Grasp pose planning failed.")
         return response # empty
     previous_ending_joint_angles = grasp_pose.joint_trajectory.points[-1].positions
 
     # Pick Up - raise gripper back to the pre grasp position --------------------------------------
     pick_up_pose = plan_trajectory(move_group, req.pick_pose, previous_ending_joint_angles)
     if not pick_up_pose.joint_trajectory.points:
+        rospy.logwarn("Pick up pose planning failed.")
         return response # empty
     previous_ending_joint_angles = pick_up_pose.joint_trajectory.points[-1].positions
 
     # Pre place - move gripper above desired placement position -----------------------------------
     pre_place_pose = plan_trajectory(move_group, req.place_pose, previous_ending_joint_angles)
     if not pre_place_pose.joint_trajectory.points:
+        rospy.logwarn("Pre place pose planning failed.")
         return response # empty
     previous_ending_joint_angles = pre_place_pose.joint_trajectory.points[-1].positions
 
@@ -87,6 +91,7 @@ def plan_pick_and_place(req):
     place_pose.position.z -= req.offset.offset - 0.015 # place 1,5 cm above ground
     place_pose = plan_trajectory(move_group, place_pose, previous_ending_joint_angles)
     if not place_pose.joint_trajectory.points:
+        rospy.logwarn("Place pose planning failed.")
         return response # empty
 
     # If trajectory planning worked for all pick and place stages, add plan to response -----------
