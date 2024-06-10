@@ -7,6 +7,11 @@ namespace Panda.Core.Controller {
             Renderer[] rendererList = GetVisualRenderers();
             foreach (var mesh in rendererList) {
                 MaterialExtensions.SetMaterialColor(mesh.material, color);
+
+                // draw joint limits
+                RobotController robotController = RobotController.GetInstance;
+                JointLimitDrawer.ClearJointLimits(robotController.limitMeshFilter);
+                JointLimitDrawer.DrawJointLimits(joint, robotController.limitMeshFilter, robotController.limitMaterial);
             }
         }
 

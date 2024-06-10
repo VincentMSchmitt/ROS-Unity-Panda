@@ -7,6 +7,8 @@ namespace Panda.Core.Controller {
         public ControlType controlType = ControlType.PositionControl;
         public float speed = 50f;
         public Color selectionColor = Color.red;
+        public Material limitMaterial;
+        public MeshFilter limitMeshFilter;
         private ArticulationBody[] articulationChain;
         private ISelectionObserver selectionObserver;
         private static RobotController instance;
@@ -43,19 +45,32 @@ namespace Panda.Core.Controller {
                     selectionObserver.Add(joint);
                 }
             }
-
             // add gripper
             RobotJoint finger1 = new(articulationChain[i]);
             RobotJoint finger2 = new(articulationChain[i+1]);
             RobotGripper gripper = new(finger1, finger2);
             selectionObserver.Add(gripper);
+
+            // init mesh filter for joint limit functionality
+            if (limitMeshFilter == null) {
+                GameObject highlightObject = new GameObject("HighlightMesh");
+                highlightObject.transform.SetParent(gameObject.transform);
+                limitMeshFilter = highlightObject.AddComponent<MeshFilter>();
+                MeshRenderer meshRenderer = highlightObject.AddComponent<MeshRenderer>();
+                if (limitMaterial == null) {
+                    Material newMaterial = new Material(Shader.Find("Standard-DoubleSided"));
+                    meshRenderer.material = newMaterial;
+                } else {
+                    meshRenderer.material = limitMaterial;
+                }
+                JointLimitDrawer.SetMeshFilter(limitMeshFilter);
+            }
         }
 
         // called every frame 
         private void Update() {
             // check current controlType
             UpadateControlType(controlType);
-
             if (controlType == ControlType.PositionControl) {
                 // update color dynamicly while in play mode
                 selectionObserver.SetSelectionColor(selectionColor);
@@ -145,11 +160,6 @@ namespace Panda.Core.Controller {
 
         public void SetControlTypePositionControl() {
             GetInstance.controlType = ControlType.PositionControl;
-        }
-
-        // TODO: update this to work with interface
-        public ArticulationBody[] GetCurrentState() {
-            return articulationChain;
         }
 
         private void UpadateControlType(ControlType type) {

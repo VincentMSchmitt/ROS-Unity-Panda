@@ -3,11 +3,15 @@ using UnityEngine;
 
 namespace Panda.Core {
     public class BoundingBoxDrawer : MonoBehaviour {
-        [SerializeField] bool drawBoundingBox = true;
+        public static bool drawBoundingBox = true;
         [SerializeField] Color boundingBoxColor = Color.green;
         private List<GameObject> trackedGameObjects;
 
-        void Start() {
+        public static void SetToogle(bool value) {
+            drawBoundingBox = value;
+        }
+
+        private void Start() {
             trackedGameObjects = new List<GameObject>();
         }
 
@@ -15,7 +19,7 @@ namespace Panda.Core {
         /// Updates bounding boxes every frame.
         /// TODO: only update if the object is moved or changed its location.
         /// </summary>
-        void Update() {
+        private void Update() {
             if (drawBoundingBox) {
                 // find all GameObjects with tag "track"
                 trackedGameObjects = GameObjectFilter.GetAllGameObjectsWithTag("track");
@@ -27,7 +31,7 @@ namespace Panda.Core {
             }
         }
 
-        void DrawBoundingBox(GameObject go) {
+        private void DrawBoundingBox(GameObject go) {
             // if renderer of GameObject is found
             if (go.TryGetComponent<Renderer>(out var renderer)) {
                 // calculate die corners of the bounding box

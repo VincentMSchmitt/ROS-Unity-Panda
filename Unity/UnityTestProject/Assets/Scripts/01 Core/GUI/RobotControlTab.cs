@@ -4,7 +4,7 @@ using Unity.Robotics.ROSTCPConnector;
 using Panda.Core.Controller;
 using Panda.PickAndPlace;
 
-namespace Panda.Core.Hud {
+namespace Panda.Core.Gui {
     public class RobotControlTab : MonoBehaviour, IHudTab {
         string IHudTab.Label => "Control";
         private RobotController robotController;
@@ -15,8 +15,8 @@ namespace Panda.Core.Hud {
         }
 
         void IHudTab.OnGUI(HudPanel hud) {
-            // Adding two new buttons
             GUILayout.BeginHorizontal();
+            // send plan request
             if (GUILayout.Button("Plan")) {
                 robotController.SetControlTypeMoveit();
                 TrajectoryPlanner trajectoryPlanner = FindObjectOfType<TrajectoryPlanner>();
@@ -25,11 +25,9 @@ namespace Panda.Core.Hud {
                 }
                 trajectoryPlanner?.SendPlanRequest();
             }
+            // toggle manual control mode
             if (GUILayout.Button("Control")) {
                 robotController.SetControlTypePositionControl();
-                
-            }
-            if (GUILayout.Button("Settings")) {
             }
             GUILayout.EndHorizontal();
         }
