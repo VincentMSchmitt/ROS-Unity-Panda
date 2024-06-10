@@ -21,7 +21,7 @@ namespace Panda.Core {
             new JointTarget { jointName = "panda_link4", targetPosition = -90f},
             new JointTarget { jointName = "panda_link5", targetPosition = 0   },
             new JointTarget { jointName = "panda_link6", targetPosition = 90f },
-            new JointTarget { jointName = "panda_link7", targetPosition = 0   }
+            new JointTarget { jointName = "panda_link7", targetPosition = 45f }
         };
         private readonly float tolerance = 0.01f;
         private readonly float checkInterval = 0.1f;
