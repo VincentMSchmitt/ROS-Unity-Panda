@@ -1,20 +1,27 @@
-using Panda.Core.Controller;
 using UnityEngine;
 
 namespace Panda.Core {
     [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
     public class JointLimitDrawer : MonoBehaviour {
+        // TODO: fix the drawn line on the circle. Currently, not line is drawn. It needs to be dynamicly updated every
+        // time the joint moves. Furthermore it is not allowed to leave the boundries of the circle
         public static bool toogleJointLimitDisplay = false;
-
         private static int lineCount = 100;
-        private static float radius = 0.5f;
+        private static float radius = 0.25f;
         private static float lineWidth = 0.01f;
-
         private static GameObject lineObject;
-        private static MeshFilter staticMeshFilter;
 
         public static void SetToogle(bool value) {
             toogleJointLimitDisplay = value;
+        }
+
+        public static void ClearJointLimits(MeshFilter meshFilter) {
+            meshFilter.mesh = null;
+
+            if (lineObject != null) {
+                Destroy(lineObject);
+                lineObject = null;
+            }
         }
 
         public static void DrawJointLimits(ArticulationBody currentJoint, MeshFilter meshFilter, Material material) {
@@ -82,20 +89,16 @@ namespace Panda.Core {
                 meshRenderer.material = material;
 
                 // Draw initial position line
-                UpdateJointPositionLine(currentJoint, currentPosition, jointRotation, material);
-            }
-        }
-
-        public static void ClearJointLimits(MeshFilter meshFilter) {
-            meshFilter.mesh = null;
-
-            if (lineObject != null) {
-                Destroy(lineObject);
-                lineObject = null;
+                //UpdateJointPositionLine(currentJoint, currentPosition, jointRotation, material);
             }
         }
 
         private static void UpdateJointPositionLine(ArticulationBody currentJoint, Vector3 currentPosition, Quaternion jointRotation, Material material) {
+            // handeling the start position (joint0)
+            if (currentJoint.jointPosition.dofCount == 0) {
+                return;
+            }
+
             if (lineObject == null) {
                 lineObject = new GameObject("CurrentPositionLine");
                 LineRenderer lineRenderer = lineObject.AddComponent<LineRenderer>();
@@ -108,12 +111,8 @@ namespace Panda.Core {
 
             LineRenderer lr = lineObject.GetComponent<LineRenderer>();
 
-            // handeling the start position (joint0)
-            if (currentJoint.jointPosition.dofCount == 0) {
-                return;
-            }
-
             float currentPositionAngle = currentJoint.jointPosition[0] * Mathf.PI / 180;
+            Debug.Log(currentPositionAngle);
             float x = radius * Mathf.Cos(currentPositionAngle);
             float z = radius * Mathf.Sin(currentPositionAngle);
 
@@ -122,14 +121,6 @@ namespace Panda.Core {
 
             lr.SetPosition(0, currentPosition);
             lr.SetPosition(1, currentPosition + rotatedPosition);
-        }
-
-        public static void SetMeshFilter(MeshFilter meshFilter) {
-            staticMeshFilter = meshFilter;
-        }
-
-        public static MeshFilter GetMeshFilter() {
-            return staticMeshFilter;
         }
     }
 }

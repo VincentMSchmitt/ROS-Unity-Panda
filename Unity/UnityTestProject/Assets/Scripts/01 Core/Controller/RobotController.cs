@@ -63,7 +63,6 @@ namespace Panda.Core.Controller {
                 } else {
                     meshRenderer.material = limitMaterial;
                 }
-                JointLimitDrawer.SetMeshFilter(limitMeshFilter);
             }
         }
 
