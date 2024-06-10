@@ -1,18 +1,13 @@
 using System;
 using UnityEngine;
 
-namespace Panda.Calculate {
+namespace Panda.Core.Calculate {
     /// <summary>
     /// Class for performing direct kinematics calculations for the Franka Emika Panda nonstandard robotic arm (7DOF).
     /// </summary>
     public class PandaKinematics {
         static readonly float M_PI = Mathf.PI;
 
-        /// <summary>
-        /// Extracts the TCP (Tool Center Point) position from a transformation matrix.
-        /// </summary>
-        /// <param name="matrix">The transformation matrix.</param>
-        /// <returns>The TCP position as a Vector3.</returns>
         public static Vector3 GetTCPPosition(float[] jointAngles) {
             Matrix4x4 transformationMatrix = ForwardKinematics(jointAngles);
             // position is saved in column 3 of the transformation matrix
@@ -20,11 +15,6 @@ namespace Panda.Calculate {
             return position;
         }
 
-        /// <summary>
-        /// Extracts the TCP (Tool Center Point) rotation from a transformation matrix.
-        /// </summary>
-        /// <param name="matrix">The transformation matrix.</param>
-        /// <returns>The TCP rotation as a Quaternion.</returns>
         public static Quaternion GetTCPRotation(float[] jointAngles) {
             Matrix4x4 transformationMatrix = ForwardKinematics(jointAngles);
             // rotation is saved in the upper-left 3x3 submatrix of the transformation matrix

@@ -12,7 +12,7 @@ namespace Panda.Core.Ros {
                 offset = new PandaMoveitOffsetMsg(offset)
             };
         }
-        // follow
+        // TODO: follower
         public static FollowerServiceRequest CreateFollowerRequest(PandaMoveitJointsMsg currentJoints, PoseMsg targetPose, float offset) {
             return new FollowerServiceRequest {
                 joints_input = currentJoints,

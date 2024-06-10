@@ -3,9 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace Panda.Core {
-    /// <summary>
-    /// Represents a target position for a robot joint.
-    /// </summary>
     [System.Serializable] public class JointTarget {
         public string jointName;
         public float targetPosition;
@@ -17,9 +14,6 @@ namespace Panda.Core {
     /// </summary>
     [DefaultExecutionOrder(-1000)]
     public class Startup : MonoBehaviour {
-        /// <summary>
-        /// List of joint targets defining the desired start positions.
-        /// </summary>
         [SerializeField] List<JointTarget> jointTargets = new List<JointTarget> {
             new JointTarget { jointName = "panda_link1", targetPosition = 0   },
             new JointTarget { jointName = "panda_link2", targetPosition = 0   },
@@ -32,21 +26,13 @@ namespace Panda.Core {
         private readonly float tolerance = 0.01f;
         private readonly float checkInterval = 0.1f;
 
-        /// <summary>
-        /// Called on the frame when a script is enabled just before any of the Update
-        /// methods are called the first time.
-        /// </summary>
         void Start() {
             ArticulationBody[] articulationChain = this.GetComponentsInChildren<ArticulationBody>();
             StartCoroutine(MoveJointsToTarget(articulationChain, jointTargets));
         }
 
-        /// <summary>
-        /// Coroutine to move joints to their target positions.
-        /// </summary>
         /// <param name="articulationChain">Array of articulation bodies representing the robot joints.</param>
         /// <param name="jointTargets">List of target positions for the joints.</param>
-        /// <returns>IEnumerator for the coroutine.</returns>
         IEnumerator MoveJointsToTarget(ArticulationBody[] articulationChain, List<JointTarget> jointTargets) {
             for (int i = 1; i <= jointTargets.Count; ++i) {
                 var currentDrive = articulationChain[i].xDrive;
@@ -56,15 +42,10 @@ namespace Panda.Core {
             yield return StartCoroutine(WaitUntilJointsReachTarget(articulationChain, jointTargets));
         }
 
-        /// <summary>
-        /// Coroutine to wait until all joints reach their target positions.
-        /// </summary>
         /// <param name="articulationChain">Array of articulation bodies representing the robot joints.</param>
         /// <param name="jointTargets">List of target positions for the joints.</param>
-        /// <returns>IEnumerator for the coroutine.</returns>
         IEnumerator WaitUntilJointsReachTarget(ArticulationBody[] articulationChain, List<JointTarget> jointTargets) {
             bool allJointsAtTarget = false;
-
             while (!allJointsAtTarget) {
                 allJointsAtTarget = true;
                 for (int i = 1; i <= jointTargets.Count; ++i) {
@@ -81,7 +62,7 @@ namespace Panda.Core {
                     yield return new WaitForSeconds(checkInterval);
                 }
             }
-            Debug.Log("All specified joints have reached the target positions.");
+            // Debug.Log("All specified joints have reached the target positions.");
             EventManager.Instance.TriggerStartupComplete();
         }
     }

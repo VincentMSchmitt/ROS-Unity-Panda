@@ -5,9 +5,7 @@ using Unity.Robotics.ROSTCPConnector;
 using Unity.Robotics.ROSTCPConnector.ROSGeometry;
 using UnityEngine;
 
-using Panda.Core;
-
-namespace Panda.Ros {
+namespace Panda.Core.Ros {
     public class ObjectInfoPublisher : MonoBehaviour {
         [Tooltip("If true, the object information will be sent for collision avoidance.")]
         [SerializeField] bool sendCollisions = true;
@@ -22,28 +20,19 @@ namespace Panda.Ros {
         private List<GameObject> trackedGameObjects;
         private float timeSinceLastPublish;
 
-        /// <summary>
-        /// Called on the frame when a script is enabled just before any of the Update methods are called the first
-        /// time. Initialize the ROS connection and set up the publisher.
-        /// </summary>
         void Start() {
             // ROS Connector init
             ros = ROSConnection.GetOrCreateInstance();
             ros.RegisterPublisher<ObjectInfoMsg>(rosTopicName);
             timeSinceLastPublish = 0.0f;
-            print("Ready to avioid collisions.");
+            Debug.Log("Ready to avioid collisions.");
         }
 
-        /// <summary>
-        /// Publishes the object information at the specified interval.
-        /// </summary>
         void Update() {
             if (sendCollisions) {
                 timeSinceLastPublish += Time.deltaTime;
-
                 if (timeSinceLastPublish >= publishInterval) {
                     trackedGameObjects = GameObjectFilter.GetAllGameObjectsWithTag("track");
-
                     // send each box on their own
                     // TODO: maybe it is smart to pack them into one Message before sending
                     foreach (GameObject go in trackedGameObjects) {

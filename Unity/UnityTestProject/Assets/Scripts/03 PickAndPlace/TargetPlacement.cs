@@ -15,7 +15,8 @@ namespace Panda.PickAndPlace {
         static readonly int shaderColorId = Shader.PropertyToID("_Color");
         
         private const string nameExpectedTarget = "Target";
-        private const float maximumSpeedForStopped = 0.01f; // The threshold that the Target's speed must be under to be considered "placed" in the target area
+        // The threshold that the Target's speed must be under to be considered "placed" in the target area
+        private const float maximumSpeedForStopped = 0.01f;
         private float colorAlpha01 => colorAlpha / 255f;
         private MeshRenderer targetMeshRenderer;
         private MeshRenderer meshRenderer;
