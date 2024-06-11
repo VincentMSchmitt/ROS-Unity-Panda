@@ -5,6 +5,7 @@ project(franka_panda_moveit)
 cmake_policy(SET CMP0148 OLD)
 
 find_package(catkin REQUIRED COMPONENTS
+  # python
   rospy
   std_msgs
   geometry_msgs
@@ -15,7 +16,15 @@ find_package(catkin REQUIRED COMPONENTS
   controller_manager
   roslaunch
   trajectory_msgs
+
+  # cpp
+  roscpp
+  moveit_core
+  moveit_ros_planning_interface
+  geometry_msgs
+  std_srvs
 )
+
 roslaunch_add_file_check(launch)
 
 add_message_files(DIRECTORY msg)
@@ -30,14 +39,28 @@ generate_messages(
   sensor_msgs
 )
 
-catkin_package()
+catkin_package(
+  CATKIN_DEPENDS
+  roscpp
+  moveit_core
+  moveit_ros_planning_interface
+  geometry_msgs
+  std_srvs
+)
+
+include_directories(
+  ${catkin_INCLUDE_DIRS}
+)
+
+# target_link_libraries(${PROJECT_NAME}_node
+#   ${catkin_LIBRARIES}
+# )
 
 catkin_install_python(PROGRAMS
   scripts/mover.py
   scripts/follower.py
   scripts/trajectory_subscriber.py
   scripts/collision_detector.py
-  scripts/direct_kinematics.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

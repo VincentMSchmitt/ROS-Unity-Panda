@@ -67,6 +67,7 @@ namespace Panda.Follower {
         }
 
         public void SendPlanRequest() {
+            // TODO: use factory
             var request = new FollowerServiceRequest();
             request.joints_input = CurrentJointState();
 

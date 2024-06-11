@@ -12,7 +12,6 @@ Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/lib/franka_panda
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/lib/franka_panda_moveit/trajectory_subscriber.py
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/lib/franka_panda_moveit/follower.py
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/lib/franka_panda_moveit/collision_detector.py
-Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/lib/franka_panda_moveit/direct_kinematics.py
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/lib/franka_panda_moveit/cmake.lock
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/lib/pkgconfig/franka_panda_moveit.pc
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/lib/python3.11/site-packages/franka_panda_moveit/__init__.py
