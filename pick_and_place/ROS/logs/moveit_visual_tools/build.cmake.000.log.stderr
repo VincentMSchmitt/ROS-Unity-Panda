@@ -14,11 +14,21 @@
 [36mCall Stack (most recent call first):[0m
   /Users/vincent/miniconda3/envs/ros_env/share/catkin/cmake/all.cmake:164 (include)
   /Users/vincent/miniconda3/envs/ros_env/share/catkin/cmake/catkinConfig.cmake:20 (include)
-  CMakeLists.txt:4 (find_package)
+  CMakeLists.txt:5 (find_package)
 This warning is for project developers.  Use -Wno-dev to suppress it.
 [0m
-[31mCMake Error at CMakeLists.txt:55 (target_link_libraries):
-  Cannot specify link libraries for target "test_node" which is not built by
-  this project.
+[31mCMake Error at /Users/vincent/miniconda3/envs/ros_env/share/catkin/cmake/catkinConfig.cmake:83 (find_package):
+  Could not find a package configuration file provided by "rviz_visual_tools"
+  with any of the following names:
+
+    rviz_visual_toolsConfig.cmake
+    rviz_visual_tools-config.cmake
+
+  Add the installation prefix of "rviz_visual_tools" to CMAKE_PREFIX_PATH or
+  set "rviz_visual_tools_DIR" to a directory containing one of the above
+  files.  If "rviz_visual_tools" provides a separate development package or
+  SDK, be sure it has been installed.
+[36mCall Stack (most recent call first):[0m
+  CMakeLists.txt:5 (find_package)
 
 [0m

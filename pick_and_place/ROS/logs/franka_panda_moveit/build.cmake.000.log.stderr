@@ -17,8 +17,3 @@
   CMakeLists.txt:4 (find_package)
 This warning is for project developers.  Use -Wno-dev to suppress it.
 [0m
-[31mCMake Error at CMakeLists.txt:59 (target_link_libraries):
-  Cannot specify link libraries for target "test_node" which is not built by
-  this project.
-
-[0m
