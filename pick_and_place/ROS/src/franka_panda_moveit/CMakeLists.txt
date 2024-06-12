@@ -1,9 +1,6 @@
 cmake_minimum_required(VERSION 3.1.3)
 project(franka_panda_moveit)
 
-# Set CMP0148 to OLD to suppress warning when building
-cmake_policy(SET CMP0148 OLD)
-
 find_package(catkin REQUIRED COMPONENTS
   # python
   rospy
@@ -52,9 +49,15 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-# target_link_libraries(${PROJECT_NAME}_node
-#   ${catkin_LIBRARIES}
-# )
+add_executable(${PROJECT_NAME}_node scripts/mover.cpp)
+target_link_libraries(${PROJECT_NAME}_node
+  ${catkin_LIBRARIES}
+)
+
+add_executable(test_node scripts/test_cpp.cpp)
+target_link_libraries(test_node
+  ${catkin_LIBRARIES}
+)
 
 catkin_install_python(PROGRAMS
   scripts/mover.py

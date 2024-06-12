@@ -34,6 +34,6 @@ Not searching for unused variables given on the command line.
 [36m--[0m Using Python nosetests: /Users/vincent/miniconda3/envs/ros_env/bin/nosetests
 [36m--[0m catkin 0.8.10
 [36m--[0m BUILD_SHARED_LIBS is on
-[36m--[0m Configuring done (2.4s)
+[36m--[0m Configuring done (2.0s)
 [36m--[0m Generating done (0.0s)
 [36m--[0m Build files have been written to: /Users/vincent/ROS/ws_panda/pick_and_place/ROS/build/ros_tcp_endpoint

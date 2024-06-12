@@ -10,7 +10,9 @@ Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/include/franka_p
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/include/franka_panda_moveit/MoverServiceResponse.h
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/lib/franka_panda_moveit/mover.py
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/lib/franka_panda_moveit/trajectory_subscriber.py
+Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/lib/franka_panda_moveit/test_node
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/lib/franka_panda_moveit/follower.py
+Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/lib/franka_panda_moveit/franka_panda_moveit_node
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/lib/franka_panda_moveit/collision_detector.py
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/lib/franka_panda_moveit/cmake.lock
 Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/lib/pkgconfig/franka_panda_moveit.pc

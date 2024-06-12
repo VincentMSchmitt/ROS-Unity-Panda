@@ -11,5 +11,5 @@
     <!-- MoveIt -->
     <include file="$(find franka_panda_moveit)/launch/demo.launch"/>
     <!-- Mover.py script -->
-    <node name="panda_mover" pkg="franka_panda_moveit" type="mover.cpp" args="--wait" output="screen"/>
+    <node name="panda_mover" pkg="franka_panda_moveit" type="franka_panda_moveit_node" args="--wait" output="screen"/>
  </launch>
