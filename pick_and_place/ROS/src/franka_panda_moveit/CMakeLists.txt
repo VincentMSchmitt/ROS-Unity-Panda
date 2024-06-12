@@ -52,11 +52,15 @@ include_directories(
 add_executable(${PROJECT_NAME}_node scripts/mover.cpp)
 target_link_libraries(${PROJECT_NAME}_node
   ${catkin_LIBRARIES}
+  moveit_visual_tools
+  rviz_visual_tools
 )
 
 add_executable(test_node scripts/test_cpp.cpp)
 target_link_libraries(test_node
   ${catkin_LIBRARIES}
+  moveit_visual_tools
+  rviz_visual_tools
 )
 
 catkin_install_python(PROGRAMS

@@ -1,0 +1,10 @@
+[1m/Users/vincent/ROS/ws_panda/pick_and_place/ROS/src/franka_panda_moveit/scripts/test_cpp.cpp:97:10: [0m[0;1;31merror: [0m[1mredefinition of 'success'[0m
+    bool success = (move_group_interface_arm.plan(plan) == moveit::core::MoveItErrorCode::SUCCESS);
+[0;1;32m         ^
+[0m[1m/Users/vincent/ROS/ws_panda/pick_and_place/ROS/src/franka_panda_moveit/scripts/test_cpp.cpp:79:10: [0m[0;1;30mnote: [0mprevious definition is here[0m
+    bool success = (move_group_interface_arm.plan(plan) == moveit::core::MoveItErrorCode::SUCCESS);
+[0;1;32m         ^
+[0m1 error generated.
+make[2]: *** [CMakeFiles/test_node.dir/build.make:76: CMakeFiles/test_node.dir/scripts/test_cpp.cpp.o] Error 1
+make[1]: *** [CMakeFiles/Makefile2:3429: CMakeFiles/test_node.dir/all] Error 2
+make: *** [Makefile:146: all] Error 2

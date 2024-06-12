@@ -17,7 +17,6 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <buildtool_depend>catkin</buildtool_depend>
   <build_depend>franka_panda_description</build_depend>
   <build_depend>rospy</build_depend>
   <build_depend>std_msgs</build_depend>
@@ -36,18 +35,16 @@
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>geometry_msgs</exec_depend>
   <exec_depend>ros_tcp_endpoint</exec_depend>
-  <exec_depend>franka_description</exec_depend> 
   <exec_depend>moveit_ros_move_group</exec_depend>
   <exec_depend>moveit_fake_controller_manager</exec_depend>
   <exec_depend>moveit_kinematics</exec_depend>
   <exec_depend>moveit_planners_ompl</exec_depend>
   <exec_depend>moveit_ros_visualization</exec_depend>
-  <exec_depend>joint_state_publisher</exec_depend>
+  <exec_depend>moveit_msgs</exec_depend>
   <exec_depend>joint_state_publisher_gui</exec_depend>
   <exec_depend>robot_state_publisher</exec_depend>
   <exec_depend>xacro</exec_depend>
   <exec_depend>topic_tools</exec_depend>
-  <exec_depend>moveit_msgs</exec_depend>
   <exec_depend>sensor_msgs</exec_depend>
   <exec_depend>controller_manager</exec_depend>
   

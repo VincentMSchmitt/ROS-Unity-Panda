@@ -30,7 +30,6 @@ This open source project was developed at [PickNik Robotics](https://picknik.ai/
 ## Install
 
 ### Ubuntu Debian
-
     sudo apt-get install ros-kinetic-moveit-visual-tools
 
 ### Install From Source

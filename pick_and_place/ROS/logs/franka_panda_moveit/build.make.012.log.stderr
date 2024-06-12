@@ -1,0 +1,14 @@
+Undefined symbols for architecture arm64:
+  "rviz_visual_tools::RvizVisualTools::deleteAllMarkers()", referenced from:
+      _main in test_cpp.cpp.o
+  "rviz_visual_tools::RvizVisualTools::loadRemoteControl()", referenced from:
+      _main in test_cpp.cpp.o
+  "rviz_visual_tools::RvizVisualTools::trigger()", referenced from:
+      _main in test_cpp.cpp.o
+  "moveit_visual_tools::MoveItVisualTools::MoveItVisualTools(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, std::__1::shared_ptr<moveit::core::RobotModel const>)", referenced from:
+      _main in test_cpp.cpp.o
+ld: symbol(s) not found for architecture arm64
+clang-16: [0;1;31merror: [0m[1mlinker command failed with exit code 1 (use -v to see invocation)[0m
+make[2]: *** [CMakeFiles/test_node.dir/build.make:192: /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/.private/franka_panda_moveit/lib/franka_panda_moveit/test_node] Error 1
+make[1]: *** [CMakeFiles/Makefile2:3429: CMakeFiles/test_node.dir/all] Error 2
+make: *** [Makefile:146: all] Error 2
