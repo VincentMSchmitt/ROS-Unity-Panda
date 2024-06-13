@@ -31,18 +31,18 @@ moveit::planning_interface::MoveGroupInterface::Plan plan_trajectory(moveit::pla
     if (!success) {
         std::stringstream ss;
         ss << "Trajectory could not be planned for a destination of " << destination_pose;
-        ss << "\nPlease make sure target and destination are reachable by the robot." << ss.end;
+        ss << "\nPlease make sure target and destination are reachable by the robot.";
         throw std::runtime_error(ss.str());
     }
-
     return plan;
 }
 
 bool plan_pick_and_place(franka_panda_moveit::MoverService::Request &request,
                         franka_panda_moveit::MoverService::Response &response) {
 
-    moveit::planning_interface::MoveGroupInterface move_group("panda_arm");
-    moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
+    ROS_INFO("START PLAN PICK AND PLACE");
+
+    static moveit::planning_interface::MoveGroupInterface move_group("panda_arm");
 
     std::vector<double> current_robot_joint_configuration(request.joints_input.joints.begin(), request.joints_input.joints.end());
 
@@ -100,44 +100,16 @@ bool plan_pick_and_place(franka_panda_moveit::MoverService::Request &request,
 }
 
 int main(int argc, char** argv) {
-    ros::init(argc, argv, "franka_panda_moveit_server");
+    ros::AsyncSpinner spinner(1);
+    spinner.start();
+
     ros::NodeHandle node_handle;
-
-    ROS_INFO_NAMED("HERE", "HERE");
-    // planning group
-    static const std::string PLANNING_GROUP = "panda_arm";
-    moveit::planning_interface::MoveGroupInterface move_group_interface(PLANNING_GROUP);
-    
-    // to add and remove collision objects
-    moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
-
-    ROS_INFO_NAMED("HERE", "HERE2");
-    // Raw pointers are frequently used to refer to the planning group for improved performance.
-    const moveit::core::JointModelGroup* joint_model_group =
-        move_group_interface.getCurrentState()->getJointModelGroup(PLANNING_GROUP);
-
-    // We can print the name of the reference frame for this robot.
-    ROS_INFO_NAMED("franka_panda", "Planning frame: %s", move_group_interface.getPlanningFrame().c_str());
-
-    // We can also print the name of the end-effector link for this group.
-    ROS_INFO_NAMED("franka_panda", "End effector link: %s", move_group_interface.getEndEffectorLink().c_str());
-
-    // We can get a list of all the groups in the robot:
-    ROS_INFO_NAMED("franka_panda", "Available Planning Groups:");
-    std::copy(move_group_interface.getJointModelGroupNames().begin(),
-                move_group_interface.getJointModelGroupNames().end(), std::ostream_iterator<std::string>(std::cout, ", "));
-
-
-    moveit::planning_interface::MoveGroupInterface::Plan plan;
-    bool success = (move_group_interface.plan(plan) == moveit::core::MoveItErrorCode::SUCCESS);
-
-    ROS_INFO_NAMED("franka_panda", "Visualizing plan 1 (pose goal) %s", success ? "" : "FAILED");
-
-    
-
     ros::ServiceServer service = node_handle.advertiseService("franka_panda_moveit", plan_pick_and_place);
+
+    ros::init(argc, argv, "franka_panda_moveit_server");
     ROS_INFO("Ready to plan");
-    ros::spin();
+    //ros::spin();
+    // Start the spinner
 
     return 0;
 }
