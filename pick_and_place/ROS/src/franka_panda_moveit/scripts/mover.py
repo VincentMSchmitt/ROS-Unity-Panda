@@ -99,11 +99,6 @@ def plan_pick_and_place(req):
     response.trajectories.append(pre_place_pose)
     response.trajectories.append(place_pose)
 
-    # Calculate and return TCP positions ----------------------------------------------------------
-    tcp_positions = calculate_tcp_positions(move_group, response.trajectories)
-    # response.tcp_positions = tcp_positions #TODO: send positions with the service
-    print(tcp_positions)
-
     # It is adviced to clear the targets after planning the poses ---------------------------------
     move_group.clear_pose_targets()
 
@@ -136,18 +131,6 @@ def plan_trajectory(move_group, destination_pose, start_joint_angles):
         raise Exception(exception_str)
 
     return planCompat(plan)
-
-"""
-    Calculate the TCP positions for the planned trajectories.
-"""
-def calculate_tcp_positions(move_group, trajectories):
-    tcp_positions = []
-    for traj in trajectories:
-        for point in traj.joint_trajectory.points:
-            move_group.set_joint_value_target(point.positions)
-            tcp_pose = move_group.get_current_pose().pose
-            tcp_positions.append(tcp_pose.position)
-    return tcp_positions
 
 def moveit_server():
     moveit_commander.roscpp_initialize(sys.argv)

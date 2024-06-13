@@ -32,6 +32,7 @@ int main(int argc, char** argv) {
 
     // setup the planning groups
     moveit::planning_interface::MoveGroupInterface move_group_interface_arm(PLANNING_GROUP_ARM);
+    moveit::planning_interface::MoveGroupInterface move_group_interface_hand(PLANNING_GROUP_HAND);
 
     // FOr adding and removing collision objects to the "virtual world" scene
     moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
@@ -39,6 +40,8 @@ int main(int argc, char** argv) {
     // Raw pointers are frequently used to refer to the planning group for improved performance.
     const moveit::core::JointModelGroup* joint_model_group_arm =
         move_group_interface_arm.getCurrentState()->getJointModelGroup(PLANNING_GROUP_ARM);
+    const moveit::core::JointModelGroup* joint_model_group_hand =
+        move_group_interface_hand.getCurrentState()->getJointModelGroup(PLANNING_GROUP_HAND);
 
     // Set workspace boundaries (x_min, y_min, z_min, x_max, y_max, z_max)
     move_group_interface_arm.setWorkspace(-1.0, -1.0, 0.01, 1.0,  1.0, 2.0);
@@ -61,8 +64,11 @@ int main(int argc, char** argv) {
     // ^^^^^^^^^^^^^^^^^^^^^^^^^
     visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to start the demo");
 
-    // .. _move_group_interface-planning-to-pose-goal:
-    //
+    // ----------------------------------------------------------------------------------------------------------------
+    // Open Gripper
+    // ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
     // Planning to a Pose goal
     // ^^^^^^^^^^^^^^^^^^^^^^^
     // We can plan a motion for this group to a desired pose for the
@@ -107,6 +113,7 @@ int main(int argc, char** argv) {
     // Add a box to the scene
     // ^^^^^^^^^^^^^^^^^^^^^^
     // Define a collision object ROS message for the robot to avoid.
+    visual_tools.deleteAllMarkers();
     moveit_msgs::CollisionObject collision_object;
     collision_object.header.frame_id = move_group_interface_arm.getPlanningFrame();
 
@@ -149,6 +156,76 @@ int main(int argc, char** argv) {
     visual_tools.publishTrajectoryLine(plan.trajectory_, joint_model_group_arm);
     visual_tools.trigger();
     visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window once the plan is complete");
+
+    // Attaching objects to the robot ---------------------------------------------------------------------------------
+    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    //
+    // Attach objects to the robot, so that it moves with the robot geometry. This simulates picking up the object for
+    //  the purpose of manipulating it. The motion planning should avoid collisions between the two objects as well.
+    moveit_msgs::CollisionObject object_to_attach;
+    object_to_attach.id = "cylinder1";
+
+    shape_msgs::SolidPrimitive cylinder_primitive;
+    cylinder_primitive.type = primitive.CYLINDER;
+    cylinder_primitive.dimensions.resize(2);
+    cylinder_primitive.dimensions[primitive.CYLINDER_HEIGHT] = 0.20;
+    cylinder_primitive.dimensions[primitive.CYLINDER_RADIUS] = 0.04;
+
+    // We define the frame/pose for this cylinder so that it appears in the gripper
+    object_to_attach.header.frame_id = move_group_interface_arm.getEndEffectorLink();
+    geometry_msgs::Pose grab_pose;
+    grab_pose.orientation.w = 1.0;
+    grab_pose.position.z = 0.2;
+
+    // First, we add the object to the world (without using a vector)
+    object_to_attach.primitives.push_back(cylinder_primitive);
+    object_to_attach.primitive_poses.push_back(grab_pose);
+    object_to_attach.operation = object_to_attach.ADD;
+    planning_scene_interface.applyCollisionObject(object_to_attach);
+
+    // Then, we "attach" the object to the robot at the given link and allow collisions between the object and the listed
+    // links. You could also use applyAttachedCollisionObject to attach an object to the robot directly.
+    ROS_INFO_NAMED("tutorial", "Attach the object to the robot");
+    move_group_interface_arm.attachObject(object_to_attach.id, "panda_hand", { "panda_leftfinger", "panda_rightfinger" });
+
+    visual_tools.trigger();
+
+    /* Wait for MoveGroup to receive and process the attached collision object message */
+    visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window once the new object is attached to the robot");
+
+    // Replan, but now with the object in hand.
+    move_group_interface_arm.setStartStateToCurrentState();
+    success = (move_group_interface_arm.plan(plan) == moveit::core::MoveItErrorCode::SUCCESS);
+    ROS_INFO_NAMED("tutorial", "Visualizing plan 7 (move around cuboid with cylinder) %s", success ? "SUCCESS" : "FAILED");
+    visual_tools.publishTrajectoryLine(plan.trajectory_, joint_model_group_arm);
+    visual_tools.trigger();
+    visual_tools.deleteAllMarkers();
+    visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window once the plan is complete");
+
+    // Detaching and Removing Objects ---------------------------------------------------------------------------------
+    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    //
+    // Now, let's detach the cylinder from the robot's gripper.
+    ROS_INFO_NAMED("tutorial", "Detach the object from the robot");
+    move_group_interface_arm.detachObject(object_to_attach.id);
+    visual_tools.deleteAllMarkers();
+    visual_tools.trigger();
+
+    /* Wait for MoveGroup to receive and process the attached collision object message */
+    visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window once the new object is detached from the robot");
+
+    // Now, let's remove the objects from the world.
+    ROS_INFO_NAMED("tutorial", "Remove the objects from the world");
+    std::vector<std::string> object_ids;
+    object_ids.push_back(collision_object.id);
+    object_ids.push_back(object_to_attach.id);
+    planning_scene_interface.removeCollisionObjects(object_ids);
+
+    // Show text in RViz of status
+    visual_tools.trigger();
+
+    /* Wait for MoveGroup to receive and process the attached collision object message */
+    visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to once the collision object disappears");
 
     // ----------------------------------------------------------------------------------------------------------------
     // Program End
