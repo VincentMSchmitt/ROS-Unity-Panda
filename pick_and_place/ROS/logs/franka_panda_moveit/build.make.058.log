@@ -1,0 +1,43 @@
+[  0%] Built target moveit_msgs_generate_messages_py
+[  0%] Built target std_msgs_generate_messages_py
+[  0%] Built target sensor_msgs_generate_messages_py
+[  0%] Built target geometry_msgs_generate_messages_py
+[  0%] Built target _franka_panda_moveit_generate_messages_check_deps_ObjectInfo
+[  0%] Built target _franka_panda_moveit_generate_messages_check_deps_PandaMoveitJoints
+[  0%] Built target _franka_panda_moveit_generate_messages_check_deps_PandaMoveitOffset
+[  0%] Built target std_msgs_generate_messages_cpp
+[  0%] Built target geometry_msgs_generate_messages_cpp
+[  0%] Built target _franka_panda_moveit_generate_messages_check_deps_MoverService
+[  0%] Built target moveit_msgs_generate_messages_cpp
+[  0%] Built target _franka_panda_moveit_generate_messages_check_deps_FollowerService
+[  0%] Built target std_msgs_generate_messages_eus
+[  0%] Built target _franka_panda_moveit_generate_messages_check_deps_PandaTrajectory
+[  0%] Built target geometry_msgs_generate_messages_eus
+[  0%] Built target sensor_msgs_generate_messages_cpp
+[  0%] Built target sensor_msgs_generate_messages_eus
+[  0%] Built target moveit_msgs_generate_messages_eus
+[  0%] Built target std_msgs_generate_messages_lisp
+[  0%] Built target moveit_msgs_generate_messages_lisp
+[  0%] Built target sensor_msgs_generate_messages_lisp
+[  0%] Built target geometry_msgs_generate_messages_lisp
+[  0%] Built target std_msgs_generate_messages_nodejs
+[  0%] Built target geometry_msgs_generate_messages_nodejs
+[  0%] Built target moveit_msgs_generate_messages_nodejs
+[  0%] Built target sensor_msgs_generate_messages_nodejs
+[ 16%] Built target franka_panda_moveit_generate_messages_cpp
+[ 37%] Built target franka_panda_moveit_generate_messages_py
+[ 56%] Built target franka_panda_moveit_generate_messages_eus
+[ 81%] Built target franka_panda_moveit_generate_messages_nodejs
+[ 89%] Built target franka_panda_moveit_generate_messages_lisp
+[ 94%] Built target test_node
+[ 97%] [32mBuilding CXX object CMakeFiles/franka_panda_moveit_node.dir/scripts/mover.cpp.o[0m
+[ 97%] Built target franka_panda_moveit_generate_messages
+[1m/Users/vincent/ROS/ws_panda/pick_and_place/ROS/src/franka_panda_moveit/scripts/mover.cpp:29:89: [0m[0;1;35mwarning: [0m[1m'MoveItErrorCode' is deprecated: Use moveit::core::MoveItErrorCode [-Wdeprecated-declarations][0m
+    bool success = (move_group.plan(plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+[0;1;32m                                                                                        ^
+[0m[1m/Users/vincent/miniconda3/envs/ros_env/include/moveit/move_group_interface/move_group_interface.h:78:25: [0m[0;1;30mnote: [0m'MoveItErrorCode' has been explicitly marked deprecated here[0m
+using MoveItErrorCode [[deprecated("Use moveit::core::MoveItErrorCode")]] = moveit::core::MoveItErrorCode;
+[0;1;32m                        ^
+[0m1 warning generated.
+[100%] [32m[1mLinking CXX executable /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/.private/franka_panda_moveit/lib/franka_panda_moveit/franka_panda_moveit_node[0m
+[100%] Built target franka_panda_moveit_node

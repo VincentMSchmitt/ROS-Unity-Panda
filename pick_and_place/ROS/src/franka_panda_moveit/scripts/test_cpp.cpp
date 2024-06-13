@@ -1,3 +1,8 @@
+/*
+    This program is a testing ground for experimenting with the moveit c++ interface.
+    Everything that is being done here, served as an example for the real program.
+*/
+
 #include <ros/ros.h>
 #include <moveit/move_group_interface/move_group_interface.h>
 #include <moveit/planning_scene_interface/planning_scene_interface.h>
@@ -61,26 +66,33 @@ int main(int argc, char** argv) {
 
     // ----------------------------------------------------------------------------------------------------------------
     // Start the demo
-    // ^^^^^^^^^^^^^^^^^^^^^^^^^
+    // ^^^^^^^^^^^^^^
     visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to start the demo");
 
     // ----------------------------------------------------------------------------------------------------------------
     // Open Gripper
-    // ^^^^^^^^^^^^^^^^^^^^^^^^^
-
+    // ^^^^^^^^^^^^
+    std::vector<double> open_gripper = {0.04, 0.04};
+    move_group_interface_hand.setJointValueTarget(open_gripper);
+    move_group_interface_hand.setMaxVelocityScalingFactor(1);
+    move_group_interface_hand.setMaxAccelerationScalingFactor(1);
+    move_group_interface_hand.move();
     
     visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to plan a pose");
 
-    // Planning to a Pose goal
+    // ----------------------------------------------------------------------------------------------------------------
+    // Planning to a Pose goal 
     // ^^^^^^^^^^^^^^^^^^^^^^^
-    // We can plan a motion for this group to a desired pose for the
-    // end-effector.
+    // We can plan a motion for this group to a desired pose for the end-effector.
     geometry_msgs::Pose target_pose1;
     target_pose1.position.x = 0.28;
     target_pose1.position.y = -0.2;
     target_pose1.position.z = 0.5;
     target_pose1.orientation.y = 1.0;
     move_group_interface_arm.setPoseTarget(target_pose1);
+
+    move_group_interface_arm.setMaxVelocityScalingFactor(0.75);
+    move_group_interface_arm.setMaxAccelerationScalingFactor(0.75);
 
     moveit::planning_interface::MoveGroupInterface::Plan plan;
     bool success = (move_group_interface_arm.plan(plan) == moveit::core::MoveItErrorCode::SUCCESS);
@@ -89,12 +101,16 @@ int main(int argc, char** argv) {
     visual_tools.trigger();
     move_group_interface_arm.clearPoseTargets();
     visual_tools.prompt("Press 'next' to execute the path");
-    move_group_interface_arm.setMaxVelocityScalingFactor(0.7);
+
+    // ----------------------------------------------------------------------------------------------------------------
+    // Executing to a Pose goal 
+    // ^^^^^^^^^^^^^^^^^^^^^^^^
     move_group_interface_arm.execute(plan);
     visual_tools.prompt("Press 'next' to plan the next path (no obstacles)");
 
     // ----------------------------------------------------------------------------------------------------------------
     // Simple plan
+    // ^^^^^^^^^^^
     // plan a simple goal with no objects in the way
     visual_tools.deleteAllMarkers();
     move_group_interface_arm.setStartState(*move_group_interface_arm.getCurrentState());
@@ -201,8 +217,8 @@ int main(int argc, char** argv) {
     success = (move_group_interface_arm.plan(plan) == moveit::core::MoveItErrorCode::SUCCESS);
     ROS_INFO_NAMED("tutorial", "Visualizing plan 7 (move around cuboid with cylinder) %s", success ? "SUCCESS" : "FAILED");
     visual_tools.publishTrajectoryLine(plan.trajectory_, joint_model_group_arm);
-    visual_tools.trigger();
     visual_tools.deleteAllMarkers();
+    visual_tools.trigger();
     visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window once the plan is complete");
 
     // Detaching and Removing Objects ---------------------------------------------------------------------------------
@@ -234,6 +250,7 @@ int main(int argc, char** argv) {
     // Program End
     // ^^^^^^^^^^^
     visual_tools.deleteAllMarkers();
+    visual_tools.trigger();
     ros::shutdown();
     return 0;
 }

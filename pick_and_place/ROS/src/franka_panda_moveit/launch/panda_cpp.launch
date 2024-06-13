@@ -1,11 +1,19 @@
 <launch>
     <!-- Start RViz -->
-    <include file="$(find moveit_ros_visualization)/launch/moveit_rviz.launch">
-      <arg name="config" value="$(find your_package_name)/launch/moveit.rviz" />
+    <arg name="tcp_ip" default="0.0.0.0"/>
+    <arg name="tcp_port" default="10000"/>
+
+    <!-- ROS-TCP-Connector -->
+      <node name="server_endpoint" pkg="ros_tcp_endpoint" type="default_server_endpoint.py" args="--wait" output="screen" respawn="true">
+      <param name="tcp_ip" type="string" value="$(arg tcp_ip)"/>
+          <param name="tcp_port" type="int" value="$(arg tcp_port)"/>
+    </node>
+
+    <!-- MoveIt -->
+    <include file="$(find franka_panda_moveit)/launch/demo.launch">
+      <arg name="use_rviz" value="true"/>
     </include>
   
     <!-- RViz Visual Tools GUI -->
-    <node name="rviz_visual_tools_gui" pkg="rviz_visual_tools" type="RvizVisualToolsGui" output="screen">
-      <param name="debug" value="false" />
-    </node>
+    <node name="franka_panda_moveit_server" pkg="franka_panda_moveit" type="franka_panda_moveit_node" output="screen"/>
   </launch>
