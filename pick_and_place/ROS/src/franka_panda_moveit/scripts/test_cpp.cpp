@@ -68,6 +68,8 @@ int main(int argc, char** argv) {
     // Open Gripper
     // ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+    
+    visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to plan a pose");
 
     // Planning to a Pose goal
     // ^^^^^^^^^^^^^^^^^^^^^^^
@@ -87,6 +89,7 @@ int main(int argc, char** argv) {
     visual_tools.trigger();
     move_group_interface_arm.clearPoseTargets();
     visual_tools.prompt("Press 'next' to execute the path");
+    move_group_interface_arm.setMaxVelocityScalingFactor(0.7);
     move_group_interface_arm.execute(plan);
     visual_tools.prompt("Press 'next' to plan the next path (no obstacles)");
 
