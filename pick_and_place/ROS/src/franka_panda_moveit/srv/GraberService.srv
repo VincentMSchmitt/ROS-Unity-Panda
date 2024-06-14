@@ -1,0 +1,6 @@
+PandaMoveitGrabberJoints joints_input
+PandaMoveitGrabberDistance distance
+PandaMoveitOffset grab_offset
+---
+# send back the trajectories to open/close the gripper
+moveit_msgs/RobotTrajectory[] trajectories

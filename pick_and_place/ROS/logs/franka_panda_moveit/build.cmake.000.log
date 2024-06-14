@@ -46,11 +46,11 @@ This warning is for project developers.  Use -Wno-dev to suppress it.
 [36m--[0m catkin 0.8.10
 [36m--[0m BUILD_SHARED_LIBS is on
 [36m--[0m Using these message generators: gencpp;geneus;genlisp;gennodejs;genpy
-[36m--[0m franka_panda_moveit: 4 messages, 2 services
+[36m--[0m franka_panda_moveit: 5 messages, 3 services
 [36m--[0m Installing devel-space wrapper /Users/vincent/ROS/ws_panda/pick_and_place/ROS/src/franka_panda_moveit/scripts/mover.py to /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/.private/franka_panda_moveit/lib/franka_panda_moveit
 [36m--[0m Installing devel-space wrapper /Users/vincent/ROS/ws_panda/pick_and_place/ROS/src/franka_panda_moveit/scripts/follower.py to /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/.private/franka_panda_moveit/lib/franka_panda_moveit
 [36m--[0m Installing devel-space wrapper /Users/vincent/ROS/ws_panda/pick_and_place/ROS/src/franka_panda_moveit/scripts/trajectory_subscriber.py to /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/.private/franka_panda_moveit/lib/franka_panda_moveit
 [36m--[0m Installing devel-space wrapper /Users/vincent/ROS/ws_panda/pick_and_place/ROS/src/franka_panda_moveit/scripts/collision_detector.py to /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/.private/franka_panda_moveit/lib/franka_panda_moveit
-[36m--[0m Configuring done (2.4s)
-[36m--[0m Generating done (0.2s)
+[36m--[0m Configuring done (2.9s)
+[36m--[0m Generating done (0.3s)
 [36m--[0m Build files have been written to: /Users/vincent/ROS/ws_panda/pick_and_place/ROS/build/franka_panda_moveit

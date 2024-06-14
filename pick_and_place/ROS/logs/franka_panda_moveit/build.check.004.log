@@ -1,0 +1,41 @@
+[0mCMake Deprecation Warning at CMakeLists.txt:1 (cmake_minimum_required):
+  Compatibility with CMake < 3.5 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value or use a ...<max> suffix to tell
+  CMake that the project does not need compatibility with older versions.
+
+[0m
+[36m--[0m Using CATKIN_DEVEL_PREFIX: /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/.private/franka_panda_moveit
+[36m--[0m Using CMAKE_PREFIX_PATH: /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel;/Users/vincent/ros/ws_panda/pick_and_place/ROS/devel;/Users/vincent/miniconda3/envs/ros_env
+[36m--[0m This workspace overlays: /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel;/Users/vincent/ros/ws_panda/pick_and_place/ROS/devel;/Users/vincent/miniconda3/envs/ros_env
+[33mCMake Warning (dev) at /Users/vincent/miniconda3/envs/ros_env/share/catkin/cmake/python.cmake:4 (find_package):
+  Policy CMP0148 is not set: The FindPythonInterp and FindPythonLibs modules
+  are removed.  Run "cmake --help-policy CMP0148" for policy details.  Use
+  the cmake_policy command to set the policy and suppress this warning.
+
+[36mCall Stack (most recent call first):[0m
+  /Users/vincent/miniconda3/envs/ros_env/share/catkin/cmake/all.cmake:164 (include)
+  /Users/vincent/miniconda3/envs/ros_env/share/catkin/cmake/catkinConfig.cmake:20 (include)
+  CMakeLists.txt:4 (find_package)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+[0m
+[36m--[0m Using PYTHON_EXECUTABLE: /Users/vincent/miniconda3/envs/ros_env/bin/python3.11
+[36m--[0m Using default Python package layout
+[36m--[0m Using empy: /Users/vincent/miniconda3/envs/ros_env/lib/python3.11/site-packages/em.py
+[36m--[0m Using CATKIN_ENABLE_TESTING: ON
+[36m--[0m Call enable_testing()
+[36m--[0m Using CATKIN_TEST_RESULTS_DIR: /Users/vincent/ROS/ws_panda/pick_and_place/ROS/build/franka_panda_moveit/test_results
+[36m--[0m Found gtest: gtests will be built
+[36m--[0m Using Python nosetests: /Users/vincent/miniconda3/envs/ros_env/bin/nosetests
+[36m--[0m catkin 0.8.10
+[36m--[0m BUILD_SHARED_LIBS is on
+[36m--[0m Using these message generators: gencpp;geneus;genlisp;gennodejs;genpy
+[36m--[0m franka_panda_moveit: 6 messages, 3 services
+[36m--[0m Installing devel-space wrapper /Users/vincent/ROS/ws_panda/pick_and_place/ROS/src/franka_panda_moveit/scripts/mover.py to /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/.private/franka_panda_moveit/lib/franka_panda_moveit
+[36m--[0m Installing devel-space wrapper /Users/vincent/ROS/ws_panda/pick_and_place/ROS/src/franka_panda_moveit/scripts/follower.py to /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/.private/franka_panda_moveit/lib/franka_panda_moveit
+[36m--[0m Installing devel-space wrapper /Users/vincent/ROS/ws_panda/pick_and_place/ROS/src/franka_panda_moveit/scripts/trajectory_subscriber.py to /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/.private/franka_panda_moveit/lib/franka_panda_moveit
+[36m--[0m Installing devel-space wrapper /Users/vincent/ROS/ws_panda/pick_and_place/ROS/src/franka_panda_moveit/scripts/collision_detector.py to /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/.private/franka_panda_moveit/lib/franka_panda_moveit
+[36m--[0m Configuring done (1.1s)
+[36m--[0m Generating done (0.2s)
+[36m--[0m Build files have been written to: /Users/vincent/ROS/ws_panda/pick_and_place/ROS/build/franka_panda_moveit

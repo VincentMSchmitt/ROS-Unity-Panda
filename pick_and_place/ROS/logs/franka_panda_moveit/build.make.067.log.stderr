@@ -1,7 +1,0 @@
-[1m/Users/vincent/ROS/ws_panda/pick_and_place/ROS/src/franka_panda_moveit/scripts/mover.cpp:32:89: [0m[0;1;35mwarning: [0m[1m'MoveItErrorCode' is deprecated: Use moveit::core::MoveItErrorCode [-Wdeprecated-declarations][0m
-    bool success = (move_group.plan(plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
-[0;1;32m                                                                                        ^
-[0m[1m/Users/vincent/miniconda3/envs/ros_env/include/moveit/move_group_interface/move_group_interface.h:78:25: [0m[0;1;30mnote: [0m'MoveItErrorCode' has been explicitly marked deprecated here[0m
-using MoveItErrorCode [[deprecated("Use moveit::core::MoveItErrorCode")]] = moveit::core::MoveItErrorCode;
-[0;1;32m                        ^
-[0m1 warning generated.

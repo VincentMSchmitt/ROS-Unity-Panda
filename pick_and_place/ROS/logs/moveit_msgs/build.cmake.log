@@ -57,6 +57,6 @@ Generating for action Pickup
 [36m--[0m Generating .msg files for action moveit_msgs/Place /Users/vincent/ROS/ws_panda/pick_and_place/ROS/src/moveit_msgs/action/Place.action
 Generating for action Place
 [36m--[0m moveit_msgs: 81 messages, 24 services
-[36m--[0m Configuring done (2.4s)
+[36m--[0m Configuring done (3.1s)
 [36m--[0m Generating done (0.3s)
 [36m--[0m Build files have been written to: /Users/vincent/ROS/ws_panda/pick_and_place/ROS/build/moveit_msgs

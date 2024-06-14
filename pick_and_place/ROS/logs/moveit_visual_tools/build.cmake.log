@@ -7,6 +7,18 @@ Not searching for unused variables given on the command line.
   CMake that the project does not need compatibility with older versions.
 
 [0m
+[36m--[0m The C compiler identification is Clang 16.0.6
+[36m--[0m The CXX compiler identification is Clang 16.0.6
+[36m--[0m Detecting C compiler ABI info
+[36m--[0m Detecting C compiler ABI info - done
+[36m--[0m Check for working C compiler: /Users/vincent/miniconda3/envs/ros_env/bin/arm64-apple-darwin20.0.0-clang - skipped
+[36m--[0m Detecting C compile features
+[36m--[0m Detecting C compile features - done
+[36m--[0m Detecting CXX compiler ABI info
+[36m--[0m Detecting CXX compiler ABI info - done
+[36m--[0m Check for working CXX compiler: /Users/vincent/miniconda3/envs/ros_env/bin/arm64-apple-darwin20.0.0-clang++ - skipped
+[36m--[0m Detecting CXX compile features
+[36m--[0m Detecting CXX compile features - done
 [36m--[0m Using CATKIN_DEVEL_PREFIX: /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/.private/moveit_visual_tools
 [36m--[0m Using CMAKE_PREFIX_PATH: /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel;/Users/vincent/ros/ws_panda/pick_and_place/ROS/devel;/Users/vincent/miniconda3/envs/ros_env
 [36m--[0m This workspace overlays: /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel;/Users/vincent/ros/ws_panda/pick_and_place/ROS/devel;/Users/vincent/miniconda3/envs/ros_env
@@ -21,8 +33,10 @@ Not searching for unused variables given on the command line.
   CMakeLists.txt:5 (find_package)
 This warning is for project developers.  Use -Wno-dev to suppress it.
 [0m
+[36m--[0m Found PythonInterp: /Users/vincent/miniconda3/envs/ros_env/bin/python3.11 (found suitable version "3.11.9", minimum required is "3.11")
 [36m--[0m Using PYTHON_EXECUTABLE: /Users/vincent/miniconda3/envs/ros_env/bin/python3.11
 [36m--[0m Using default Python package layout
+[36m--[0m Found PY_em: /Users/vincent/miniconda3/envs/ros_env/lib/python3.11/site-packages/em.py
 [36m--[0m Using empy: /Users/vincent/miniconda3/envs/ros_env/lib/python3.11/site-packages/em.py
 [36m--[0m Using CATKIN_ENABLE_TESTING: ON
 [36m--[0m Call enable_testing()
@@ -33,6 +47,6 @@ This warning is for project developers.  Use -Wno-dev to suppress it.
 [36m--[0m BUILD_SHARED_LIBS is on
 [36m--[0m Using these message generators: gencpp;geneus;genlisp;gennodejs;genpy
 [36m--[0m Found Boost: /Users/vincent/miniconda3/envs/ros_env/lib/cmake/Boost-1.82.0/BoostConfig.cmake (found version "1.82.0") found components: system
-[36m--[0m Configuring done (1.8s)
-[36m--[0m Generating done (0.3s)
+[36m--[0m Configuring done (3.8s)
+[36m--[0m Generating done (0.5s)
 [36m--[0m Build files have been written to: /Users/vincent/ROS/ws_panda/pick_and_place/ROS/build/moveit_visual_tools
