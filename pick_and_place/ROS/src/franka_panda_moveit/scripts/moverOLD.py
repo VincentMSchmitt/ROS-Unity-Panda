@@ -17,7 +17,6 @@ from std_msgs.msg import String
 from moveit_commander.conversions import pose_to_list
 
 from franka_panda_moveit.srv import MoverService, MoverServiceRequest, MoverServiceResponse
-from franka_panda_moveit.srv import GrabberService, GrabberServiceRequest, GrabberServiceResponse
 
 joint_names = ['panda_joint1', 'panda_joint2', 'panda_joint3', 'panda_joint4', 'panda_joint5', 'panda_joint6', 'panda_joint7']
 
@@ -30,13 +29,16 @@ else:
         return plan
 
 """
-    Creates a pick and place plan using the five states below.
+    Creates a pick and place plan using the four states below.
     
     1. Pre Grasp - position gripper directly above target object
     2. Grasp - lower gripper so that fingers are on either side of object
     3. Pick Up - raise gripper back to the pre grasp position
-    4. Pre Place - position gripper directly above the desired placement position
-    5. Place - move gripper to desired placement position
+    4. Place - move gripper to desired placement position
+
+    Gripper behaviour is handled outside of this trajectory planning.
+        - Gripper close occurs after 'grasp' position has been achieved
+        - Gripper open occurs after 'place' position has been achieved
 
     https://github.com/ros-planning/moveit/blob/master/moveit_commander/src/moveit_commander/move_group.py
 """
@@ -103,28 +105,6 @@ def plan_pick_and_place(req):
     return response
 
 """
-    Creates a grab plan. The gripper can either:
-    1. Open
-    2. Close
-"""
-def grab(req):
-    response = GrabberServiceResponse()
-
-    # define new group for the hand
-    group_name = "panda_hand"
-    move_group = moveit_commander.MoveGroupCommander(group_name)
-
-    # get the current grabber state
-    current_gabber_configuration = req.joints_input.joints
-
-    # plan the open/closing of the gripper
-    pre_grasp_pose = plan_grab(move_group, req.distance, current_gabber_configuration)
-    if not pre_grasp_pose.joint_trajectory.points:
-        rospy.logwarn("Pre grasp pose planning failed.")
-        return response # empty
-    previous_ending_joint_angles = pre_grasp_pose.joint_trajectory.points[-1].positions
-
-"""
     Given the start angles of the robot, plan a trajectory that ends at the destination pose.
 """
 def plan_trajectory(move_group, destination_pose, start_joint_angles):
@@ -152,44 +132,11 @@ def plan_trajectory(move_group, destination_pose, start_joint_angles):
 
     return planCompat(plan)
 
-"""
-    Given the start angles of the robot and the distance that should be grabbed, plan a trajectory
-    that ends at the destination pose.
-"""
-def plan_grab(move_group, distance, start_joint_angles):
-    # save current states of the joints defined above
-    current_joint_state = JointState()
-    current_joint_state.name = joint_names
-    current_joint_state.position = start_joint_angles
-
-    # set the start state with the current joint values
-    moveit_robot_state = RobotState()
-    moveit_robot_state.joint_state = current_joint_state
-    move_group.set_start_state(moveit_robot_state)
-
-    # set the goal state and plan the trajectory
-    goal_gripper = [distance, distance]
-    move_group.set_joint_value_target(goal_gripper)
-    #move_group.set_pose_target(goal_gripper)
-    plan = move_group.plan()
-
-    # if planning fails, raise exeption
-    if not plan:
-        exception_str = """
-            There was en error while trying to create a grab plan with starting joint angles {}
-            and an distance of {}.
-            Please make sure the distance is within the limits of the robot.
-        """.format(start_joint_angles, distance)
-        raise Exception(exception_str)
-
-    return planCompat(plan)
-
 def moveit_server():
     moveit_commander.roscpp_initialize(sys.argv)
     rospy.init_node('franka_panda_moveit_server')
 
-    s = rospy.Service('franka_panda_moveit_move', MoverService, plan_pick_and_place)
-    #s2 = rospy.Service('franka_panda_moveit_grab', GrabberService, grab)
+    s = rospy.Service('franka_panda_moveit', MoverService, plan_pick_and_place)
     print("Ready to plan")
     rospy.spin()
 

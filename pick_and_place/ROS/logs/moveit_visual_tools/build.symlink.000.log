@@ -1,6 +1,0 @@
-Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/lib/libmoveit_visual_tools.3.6.1.dylib
-Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/lib/libmoveit_visual_tools.dylib
-Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/lib/pkgconfig/moveit_visual_tools.pc
-Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/lib/moveit_visual_tools/moveit_visual_tools_demo
-Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/share/moveit_visual_tools/cmake/moveit_visual_toolsConfig-version.cmake
-Symlinking /Users/vincent/ROS/ws_panda/pick_and_place/ROS/devel/share/moveit_visual_tools/cmake/moveit_visual_toolsConfig.cmake
