@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Panda.Core.Controller {
@@ -9,8 +10,16 @@ namespace Panda.Core.Controller {
         public Color selectionColor = Color.red;
         public Material limitMaterial;
         public MeshFilter limitMeshFilter;
-        private ArticulationBody[] articulationChain;
-        private ISelectionObserver selectionObserver;
+        public ISelectionObserver selectionObserver { get; private set; }
+        public ArticulationBody[] articulationChain {get; private set; }
+        public List<ArticulationBody> articulationList {
+            get {
+                List<ArticulationBody> articulationListTemp = articulationChain?.OfType<ArticulationBody>().ToList();
+                return articulationListTemp.Where( x => ( (x.jointType == ArticulationJointType.RevoluteJoint)
+                                                       || (x.jointType == ArticulationJointType.PrismaticJoint) )
+                                                 ).ToList<ArticulationBody>();
+            }
+        }
         private static RobotController instance;
         public static RobotController GetInstance {
             get {
