@@ -1,0 +1,49 @@
+[  0%] Built target sensor_msgs_generate_messages_py
+[  0%] Built target geometry_msgs_generate_messages_py
+[  0%] Built target std_msgs_generate_messages_py
+[  0%] Built target moveit_msgs_generate_messages_py
+[  0%] Built target _franka_panda_moveit_generate_messages_check_deps_PandaMoveitGrabberJoints
+[  0%] Built target _franka_panda_moveit_generate_messages_check_deps_PandaMoveitGrabberDistance
+[  0%] Built target _franka_panda_moveit_generate_messages_check_deps_MoverService
+[  0%] Built target _franka_panda_moveit_generate_messages_check_deps_ObjectInfo
+[  0%] Built target _franka_panda_moveit_generate_messages_check_deps_PandaMoveitOffset
+[  0%] Built target _franka_panda_moveit_generate_messages_check_deps_PandaMoveitJoints
+[  0%] Built target _franka_panda_moveit_generate_messages_check_deps_PandaTrajectory
+[  0%] Built target geometry_msgs_generate_messages_cpp
+[  0%] Built target std_msgs_generate_messages_cpp
+[  0%] Built target _franka_panda_moveit_generate_messages_check_deps_FollowerService
+[  0%] Built target moveit_msgs_generate_messages_cpp
+[  0%] Built target _franka_panda_moveit_generate_messages_check_deps_GraberService
+[  0%] Built target geometry_msgs_generate_messages_eus
+[  0%] Built target std_msgs_generate_messages_lisp
+[  0%] Built target sensor_msgs_generate_messages_cpp
+[  0%] Built target moveit_msgs_generate_messages_eus
+[  0%] Built target std_msgs_generate_messages_eus
+[  0%] Built target sensor_msgs_generate_messages_eus
+[  0%] Built target geometry_msgs_generate_messages_lisp
+[  0%] Built target sensor_msgs_generate_messages_lisp
+[  0%] Built target std_msgs_generate_messages_nodejs
+[  0%] Built target moveit_msgs_generate_messages_lisp
+[  0%] Built target geometry_msgs_generate_messages_nodejs
+[  0%] Built target sensor_msgs_generate_messages_nodejs
+[  0%] Built target moveit_msgs_generate_messages_nodejs
+[  3%] [34m[1mGenerating C++ code from franka_panda_moveit/PandaMoveitGrabberDistance.msg[0m
+[  3%] [34m[1mGenerating C++ code from franka_panda_moveit/GraberService.srv[0m
+[  5%] [34m[1mGenerating EusLisp code from franka_panda_moveit/PandaMoveitGrabberDistance.msg[0m
+[  7%] [34m[1mGenerating Python from MSG franka_panda_moveit/PandaMoveitGrabberDistance[0m
+[ 11%] [34m[1mGenerating Lisp code from franka_panda_moveit/PandaMoveitGrabberDistance.msg[0m
+[ 11%] [34m[1mGenerating Javascript code from franka_panda_moveit/PandaMoveitGrabberDistance.msg[0m
+[ 15%] Built target franka_panda_moveit_node
+[ 19%] Built target test_node
+[ 21%] [34m[1mGenerating Lisp code from franka_panda_moveit/GraberService.srv[0m
+[ 23%] [34m[1mGenerating EusLisp code from franka_panda_moveit/GraberService.srv[0m
+[ 25%] [34m[1mGenerating Javascript code from franka_panda_moveit/GraberService.srv[0m
+[ 26%] [34m[1mGenerating Python code from SRV franka_panda_moveit/GraberService[0m
+[ 40%] Built target franka_panda_moveit_generate_messages_cpp
+[ 53%] Built target franka_panda_moveit_generate_messages_lisp
+[ 67%] Built target franka_panda_moveit_generate_messages_nodejs
+[ 82%] Built target franka_panda_moveit_generate_messages_eus
+[ 86%] [34m[1mGenerating Python srv __init__.py for franka_panda_moveit[0m
+[ 86%] [34m[1mGenerating Python msg __init__.py for franka_panda_moveit[0m
+[100%] Built target franka_panda_moveit_generate_messages_py
+[100%] Built target franka_panda_moveit_generate_messages
