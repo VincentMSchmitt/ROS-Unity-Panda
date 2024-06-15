@@ -72,9 +72,9 @@ def plan_pick_and_place(req):
 
     # plan the trajectory of the poses, if no points in the pose, return empty
     # Plan the hand open trajectory --------------------------------------------------------------
-    hand_close_trajectory = plan_hand_trajectory(hand_move_group, [0.04, 0.04])
-    if not hand_close_trajectory.joint_trajectory.points:
-        rospy.logwarn("Hand close trajectory planning failed.")
+    hand_open_trajectory = plan_hand_trajectory(hand_move_group, [0.04, 0.04])
+    if not hand_open_trajectory.joint_trajectory.points:
+        rospy.logwarn("Hand open trajectory planning failed.")
         return response # empty
 
     # Pre grasp - position gripper directly above target object -----------------------------------

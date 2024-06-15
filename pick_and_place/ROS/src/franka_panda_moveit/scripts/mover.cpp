@@ -15,10 +15,11 @@ std::vector<std::string> joint_names = {"panda_joint1", "panda_joint2", "panda_j
 
 moveit::planning_interface::MoveGroupInterface::Plan plan_trajectory(moveit::planning_interface::MoveGroupInterface& move_group,
                                                                         const geometry_msgs::Pose& destination_pose,
-                                                                        const std::vector<double>& start_joint_angles) {
+                                                                        const boost::array<double, 7UL>& start_joint_angles) {
     sensor_msgs::JointState current_joint_state;
     current_joint_state.name = joint_names;
-    current_joint_state.position = start_joint_angles;
+
+    current_joint_state.position = ToVector(start_joint_angles);
 
     moveit_msgs::RobotState moveit_robot_state;
     moveit_robot_state.joint_state = current_joint_state;
@@ -37,6 +38,23 @@ moveit::planning_interface::MoveGroupInterface::Plan plan_trajectory(moveit::pla
     return plan;
 }
 
+std::vector<double> ToVector(boost::array<double, 7UL> array) {
+    std::vector<double> vector;
+    for (auto elem : array) {
+        vector.push_back(elem);
+    }
+    return std::move(vector);
+}
+
+boost::array<double, 7UL> ToArray(std::vector<double> vector) {
+    boost::array<double, 7UL> array;
+    int i = 0;
+    for (auto elem : vector) {
+        array[i++] = elem;
+    }
+    return std::move(array);
+}
+
 bool plan_pick_and_place(franka_panda_moveit::MoverService::Request &request,
                         franka_panda_moveit::MoverService::Response &response) {
 
@@ -44,7 +62,8 @@ bool plan_pick_and_place(franka_panda_moveit::MoverService::Request &request,
 
     static moveit::planning_interface::MoveGroupInterface move_group("panda_arm");
 
-    std::vector<double> current_robot_joint_configuration(request.joints_input.joints.begin(), request.joints_input.joints.end());
+    //std::vector<double> current_robot_joint_configuration(request.joints_input.joints.begin(), request.joints_input.joints.end());
+    auto current_robot_joint_configuration = request.joints_input.joints;
 
     // pre grasp pose
     auto pre_grasp_pose = plan_trajectory(move_group, request.pick_pose, current_robot_joint_configuration);
@@ -57,7 +76,7 @@ bool plan_pick_and_place(franka_panda_moveit::MoverService::Request &request,
     // pick pose
     geometry_msgs::Pose pick_pose = request.pick_pose;
     pick_pose.position.z -= request.offset.offset;
-    auto grasp_pose = plan_trajectory(move_group, pick_pose, previous_ending_joint_angles);
+    auto grasp_pose = plan_trajectory(move_group, pick_pose, ToArray(previous_ending_joint_angles));
     if (grasp_pose.trajectory_.joint_trajectory.points.empty()) {
         ROS_WARN("Grasp pose planning failed.");
         return false;
@@ -65,7 +84,7 @@ bool plan_pick_and_place(franka_panda_moveit::MoverService::Request &request,
     previous_ending_joint_angles = grasp_pose.trajectory_.joint_trajectory.points.back().positions;
 
     // pick up pose
-    auto pick_up_pose = plan_trajectory(move_group, request.pick_pose, previous_ending_joint_angles);
+    auto pick_up_pose = plan_trajectory(move_group, request.pick_pose, ToArray(previous_ending_joint_angles));
     if (pick_up_pose.trajectory_.joint_trajectory.points.empty()) {
         ROS_WARN("Pick up pose planning failed.");
         return false;
@@ -73,7 +92,7 @@ bool plan_pick_and_place(franka_panda_moveit::MoverService::Request &request,
     previous_ending_joint_angles = pick_up_pose.trajectory_.joint_trajectory.points.back().positions;
 
     // pre place pose
-    auto pre_place_pose = plan_trajectory(move_group, request.place_pose, previous_ending_joint_angles);
+    auto pre_place_pose = plan_trajectory(move_group, request.place_pose, ToArray(previous_ending_joint_angles));
     if (pre_place_pose.trajectory_.joint_trajectory.points.empty()) {
         ROS_WARN("Pre place pose planning failed.");
         return false;
@@ -83,7 +102,7 @@ bool plan_pick_and_place(franka_panda_moveit::MoverService::Request &request,
     // place pose
     geometry_msgs::Pose place_pose = request.place_pose;
     place_pose.position.z -= request.offset.offset - 0.015;
-    auto place_trajectory = plan_trajectory(move_group, place_pose, previous_ending_joint_angles);
+    auto place_trajectory = plan_trajectory(move_group, place_pose, ToArray(previous_ending_joint_angles));
     if (place_trajectory.trajectory_.joint_trajectory.points.empty()) {
         ROS_WARN("Place pose planning failed.");
         return false;

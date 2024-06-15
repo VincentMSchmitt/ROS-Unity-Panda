@@ -14,6 +14,6 @@
       <arg name="use_rviz" value="true"/>
     </include>
   
-    <!-- Mover.cpp
-    <node name="franka_panda_moveit_server" pkg="franka_panda_moveit" type="franka_panda_moveit_node" output="screen"/> -->
+    <!-- Mover.cpp -->
+    <node name="franka_panda_moveit_server" pkg="franka_panda_moveit" type="franka_panda_moveit_node" output="screen"/>
   </launch>
