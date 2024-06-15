@@ -6,12 +6,15 @@ import sys
 import copy
 import math
 import rospy
+import tf.transformations as tf
 import moveit_commander
+from moveit_commander import PlanningSceneInterface
 import moveit_msgs.msg
 from moveit_msgs.msg import Constraints, JointConstraint, PositionConstraint, OrientationConstraint, BoundingVolume
 from sensor_msgs.msg import JointState
 from moveit_msgs.msg import RobotState
 import geometry_msgs.msg
+from geometry_msgs.msg import PoseStamped
 from geometry_msgs.msg import Quaternion, Pose
 from std_msgs.msg import String
 from moveit_commander.conversions import pose_to_list
@@ -27,6 +30,12 @@ if sys.version_info >= (3, 0):
 else:
     def planCompat(plan):
         return plan
+    
+class Target:
+    def __init__(self, name, pose, size):
+        self.name = name
+        self.pose = pose
+        self.size = size
 
 """
     Creates a pick and place plan using the four states below.
@@ -50,9 +59,24 @@ def plan_pick_and_place(req):
     group_name = "panda_arm"
     move_group = moveit_commander.MoveGroupCommander(group_name)
 
+    hand_group_name = "panda_hand"
+    hand_move_group = moveit_commander.MoveGroupCommander(hand_group_name)
+
+    scene = PlanningSceneInterface()
+
     current_robot_joint_configuration = req.joints_input.joints
 
+    # spawn the target to the world --------------------------------------------------------------
+    target = convert_target(req.target)
+    scene.add_box(target.name, target.pose, target.size)
+
     # plan the trajectory of the poses, if no points in the pose, return empty
+    # Plan the hand open trajectory --------------------------------------------------------------
+    hand_close_trajectory = plan_hand_trajectory(hand_move_group, [0.04, 0.04])
+    if not hand_close_trajectory.joint_trajectory.points:
+        rospy.logwarn("Hand close trajectory planning failed.")
+        return response # empty
+
     # Pre grasp - position gripper directly above target object -----------------------------------
     pre_grasp_pose = plan_trajectory(move_group, req.pick_pose, current_robot_joint_configuration)
     if not pre_grasp_pose.joint_trajectory.points:
@@ -68,6 +92,12 @@ def plan_pick_and_place(req):
         rospy.logwarn("Grasp pose planning failed.")
         return response # empty
     previous_ending_joint_angles = grasp_pose.joint_trajectory.points[-1].positions
+
+    # Plan the hand close trajectory --------------------------------------------------------------
+    hand_close_trajectory = plan_hand_trajectory(hand_move_group, [0, 0])
+    if not hand_close_trajectory.joint_trajectory.points:
+        rospy.logwarn("Hand close trajectory planning failed.")
+        return response # empty
 
     # Pick Up - raise gripper back to the pre grasp position --------------------------------------
     pick_up_pose = plan_trajectory(move_group, req.pick_pose, previous_ending_joint_angles)
@@ -90,6 +120,15 @@ def plan_pick_and_place(req):
     if not place_pose.joint_trajectory.points:
         rospy.logwarn("Place pose planning failed.")
         return response # empty
+    
+    # Plan the hand open trajectory --------------------------------------------------------------
+    hand_close_trajectory = plan_hand_trajectory(hand_move_group, [0.04, 0.04])
+    if not hand_close_trajectory.joint_trajectory.points:
+        rospy.logwarn("Hand close trajectory planning failed.")
+        return response # empty
+    
+    # remove target -------------------------------------------------------------------------------
+    scene.remove_world_object(target.name)
 
     # If trajectory planning worked for all pick and place stages, add plan to response -----------
     response.trajectories.append(pre_grasp_pose)
@@ -102,6 +141,27 @@ def plan_pick_and_place(req):
     move_group.clear_pose_targets()
 
     return response
+
+"""
+    Converts the Unity values of the target into ROS values so the target can be spawned in RViz
+"""
+def convert_target(target):
+    object_name = target.name
+    # Create a PoseStamped message for the object
+    object_pose = PoseStamped()
+    object_pose.header.frame_id = "world"
+    object_pose.pose.position = target.position
+
+    # Create a quaternion for a 90-degree rotation around the x-axis
+    q = tf.quaternion_from_euler(1.5708, 0, 0)  # 1.5708 radians = 90 degrees
+    object_pose.pose.orientation.x = q[0]
+    object_pose.pose.orientation.y = q[1]
+    object_pose.pose.orientation.z = q[2]
+    object_pose.pose.orientation.w = q[3]
+
+    size = (target.size.x, target.size.y, target.size.z)
+
+    return Target(object_name, object_pose, size)
 
 """
     Given the start angles of the robot, plan a trajectory that ends at the destination pose.
@@ -131,6 +191,20 @@ def plan_trajectory(move_group, destination_pose, start_joint_angles):
 
     return planCompat(plan)
 
+"""
+    Plans the opening and closing of the hand
+"""
+def plan_hand_trajectory(hand_move_group, target_positions):
+    hand_move_group.set_joint_value_target(target_positions)
+    plan = hand_move_group.plan()
+    if not plan:
+        exception_str = "Hand trajectory could not be planned for target positions {}.".format(target_positions)
+        raise Exception(exception_str)
+    return planCompat(plan)
+
+"""
+    Handels incoming requests
+"""
 def moveit_server():
     moveit_commander.roscpp_initialize(sys.argv)
     rospy.init_node('franka_panda_moveit_server')
