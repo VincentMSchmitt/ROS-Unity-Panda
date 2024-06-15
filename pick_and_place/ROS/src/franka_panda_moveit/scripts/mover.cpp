@@ -13,6 +13,23 @@
 std::vector<std::string> joint_names = {"panda_joint1", "panda_joint2", "panda_joint3", "panda_joint4",
                                         "panda_joint5", "panda_joint6", "panda_joint7"};
 
+std::vector<double> ToVector(boost::array<double, 7UL> array) {
+    std::vector<double> vector;
+    for (auto elem : array) {
+        vector.push_back(elem);
+    }
+    return std::move(vector);
+}
+
+boost::array<double, 7UL> ToArray(std::vector<double> vector) {
+    boost::array<double, 7UL> array;
+    int i = 0;
+    for (auto elem : vector) {
+        array[i++] = elem;
+    }
+    return std::move(array);
+}
+
 moveit::planning_interface::MoveGroupInterface::Plan plan_trajectory(moveit::planning_interface::MoveGroupInterface& move_group,
                                                                         const geometry_msgs::Pose& destination_pose,
                                                                         const boost::array<double, 7UL>& start_joint_angles) {
@@ -36,23 +53,6 @@ moveit::planning_interface::MoveGroupInterface::Plan plan_trajectory(moveit::pla
         throw std::runtime_error(ss.str());
     }
     return plan;
-}
-
-std::vector<double> ToVector(boost::array<double, 7UL> array) {
-    std::vector<double> vector;
-    for (auto elem : array) {
-        vector.push_back(elem);
-    }
-    return std::move(vector);
-}
-
-boost::array<double, 7UL> ToArray(std::vector<double> vector) {
-    boost::array<double, 7UL> array;
-    int i = 0;
-    for (auto elem : vector) {
-        array[i++] = elem;
-    }
-    return std::move(array);
 }
 
 bool plan_pick_and_place(franka_panda_moveit::MoverService::Request &request,
