@@ -4,34 +4,31 @@ namespace Panda.Core {
     /// <summary>
     /// Class used to attach a target object to the robot's hand when touched by both fingers. This ensures that the
     /// target moves correctly with the robot.To achieve this, the target is set to kinematic while transporting,
-    /// disabling the physics of the object. Note that this is a workaround to temporarily fix abug with the articulated
-    /// bodies.
+    /// disabling the physics of the object. Note that this is purely used for the visual representation of the cube.
+    /// Currently not used anywere.
     /// </summary>
     public class AttachOnTouch : MonoBehaviour {
         enum PandaFinger { Right, Left, None }
-        [SerializeField] GameObject pandaRightFinger;
-        [SerializeField] GameObject pandaLeftFinger;
-        [SerializeField] GameObject pandaHand;
-
+        [Tooltip("The GameObject of the right finger.")] [SerializeField] GameObject pandaRightFinger;
+        [Tooltip("The GameObject of the left finger.")] [SerializeField] GameObject pandaLeftFinger;
+        [Tooltip("The GameObject of the hand --> this is where the target will be attached to.")] [SerializeField] GameObject pandaHand;
         private bool rightFingerTouching = false;
         private bool leftFingerTouching = false;
         private bool isTransporting = false;
         private bool isReleased = true;
         private GameObject targetObject = null;
         private Rigidbody targetRigidbody = null;
-
-        // Singleton instance
-        public static AttachOnTouch Instance { get; private set; }
-
+        public static AttachOnTouch GetInstance { get; private set; } // Singleton instance
+        
         public static void OnReachDestination() {
-            if (Instance != null && Instance.isTransporting) {
-                Instance.DetachTargetFromHand();
+            if (GetInstance != null && GetInstance.isTransporting) {
+                GetInstance.DetachTargetFromHand();
             }
         }
 
         public static void NewDestination() {
-            Instance.isTransporting = false;
-            Instance.isReleased = true;
+            GetInstance.isTransporting = false;
+            GetInstance.isReleased = true;
         }
 
         /// <summary>
@@ -40,10 +37,10 @@ namespace Panda.Core {
         /// assigned to the static Instance property.
         /// </summary>
         private void Awake() {
-            if (Instance != null && Instance != this) {
+            if (GetInstance != null && GetInstance != this) {
                 Destroy(this.gameObject);
             } else {
-                Instance = this;
+                GetInstance = this;
             }
         }
 
@@ -77,7 +74,7 @@ namespace Panda.Core {
             }
             // If both fingers are touching
             if (rightFingerTouching && leftFingerTouching) {
-                AttachTargetToHand(Instance.gameObject);
+                AttachTargetToHand(GetInstance.gameObject);
             }
         }
 

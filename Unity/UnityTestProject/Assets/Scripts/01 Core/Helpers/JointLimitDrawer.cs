@@ -17,7 +17,6 @@ namespace Panda.Core {
 
         public static void ClearJointLimits(MeshFilter meshFilter) {
             meshFilter.mesh = null;
-
             if (lineObject != null) {
                 Destroy(lineObject);
                 lineObject = null;
@@ -89,6 +88,7 @@ namespace Panda.Core {
                 meshRenderer.material = material;
 
                 // Draw initial position line
+                // TODO: fix this
                 //UpdateJointPositionLine(currentJoint, currentPosition, jointRotation, material);
             }
         }
@@ -98,7 +98,7 @@ namespace Panda.Core {
             if (currentJoint.jointPosition.dofCount == 0) {
                 return;
             }
-
+            
             if (lineObject == null) {
                 lineObject = new GameObject("CurrentPositionLine");
                 LineRenderer lineRenderer = lineObject.AddComponent<LineRenderer>();

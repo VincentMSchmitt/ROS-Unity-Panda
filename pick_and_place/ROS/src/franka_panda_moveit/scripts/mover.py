@@ -33,11 +33,7 @@ class Target:
     4. Pre Place - position gripper directly placement position
     5. Place - lower gripper to desired placement position
 
-    Gripper behaviour is handled outside of this trajectory planning.
-        - Gripper close occurs after 'grasp' position has been achieved
-        - Gripper open occurs after 'place' position has been achieved
-
-    https://github.com/ros-planning/moveit/blob/master/moveit_commander/src/moveit_commander/move_group.py
+    Gripper behaviour is handled outside of this trajectory planning on the unity side.
 """
 def plan_pick_and_place(req):
     # for reference see:

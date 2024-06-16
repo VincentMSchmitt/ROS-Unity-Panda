@@ -10,14 +10,17 @@ using UnityEngine;
 using Panda.Core.Controller;
 
 namespace Panda.Follower {
+    /// <summary>
+    /// Manages the following of a target using ROS and Unity components.
+    /// </summary>
     public class FollowPlanner : MonoBehaviour {
-        public static bool followToggle;
-        public string rosServiceName = "franka_panda_follower";
-        [SerializeField] GameObject target;
-        public float speed = 1f; // percentage of max speed
-        public float followDistance = 0.25f;
-        public float positionThreshold = 0.11f;
-        public float checkInterval = 0.01f;
+        [Tooltip("Enable/Disable following")] public static bool followToggle;
+        [Tooltip("The ROS servicename, which will be subscribed to")] public string rosServiceName = "franka_panda_follower";
+        [Tooltip("The GameObject of the target")] [SerializeField] GameObject target;
+        [Tooltip("Percentage of the max speed")] public float speed = 1f;
+        [Tooltip("How high the robot will plan above the target (in meters) to avoid collisions")] public float followDistance = 0.25f;
+        [Tooltip("Tolerance for detecting target position changes")] public float positionThreshold = 0.11f;
+        [Tooltip("Interval in which the follower will check for a moved target")] public float checkInterval = 0.01f;
         private Vector3 lastTargetPosition;
         private readonly Quaternion pickOrientation = Quaternion.Euler(0, 45, 180);
         private ROSConnection ros;
@@ -28,6 +31,10 @@ namespace Panda.Follower {
             followToggle = value;
         }
 
+        /// <summary>
+        /// Called in the first frame of the game. Initializes the FollowPlanner by setting up the ROS connection and
+        /// getting the necessary components.
+        /// </summary>
         void Start() {
             // Create ROS connection singleton static instance
             ros = ROSConnection.GetOrCreateInstance();
@@ -40,6 +47,10 @@ namespace Panda.Follower {
             timeAtLastMovement = Time.time;
         }
 
+        /// <summary>
+        /// Coroutine that continuously checks the target position and publishes joint states.
+        /// </summary>
+        /// <returns>An enumerator for coroutine handling.</returns>
         public IEnumerator FollowRoutine() {
             // first plan request
             SendPlanRequest();
@@ -52,6 +63,9 @@ namespace Panda.Follower {
             yield break;
         }
 
+        /// <summary>
+        /// Checks if the target position has changed based on a specified tolerance.
+        /// </summary>
         bool HasTargetMoved() {
             float distance = Vector3.Distance(lastTargetPosition, target.transform.position);
             if (distance > positionThreshold) {
@@ -66,8 +80,10 @@ namespace Panda.Follower {
             return false;
         }
 
+        /// <summary>
+        /// Publishes the current joint states and target pose to the ROS service and waits for an response.
+        /// </summary>
         public void SendPlanRequest() {
-            // TODO: use factory
             var request = new FollowerServiceRequest();
             request.joints_input = CurrentJointState();
 
@@ -96,6 +112,10 @@ namespace Panda.Follower {
             return msg;
         }
 
+        /// <summary>
+        /// Handles the response from the ROS service containing the planned trajectories.
+        /// </summary>
+        /// <param name="response">The response from the ROS service.</param>
         void TrajectoryResponse(FollowerServiceResponse response) {
             if (response.trajectories.Length > 0) {
                 StartCoroutine(ExecuteTrajectories(response));
@@ -105,6 +125,11 @@ namespace Panda.Follower {
             }
         }
 
+        /// <summary>
+        /// Executes the trajectories received from the ROS service response.
+        /// </summary>
+        /// <param name="response">The response from the ROS service containing the trajectories.</param>
+        /// <returns>An enumerator for coroutine handling.</returns>
         private IEnumerator ExecuteTrajectories(FollowerServiceResponse response) {
             isMoving = true;
             RobotController robotController = RobotController.GetInstance;

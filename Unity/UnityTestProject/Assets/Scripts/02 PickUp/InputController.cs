@@ -17,7 +17,6 @@ namespace Panda.PickUp {
             horizontalController.gripState = GripStateForInput(inputHorizontal);
         }
 
-        // INPUT HELPERS
         static GripState GripStateForInput(float input) {
             if (input > 0) {
                 return GripState.Opening;

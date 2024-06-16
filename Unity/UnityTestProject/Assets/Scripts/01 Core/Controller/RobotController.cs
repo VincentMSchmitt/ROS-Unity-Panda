@@ -4,15 +4,19 @@ using UnityEngine;
 
 namespace Panda.Core.Controller {
     public enum ControlType { PositionControl, Moveit };
+    /// <summary>
+    /// The controller of the panda robot. Handels the joints (articulation bodys), selection, meshes, xDrives and
+    /// everything else related to the robot.
+    /// </summary>
     public class RobotController : MonoBehaviour {
-        public ControlType controlType = ControlType.PositionControl;
-        public float speed = 50f;
-        public Color selectionColor = Color.red;
-        public Material limitMaterial;
-        public MeshFilter limitMeshFilter;
-        public ISelectionObserver selectionObserver { get; private set; }
-        public ArticulationBody[] articulationChain {get; private set; }
-        public List<ArticulationBody> articulationList {
+        [Tooltip("The current type of control (PositionControl or Moveit).")] public ControlType controlType = ControlType.PositionControl;
+        [Tooltip("The speed for moving the joints.")] public float speed = 50f;
+        [Tooltip("The color for a selected joint.")] public Color selectionColor = Color.red;
+        [Tooltip("The material for the limit visulization (experimental).")] public Material limitMaterial;
+        [HideInInspector] public MeshFilter limitMeshFilter;
+        [HideInInspector] public ISelectionObserver selectionObserver { get; private set; }
+        [HideInInspector] public ArticulationBody[] articulationChain {get; private set; }
+        [HideInInspector] public List<ArticulationBody> articulationList {
             get {
                 List<ArticulationBody> articulationListTemp = articulationChain?.OfType<ArticulationBody>().ToList();
                 return articulationListTemp.Where( x => ( (x.jointType == ArticulationJointType.RevoluteJoint)
@@ -20,8 +24,7 @@ namespace Panda.Core.Controller {
                                                  ).ToList<ArticulationBody>();
             }
         }
-        private static RobotController instance;
-        public static RobotController GetInstance {
+        public static RobotController GetInstance { // Singelton
             get {
                 if (instance == null) {
                     instance = FindObjectOfType<RobotController>();
@@ -37,16 +40,18 @@ namespace Panda.Core.Controller {
                 return instance;
             }
         }
+        private static RobotController instance;
 
         RobotController() {
             selectionObserver = new SelectionObserver(selectionColor);
         }
 
-        // Initialization and configuration
+        /// <summary>
+        /// Called in the first frame of the game. Initializes the controller.
+        /// </summary>
         private void Start() {
             articulationChain = GetComponentsInChildren<ArticulationBody>();
-            // add the revolute joints
-            // assume gripper are the last 2 elements
+            // add the revolute joints --> assume gripper are the last 2 elements
             int i = 0;
             for (;i < articulationChain.Length - 2; ++i) {
                 if (articulationChain[i].jointType != ArticulationJointType.FixedJoint) {
@@ -75,7 +80,9 @@ namespace Panda.Core.Controller {
             }
         }
 
-        // called every frame 
+        /// <summary>
+        /// Called every frame of the game. Gets inputs for the selection.
+        /// </summary>
         private void Update() {
             // check current controlType
             UpadateControlType(controlType);
@@ -94,7 +101,10 @@ namespace Panda.Core.Controller {
             }
         }
 
-        // called every physics update
+        /// <summary>
+        /// Called every physics update of the game. Recommended for using with articulation body manipulation. Gets
+        //  inputs movement of the selected joint(s).
+        /// </summary>
         private void FixedUpdate() {
             // at start, dont do antyhing
             if (controlType != ControlType.PositionControl && selectionObserver.HasSelection()) {
@@ -133,6 +143,10 @@ namespace Panda.Core.Controller {
             }
         }
 
+        /// <summary>
+        /// Gets all the revolute joint targets (xDrive.target).
+        /// </summary>
+        /// <returns>The joint targets of all revolute joints in the robot as list of floats.</returns>
         public List<float> GetRevoluteJointTargets() {
             List<float> jointStates = new();
             foreach (var joint in selectionObserver.GetJoints()) {
@@ -143,6 +157,10 @@ namespace Panda.Core.Controller {
             return jointStates;
         }
 
+        /// <summary>
+        /// Gets all the revolute joints.
+        /// </summary>
+        /// <returns>The joints of all revolute joints in the robot as list of IMoveCommand.</returns>
         public List<IMoveCommand> GetRevoluteJoints() {
             List<IMoveCommand> joints = new();
             foreach (var joint in selectionObserver.GetJoints()) {
@@ -153,6 +171,10 @@ namespace Panda.Core.Controller {
             return joints;
         }
 
+        /// <summary>
+        /// Gets all the revolute joints.
+        /// </summary>
+        /// <returns>The joints of the gripper of the robot as IMoveCommand.</returns>
         public IMoveCommand GetGripper() {
             foreach (var joint in selectionObserver.GetJoints()) {
                 if (joint.GetType() == typeof(RobotGripper)) {
@@ -170,6 +192,11 @@ namespace Panda.Core.Controller {
             GetInstance.controlType = ControlType.PositionControl;
         }
 
+        /// <summary>
+        /// Gets all the selectable joints and sets their drive-type and force acording to the selected control type
+        /// (PositionControl or Moveit)
+        /// </summary>
+        /// <param name="type">The control type that the force and drive-type should be set for.</param>
         private void UpadateControlType(ControlType type) {
             switch (type) {
                 case ControlType.PositionControl:

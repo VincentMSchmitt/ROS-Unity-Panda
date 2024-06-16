@@ -12,30 +12,26 @@ using Panda.Core.Controller;
 
 namespace Panda.PickAndPlace {
     enum Poses { PreGrasp, Grasp, PickUp, PrePlace, Place }
+    /// <summary>
+    /// Plans and executes an pick and place task, based on the specified target and targetPlacemtn using ROS and Unity
+    /// components.
+    /// </summary>
     public class TrajectoryPlanner : MonoBehaviour {
-        [Tooltip("The ROS servicename, which will be subscribed to")]
-        public string rosServiceName = "franka_panda_moveit";
-
-        [Tooltip("The GameObject of the target")]
-        [SerializeField] GameObject target;
-
-        [Tooltip("The GameObject of the goal")]
-        [SerializeField] GameObject targetPlacement;
-
-        [Tooltip("Percentage of the max speed")]
-        public float speed = 0.1f; // percentage of max speed
-
-        [Tooltip("How long the robot will wait until he moves to the next position")]
-        public float poseAssignmentWait = 1f;
-
-        [Tooltip("How high the robot will plan above the target/goal (in meters) to avoid collisions.")]
-        public float upwardsOffset = 0.2f; // how high the panda robot will plan the pre graps above the target
-
+        [Tooltip("The ROS servicename, which will be subscribed to.")] public string rosServiceName = "franka_panda_moveit";
+        [Tooltip("The GameObject of the target.")] [SerializeField] GameObject target;
+        [Tooltip("The GameObject of the goal")] [SerializeField] GameObject targetPlacement;
+        [Tooltip("Percentage of the max speed.")] public float speed = 0.1f;
+        [Tooltip("How long the robot will wait until he moves to the next position.")] public float poseAssignmentWait = 1f;
+        [Tooltip("How high the robot will plan above the target/goal (in meters) to avoid collisions.")] public float upwardsOffset = 0.2f;
         private const float gripperOffset = 0.105f; // panda specific
         private readonly Quaternion pickOrientation = Quaternion.Euler(0, 45, 180);
         private Vector3 pickPoseOffset => Vector3.up * upwardsOffset;
         private ROSConnection ros;
 
+        /// <summary>
+        /// Called in the first frame of the game. Initializes the pick and place by setting up the ROS connection and
+        /// getting the necessary components.
+        /// </summary>
         void Start() {
             // make sure, that the speed percentage is valid
             speed = Mathf.Clamp01(speed);
@@ -46,7 +42,7 @@ namespace Panda.PickAndPlace {
         }
 
         /// <summary>
-        ///     Create a new MoverServiceRequest with the current values of the robot's joint angles, the target cube's
+        ///     Create a new MoverServiceRequest with the current values of the robot's joint angles, the target cubes
         ///     current position and rotation, and the targetPlacement position and rotation. Call the MoverService
         ///     using the ROSConnection and if a trajectory is successfully planned, execute the trajectories in a
         ///     coroutine. Considers the roation of the target and which side of the target is easier to grab.

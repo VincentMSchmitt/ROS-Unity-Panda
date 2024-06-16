@@ -5,6 +5,10 @@ using Panda.PickAndPlace;
 using Panda.Follower;
 
 namespace Panda.Core.Gui {
+    /// <summary>
+    /// The tab for controlling the robot. This works on top of the Unity-Robotics-Hub TCP-Connector interface. Make
+    /// sure, that the TCP-Connector is installed and configured befor adding this to the scene.
+    /// </summary>
     public class RobotControlTab : MonoBehaviour, IHudTab {
         string IHudTab.Label => "Control";
         private RobotController robotController;
@@ -18,8 +22,7 @@ namespace Panda.Core.Gui {
         }
 
         void IHudTab.OnGUI(HudPanel hud) {
-            GUILayout.BeginHorizontal();
-
+            GUILayout.BeginHorizontal(); // -------------------------------------------------------
             // send plan request
             if (GUILayout.Button("Plan")) {
                 isFollowButtonPressed = false;
@@ -51,8 +54,7 @@ namespace Panda.Core.Gui {
                     StartCoroutine(followPlanner.FollowRoutine());
                 }
             }
-
-            GUILayout.EndHorizontal();
+            GUILayout.EndHorizontal(); // ---------------------------------------------------------
         }
 
         public void OnSelected() { }

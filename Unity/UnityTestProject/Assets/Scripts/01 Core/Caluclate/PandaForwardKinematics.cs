@@ -5,7 +5,7 @@ namespace Panda.Core.Calculate {
     /// <summary>
     /// Class for performing direct kinematics calculations for the Franka Emika Panda nonstandard robotic arm (7DOF).
     /// </summary>
-    public class PandaKinematics {
+    public class PandaForwardKinematics {
         static readonly float M_PI = Mathf.PI;
 
         public static Vector3 GetTCPPosition(float[] jointAngles) {
@@ -44,7 +44,9 @@ namespace Panda.Core.Calculate {
         /// <param name="jointAngles">Array of joint angles.</param>
         /// <returns>Matrix of the DH parameters.</returns>
         private static float[,] DHParams(float[] jointAngles) {
-            // DH-Parameter: https://www.researchgate.net/publication/357238256_Analytical_Inverse_Kinematics_for_Franka_Emika_Panda_-_a_Geometrical_Solver_for_7-DOF_Manipulators_with_Unconventional_Design
+            // References:
+            // https://frankaemika.github.io/docs/control_parameters.html#denavithartenberg-parameters
+            // https://www.researchgate.net/publication/357238256_Analytical_Inverse_Kinematics_for_Franka_Emika_Panda_-_a_Geometrical_Solver_for_7-DOF_Manipulators_with_Unconventional_Design
             // DH-Parameters: alpha = link twist, a = link length, d = offset, theta = joint angle
             float[,] dh = new float[,] {
             //   alpha(rad)    a(m)     d(m)     theta(rad)

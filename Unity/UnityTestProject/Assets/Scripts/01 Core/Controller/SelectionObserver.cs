@@ -3,7 +3,14 @@ using UnityEngine;
 
 namespace Panda.Core.Controller {
     public class SelectionObserver : ISelectionObserver {
+        public List<ICombinedInterface> joints { get; private set; }
+        public SelectionObserver(Color selectionColor) {
+            this.selectionColor = selectionColor;
+            joints = new();
+        }
         private int selectedJointIndex = -1;
+        private Color selectionColor;
+        private Color[] previousColor;
         private ICombinedInterface selectedJoint {
             get { 
                 if (selectedJointIndex != -1) {
@@ -11,16 +18,6 @@ namespace Panda.Core.Controller {
                 } 
                 return null;
             }    
-        }
-
-        private Color selectionColor;
-        private Color[] previousColor;
-
-        public List<ICombinedInterface> joints { get; private set; }
-
-        public SelectionObserver(Color selectionColor) {
-            this.selectionColor = selectionColor;
-            joints = new();
         }
 
          public void SetSelectionColor(Color color) {
@@ -63,13 +60,11 @@ namespace Panda.Core.Controller {
             return selectedJointIndex != -1;
         }
 
-        public void ResetSelection()
-        {
+        public void ResetSelection() {
             selectedJointIndex = -1;
         }
 
-        public void Add(ICombinedInterface robotJoint)
-        {
+        public void Add(ICombinedInterface robotJoint) {
             joints.Add(robotJoint);
         }
     }

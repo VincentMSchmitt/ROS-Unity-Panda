@@ -27,7 +27,7 @@ namespace Panda.Core {
         private readonly float checkInterval = 0.1f;
 
         void Start() {
-            ArticulationBody[] articulationChain = this.GetComponentsInChildren<ArticulationBody>();
+            ArticulationBody[] articulationChain = GetComponentsInChildren<ArticulationBody>();
             StartCoroutine(MoveJointsToTarget(articulationChain, jointTargets));
         }
 
@@ -63,7 +63,7 @@ namespace Panda.Core {
                 }
             }
             // Debug.Log("All specified joints have reached the target positions.");
-            EventManager.Instance.TriggerStartupComplete();
+            EventManager.GetInstance.TriggerStartupComplete();
         }
     }
 }

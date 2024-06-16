@@ -6,33 +6,28 @@ namespace Panda.PickAndPlace {
     [RequireComponent(typeof(BoxCollider))]
     public class TargetPlacement : MonoBehaviour {
         public enum PlacementState { Outside, InsideFloating, InsidePlaced }
-        [SerializeField] GameObject target;
-        
-        [Tooltip("Alpha value for any color set during state changes.")]
-        [Range(0, 255)]
-        [SerializeField] int colorAlpha = 100;
-
-        static readonly int shaderColorId = Shader.PropertyToID("_Color");
-        
-        private const string nameExpectedTarget = "Target";
-        // The threshold that the Target's speed must be under to be considered "placed" in the target area
-        private const float maximumSpeedForStopped = 0.01f;
-        private float colorAlpha01 => colorAlpha / 255f;
-        private MeshRenderer targetMeshRenderer;
-        private MeshRenderer meshRenderer;
-        private BoxCollider boxCollider;
-        private PlacementState currentState;
-        private PlacementState lastColoredState;
-
-        public PlacementState CurrentState {
+        [Tooltip("The GameObject of the target")] [SerializeField] GameObject target;
+        [Tooltip("Alpha value for any color set during state changes.")] [Range(0, 255)] [SerializeField] int colorAlpha = 100;
+        [HideInInspector] public PlacementState CurrentState {
             get => currentState;
             private set {
                 currentState = value;
                 UpdateStateColor();
             }
         }
+        private const string nameExpectedTarget = "Target";
+        private const float maximumSpeedForStopped = 0.01f; // The threshold that the Target's speed must be under to be considered "placed" in the target area
+        private float colorAlpha01 => colorAlpha / 255f;
+        private MeshRenderer targetMeshRenderer;
+        private MeshRenderer meshRenderer;
+        private BoxCollider boxCollider;
+        private PlacementState currentState;
+        private PlacementState lastColoredState;
+        private static readonly int shaderColorId = Shader.PropertyToID("_Color");
 
-        // Start is called before the first frame update
+        /// <summary>
+        /// Called in the first frame of the game.
+        /// </summary>
         void Start() {
             // Check for misconfigurations and disable if something has changed without this script being updated
             // These are warnings because this script does not contain critical functionality
@@ -52,7 +47,7 @@ namespace Panda.PickAndPlace {
             InitializeState();
         }
 
-        bool TrySetComponentReferences() {
+        private bool TrySetComponentReferences() {
             targetMeshRenderer = target.GetComponent<MeshRenderer>();
             if (targetMeshRenderer == null) {
                 Debug.LogWarning($"{nameof(TargetPlacement)} expects a {nameof(MeshRenderer)} to be attached " +
@@ -67,8 +62,8 @@ namespace Panda.PickAndPlace {
         }
 
         void OnValidate() {
-            // Useful for visualizing state in editor, but doesn't wholly guarantee accurate coloring in EditMode
-            // Enter PlayMode to see color update correctly
+            // Useful for visualizing state in editor, but doesnt fully guarantee accurate coloring in EditMode
+            // --> PlayMode to see color updates correctly
             if (target != null) {
                 if (TrySetComponentReferences()) {
                     InitializeState();
@@ -105,7 +100,9 @@ namespace Panda.PickAndPlace {
             return targetIsStopped && targetIsInBounds;
         }
 
-        // Update is called once per frame
+        /// <summary>
+        /// Update is called once per frame.
+        /// </summary>
         void Update() {
             if (CurrentState != PlacementState.Outside) {
                 CurrentState = IsTargetStoppedInsideBounds() ?
@@ -113,7 +110,10 @@ namespace Panda.PickAndPlace {
             }
         }
 
-        void UpdateStateColor() {
+        /// <summary>
+        /// Handels the displayed color of the targetPlacement.
+        /// </summary>
+        private void UpdateStateColor() {
             if (currentState == lastColoredState) {
                 return;
             }

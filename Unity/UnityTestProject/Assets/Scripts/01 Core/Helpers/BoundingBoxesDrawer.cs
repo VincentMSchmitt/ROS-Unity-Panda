@@ -17,7 +17,7 @@ namespace Panda.Core {
 
         /// <summary>
         /// Updates bounding boxes every frame.
-        /// TODO: only update if the object is moved or changed its location.
+        /// TODO: only update if the object is moved or changed its location to save resources.
         /// </summary>
         private void Update() {
             if (drawBoundingBox) {

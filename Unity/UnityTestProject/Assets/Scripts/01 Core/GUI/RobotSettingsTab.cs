@@ -1,8 +1,12 @@
 using UnityEngine;
 using Unity.Robotics.ROSTCPConnector;
-using System.Collections;
 
 namespace Panda.Core.Gui {
+    /// <summary>
+    /// The tab for changings settings regarding the panda robot. This works on top of the Unity-Robotics-Hub
+    /// TCP-Connector interface. Make sure, that the TCP-Connector is installed and configured befor adding this to the
+    /// scene.
+    /// </summary>
     public class RobotSettingsTab : MonoBehaviour, IHudTab {
         string IHudTab.Label => "Settings";
         private bool toggleBoundingBox = true;
@@ -14,8 +18,7 @@ namespace Panda.Core.Gui {
         }
 
         void IHudTab.OnGUI(HudPanel hud) {            
-            GUILayout.BeginVertical();
-
+            GUILayout.BeginVertical(); // ---------------------------------------------------------
             // draw bounding boxes
             toggleBoundingBox = GUILayout.Toggle(toggleBoundingBox, "Draw bounding boxes");
             if (toggleBoundingBox) {
@@ -39,8 +42,7 @@ namespace Panda.Core.Gui {
             } else {
                 JointLimitDrawer.SetToogle(false);
             }
-
-            GUILayout.EndVertical();
+            GUILayout.EndVertical(); // -----------------------------------------------------------
         }
 
         public void OnSelected() { }

@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Panda.Core {
     public class WorkingAreaDrawer : MonoBehaviour {
-        public static bool toggleWorkingArea = true;
+        [Tooltip("Toggle if the working area should be drawn.")] public static bool toggleWorkingArea = true;
         private const float radius = 0.85f;
         private const float nearEdgeDistance = 0.15f;
         private Color insideColor = Color.green;
