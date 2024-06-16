@@ -1,14 +1,10 @@
 #!/usr/bin/env python
 
-from __future__ import print_function
-
 import sys
 import copy
-import math
 import rospy
 import tf.transformations as tf
 import moveit_commander
-import moveit_msgs.msg
 from moveit_msgs.msg import Constraints, JointConstraint, PositionConstraint, OrientationConstraint, BoundingVolume
 from sensor_msgs.msg import JointState
 from moveit_msgs.msg import RobotState
@@ -18,7 +14,6 @@ from geometry_msgs.msg import PoseStamped
 from geometry_msgs.msg import Quaternion, Pose
 from std_msgs.msg import String
 from moveit_commander.conversions import pose_to_list
-
 from franka_panda_moveit.srv import MoverService, MoverServiceRequest, MoverServiceResponse
 
 joint_names = ['panda_joint1', 'panda_joint2', 'panda_joint3', 'panda_joint4', 'panda_joint5', 'panda_joint6', 'panda_joint7']
@@ -146,6 +141,7 @@ def plan_trajectory(move_group, destination_pose, start_joint_angles):
         raise Exception(exception_str)
 
     return plan[1]
+
 
 """
     Converts the Unity values of the target into ROS values so the target can be spawned in RViz
