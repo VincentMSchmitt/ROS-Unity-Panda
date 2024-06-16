@@ -6,12 +6,15 @@ import sys
 import copy
 import math
 import rospy
+import tf.transformations as tf
 import moveit_commander
 import moveit_msgs.msg
 from moveit_msgs.msg import Constraints, JointConstraint, PositionConstraint, OrientationConstraint, BoundingVolume
 from sensor_msgs.msg import JointState
 from moveit_msgs.msg import RobotState
+from moveit_commander import PlanningSceneInterface
 import geometry_msgs.msg
+from geometry_msgs.msg import PoseStamped
 from geometry_msgs.msg import Quaternion, Pose
 from std_msgs.msg import String
 from moveit_commander.conversions import pose_to_list
@@ -20,13 +23,11 @@ from franka_panda_moveit.srv import MoverService, MoverServiceRequest, MoverServ
 
 joint_names = ['panda_joint1', 'panda_joint2', 'panda_joint3', 'panda_joint4', 'panda_joint5', 'panda_joint6', 'panda_joint7']
 
-# Between Melodic and Noetic, the return type of plan() changed. moveit_commander has no __version__ variable, so checking the python version as a proxy
-if sys.version_info >= (3, 0):
-    def planCompat(plan):
-        return plan[1]
-else:
-    def planCompat(plan):
-        return plan
+class Target:
+    def __init__(self, name, pose, size):
+        self.name = name
+        self.pose = pose
+        self.size = size
 
 """
     Creates a pick and place plan using the four states below.
@@ -50,7 +51,7 @@ def plan_pick_and_place(req):
 
     group_name = "panda_arm"
     move_group = moveit_commander.MoveGroupCommander(group_name)
-
+    scene = PlanningSceneInterface()
     current_robot_joint_configuration = req.joints_input.joints
 
     # plan the trajectory of the poses, if no points in the pose, return empty
@@ -69,7 +70,15 @@ def plan_pick_and_place(req):
         rospy.logwarn("Grasp pose planning failed.")
         return response # empty
     previous_ending_joint_angles = grasp_pose.joint_trajectory.points[-1].positions
-
+    
+    # spawn and attach the target to the world ----------------------------------------------------
+    target = convert_target(req.target)
+    scene.add_box(target.name, target.pose, target.size)
+    eef_link = move_group.get_end_effector_link()
+    robot_commander = moveit_commander.RobotCommander()
+    touch_links = robot_commander.get_link_names(group_name)
+    scene.attach_box(eef_link, target.name, target.pose, target.size, touch_links)
+    
     # Pick Up - raise gripper back to the pre grasp position --------------------------------------
     pick_up_pose = plan_trajectory(move_group, req.pick_pose, previous_ending_joint_angles)
     if not pick_up_pose.joint_trajectory.points:
@@ -91,7 +100,7 @@ def plan_pick_and_place(req):
     if not place_pose.joint_trajectory.points:
         rospy.logwarn("Place pose planning failed.")
         return response # empty
-
+    
     # If trajectory planning worked for all pick and place stages, add plan to response -----------
     response.trajectories.append(pre_grasp_pose)
     response.trajectories.append(grasp_pose)
@@ -102,6 +111,12 @@ def plan_pick_and_place(req):
     # It is adviced to clear the targets after planning the poses ---------------------------------
     move_group.clear_pose_targets()
 
+    # Detach the target from the robot and remove it ----------------------------------------------
+    if target.name in scene.get_attached_objects():
+        scene.remove_attached_object(eef_link, target.name)
+    if target.name in scene.get_known_object_names():
+        scene.remove_world_object(target.name)
+    
     return response
 
 """
@@ -130,7 +145,28 @@ def plan_trajectory(move_group, destination_pose, start_joint_angles):
         """.format(destination_pose, destination_pose)
         raise Exception(exception_str)
 
-    return planCompat(plan)
+    return plan[1]
+
+"""
+    Converts the Unity values of the target into ROS values so the target can be spawned in RViz
+"""
+def convert_target(target):
+    object_name = target.name
+    # Create a PoseStamped message for the object
+    object_pose = PoseStamped()
+    object_pose.header.frame_id = "world"
+    object_pose.pose.position = target.position
+
+    # Create a quaternion for a 90-degree rotation around the x-axis
+    q = tf.quaternion_from_euler(1.5708, 0, 0)  # 1.5708 radians = 90 degrees
+    object_pose.pose.orientation.x = q[0]
+    object_pose.pose.orientation.y = q[1]
+    object_pose.pose.orientation.z = q[2]
+    object_pose.pose.orientation.w = q[3]
+
+    size = (target.size.x, target.size.y, target.size.z)
+
+    return Target(object_name, object_pose, size)
 
 def moveit_server():
     moveit_commander.roscpp_initialize(sys.argv)
