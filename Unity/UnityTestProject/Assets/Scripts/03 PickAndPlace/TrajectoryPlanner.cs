@@ -20,7 +20,7 @@ namespace Panda.PickAndPlace {
         public float speed = 0.1f; // percentage of max speed
         public float poseAssignmentWait = 1f;
         public float upwardsOffset = 0.2f;
-        private const float gripperOffset = 0.105f;
+        private const float gripperOffset = 0.105f; // panda specific
         private readonly Quaternion pickOrientation = Quaternion.Euler(0, 45, 180);
         private Vector3 pickPoseOffset => Vector3.up * upwardsOffset;
         private ROSConnection ros;
@@ -28,9 +28,6 @@ namespace Panda.PickAndPlace {
         private void Start() {
             // make sure, that speed is valid
             speed = Mathf.Clamp01(speed);
-
-            IMoveCommand gripper = RobotController.GetInstance.GetGripper();
-            StartCoroutine(gripper.MoveToTarget(GripperTarget.Open, speed));
 
             // Create ROS connection singelton static instance
             ros = ROSConnection.GetOrCreateInstance();
@@ -144,63 +141,49 @@ namespace Panda.PickAndPlace {
             }
         }
 
-        static public IEnumerator MoveToTarget(ArticulationBody body, float target, float speed) {
-            ArticulationDrive xDrive = body.xDrive;
-            xDrive.target = target;
-            xDrive.targetVelocity *= speed;
-            body.xDrive = xDrive;
-            while (!IsAtTarget(body, target)) {
-                yield break;
-            }
-        }
-
-        static private bool IsAtTarget(ArticulationBody body, float target) {
-            if (body.xDrive.target != target) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-
         private IEnumerator ExecuteTrajectories(MoverServiceResponse response) {
-            // RobotController robotController = RobotController.GetInstance;
-            // if (response.trajectories != null) {
-            //     for (var poseIndex = 0; poseIndex < response.trajectories.Length; ++poseIndex) {
-            //         foreach (var point in response.trajectories[poseIndex].joint_trajectory.points) {
-            //             var jointPositions = point.positions;
+            List<IMoveCommand> joints = RobotController.GetInstance.GetRevoluteJoints();
+            IMoveCommand gripper = RobotController.GetInstance.GetGripper();
+            if (response.trajectories != null) {
+                for (var poseIndex = 0; poseIndex < response.trajectories.Length; ++poseIndex) {
+                    foreach (var point in response.trajectories[poseIndex].joint_trajectory.points) {
+                        var jointPositions = point.positions;
                         
-            //             List<ArticulationBody> bodys = robotController.rawArticulationChain;
-            //             Debug.LogWarning("#bodys: " + bodys.Count);
-            //             Debug.LogWarning("#jointPositions: " + jointPositions.Length);
-                        
+                        // convert radiant to degree
+                        var result = jointPositions.Select(r => (float)r * Mathf.Rad2Deg).ToArray();
 
-            //             // couroutines for joints movements
-            //             List<Coroutine> jointCoroutines = new List<Coroutine>();
+                        // couroutines for joints movements
+                        List<Coroutine> jointCoroutines = new List<Coroutine>();
 
-            //             // 7 values means arm move group
-            //             if (jointPositions.Length == 7) {
-            //                 float[] target = new float[jointPositions.Length];
-            //                 var result = jointPositions.Select(r => (float)r * Mathf.Rad2Deg).ToArray();
-            //                 for (int i = 0; i < jointPositions.Length; ++i) {
-            //                     jointCoroutines.Add(StartCoroutine(MoveToTarget(bodys[i], target[i], speed)));
-            //                 }
-            //             }
-            //             // 2 values means hand move group
-            //             else if (jointPositions.Length == 2) {
-            //                 float[] target = new float[jointPositions.Length];
-            //                 var result = jointPositions.Select(r => (float)r).ToArray();
-            //                 // start from 8 to body 8 and 9 get used
-            //                 for (int i = 8; i < jointPositions.Length; ++i) {
-            //                     jointCoroutines.Add(StartCoroutine(MoveToTarget(bodys[i], target[i], speed)));
-            //                 }
-            //             }
-            //             // wait, until every joint is where he is supposed to be
-            //             yield return StartCoroutine(WaitForAllCoroutines(jointCoroutines));
-            //         }
+                        for (int i = 0; i < jointPositions.Length; ++i) {
+                            jointCoroutines.Add(StartCoroutine(joints[i].MoveToTarget(result[i], speed)));
+                        }
+                        // wait, until every joint is where it is supposed to be
+                        yield return StartCoroutine(WaitForAllCoroutines(jointCoroutines));
+                    }
+
+                    // wait before executing next pose
                     yield return new WaitForSeconds(poseAssignmentWait);
-            //     }
-            // }
+
+                    // handle event based on the pose
+                    switch (poseIndex) {
+                        case (int)Poses.PreGrasp:
+                            StartCoroutine(gripper.MoveToTarget(GripperTarget.Open, speed));
+                            break;
+                        case (int)Poses.Grasp:
+                            // Close the gripper if completed executing the trajectory
+                            StartCoroutine(gripper.MoveToTarget(GripperTarget.Close, speed));
+                            break;
+                        case (int)Poses.Place:
+                            // Open the gripper if completed executing the trajectory for the Place pose
+                            StartCoroutine(gripper.MoveToTarget(GripperTarget.Open, speed));
+                            break;
+                        default:
+                            Debug.Log("Unexpected pose index found.");
+                            break;
+                    }
+                }
+            }
         }
 
         private IEnumerator WaitForAllCoroutines(List<Coroutine> coroutines) {

@@ -19,7 +19,7 @@ namespace RosMessageTypes.FrankaPandaMoveit
 
         public PandaMoveitJointsMsg()
         {
-            this.joints = new double[0];
+            this.joints = new double[7];
             this.pick_pose = new Geometry.PoseMsg();
             this.place_pose = new Geometry.PoseMsg();
         }
@@ -35,14 +35,13 @@ namespace RosMessageTypes.FrankaPandaMoveit
 
         private PandaMoveitJointsMsg(MessageDeserializer deserializer)
         {
-            deserializer.Read(out this.joints, sizeof(double), deserializer.ReadLength());
+            deserializer.Read(out this.joints, sizeof(double), 7);
             this.pick_pose = Geometry.PoseMsg.Deserialize(deserializer);
             this.place_pose = Geometry.PoseMsg.Deserialize(deserializer);
         }
 
         public override void SerializeTo(MessageSerializer serializer)
         {
-            serializer.WriteLength(this.joints);
             serializer.Write(this.joints);
             serializer.Write(this.pick_pose);
             serializer.Write(this.place_pose);

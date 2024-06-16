@@ -1,3 +1,4 @@
+ObjectInfo target
 PandaMoveitJoints joints_input
 PandaMoveitOffset offset
 geometry_msgs/Pose pick_pose
