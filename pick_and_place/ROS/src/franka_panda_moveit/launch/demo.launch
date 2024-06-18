@@ -9,7 +9,7 @@
     <!-- Set execution mode for fake execution controllers -->
     <arg name="fake_execution_type" default="interpolate" />
     <!-- By default, use rviz -->
-    <arg name="use_rviz" default="true" />
+    <arg name="use_rviz" default="false" />
 
     
     <!-- Broadcast static tf for robot root -->

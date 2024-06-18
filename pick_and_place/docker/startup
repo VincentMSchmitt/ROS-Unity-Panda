@@ -1,6 +1,5 @@
 #!/bin/bash
 source $ROS_WORKSPACE/devel/setup.bash
 echo "ROS_IP: $(hostname -i)" > $ROS_WORKSPACE/src/franka_panda_moveit/config/params.yaml
-roslaunch franka_panda_moveit part_2.launch
 
 exec "$@"
