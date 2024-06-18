@@ -13,6 +13,7 @@ namespace RosMessageTypes.FrankaPandaMoveit
         public const string k_RosMessageName = "franka_panda_moveit/MoverService";
         public override string RosMessageName => k_RosMessageName;
 
+        public ObjectInfoMsg target;
         public PandaMoveitJointsMsg joints_input;
         public PandaMoveitOffsetMsg offset;
         public Geometry.PoseMsg pick_pose;
@@ -20,14 +21,16 @@ namespace RosMessageTypes.FrankaPandaMoveit
 
         public MoverServiceRequest()
         {
+            this.target = new ObjectInfoMsg();
             this.joints_input = new PandaMoveitJointsMsg();
             this.offset = new PandaMoveitOffsetMsg();
             this.pick_pose = new Geometry.PoseMsg();
             this.place_pose = new Geometry.PoseMsg();
         }
 
-        public MoverServiceRequest(PandaMoveitJointsMsg joints_input, PandaMoveitOffsetMsg offset, Geometry.PoseMsg pick_pose, Geometry.PoseMsg place_pose)
+        public MoverServiceRequest(ObjectInfoMsg target, PandaMoveitJointsMsg joints_input, PandaMoveitOffsetMsg offset, Geometry.PoseMsg pick_pose, Geometry.PoseMsg place_pose)
         {
+            this.target = target;
             this.joints_input = joints_input;
             this.offset = offset;
             this.pick_pose = pick_pose;
@@ -38,6 +41,7 @@ namespace RosMessageTypes.FrankaPandaMoveit
 
         private MoverServiceRequest(MessageDeserializer deserializer)
         {
+            this.target = ObjectInfoMsg.Deserialize(deserializer);
             this.joints_input = PandaMoveitJointsMsg.Deserialize(deserializer);
             this.offset = PandaMoveitOffsetMsg.Deserialize(deserializer);
             this.pick_pose = Geometry.PoseMsg.Deserialize(deserializer);
@@ -46,6 +50,7 @@ namespace RosMessageTypes.FrankaPandaMoveit
 
         public override void SerializeTo(MessageSerializer serializer)
         {
+            serializer.Write(this.target);
             serializer.Write(this.joints_input);
             serializer.Write(this.offset);
             serializer.Write(this.pick_pose);
@@ -55,6 +60,7 @@ namespace RosMessageTypes.FrankaPandaMoveit
         public override string ToString()
         {
             return "MoverServiceRequest: " +
+            "\ntarget: " + target.ToString() +
             "\njoints_input: " + joints_input.ToString() +
             "\noffset: " + offset.ToString() +
             "\npick_pose: " + pick_pose.ToString() +
