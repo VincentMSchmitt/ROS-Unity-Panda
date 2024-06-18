@@ -1,5 +1,10 @@
-# This is an modified version of the auto generated Dockerfile for ros:ros-base
+# syntax=docker/dockerfile:1
+# escape=\
+
 FROM ros:noetic-ros-core
+
+ENV ROS_WORKSPACE=/catkin_ws
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Install bootstrap and other needed tools
 RUN apt-get update && apt-get install --no-install-recommends -y \
@@ -37,9 +42,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN pip3 install \
     rospkg \
     jsonpickle
-
-# Set the workspace
-ENV ROS_WORKSPACE=/catkin_ws
 
 # Copy each directory explicitly to avoid workspace cruft
 COPY ./ROS/src/franka_panda_moveit $ROS_WORKSPACE/src/franka_panda_moveit
