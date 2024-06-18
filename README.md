@@ -122,9 +122,7 @@ This general process is always the same for launching different demos. There are
 
 ### 5. TODO: <a name="todo"></a>
 - [ ] Investigate the Unity to ROS coordinate transformation and fix a bug in the collision-sender related to that
-- [ ] Only redraw the bounding boxes of objects that have been moved for optimization reasons
-- [ ] Containerise the entire project (Docker)
-- [ ] Add VR and AR with the Meta-SDK (Quest 3)
+- [ ] Add AR support with the Meta-SDK (Quest 3)
 - [ ] Fix the FK of the panda and the drawing of the 3D splines
 - [ ] Build an Interface for basic operation like `moveto()`, `moveto_grab()`, `moveto_place()` etc.
 - [x] ~~fix the grabbing offset~~
@@ -134,7 +132,8 @@ This general process is always the same for launching different demos. There are
 - [x] ~~plan according to the orientation of the target, not use a fixed one~~
 - [x] ~~optimize the grabbing algorithm to use the easier side to grab~~
 - [x] ~~Update services to pass the `m_PickPoseOffset` varaible from Unity to ROS~~
-- [ ] ~~Fix a bug where MoveIt ignores the floor and plans its trajectory through it~~
+- [x] ~~Fix a bug where MoveIt ignores the floor and plans its trajectory through it~~
+- [x] ~~Containerise the entire project (Docker)~~
 
 
 ---
