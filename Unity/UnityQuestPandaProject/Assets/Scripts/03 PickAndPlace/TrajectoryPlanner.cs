@@ -219,15 +219,17 @@ namespace Panda.PickAndPlace {
                     switch (poseIndex) {
                         case (int)Poses.PreGrasp:
                             // Open the gripper at the start
-                            StartCoroutine(gripper.MoveToTarget(GripperTarget.Open, speed));
+                            yield return StartCoroutine(gripper.MoveToTarget(GripperTarget.Open, speed));
+                            yield return new WaitForSeconds(poseAssignmentWait);
                             break;
                         case (int)Poses.Grasp:
                             // Close the gripper if completed executing the trajectory
-                            StartCoroutine(gripper.MoveToTarget(GripperTarget.Close, speed));
+                            yield return StartCoroutine(gripper.MoveToTarget(GripperTarget.Close, speed));
+                            yield return new WaitForSeconds(poseAssignmentWait);
                             break;
                         case (int)Poses.Place:
                             // Open the gripper if completed executing the trajectory for the Place pose
-                            StartCoroutine(gripper.MoveToTarget(GripperTarget.Open, speed));
+                            yield return StartCoroutine(gripper.MoveToTarget(GripperTarget.Open, speed));
                             break;
                         default:
                             break;
