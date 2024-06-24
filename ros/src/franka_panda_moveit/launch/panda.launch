@@ -14,8 +14,6 @@
     <node name="panda_mover" pkg="franka_panda_moveit" type="mover.py" output="screen"/>
     <!-- follower.py script -->
     <node name="panda_follower" pkg="franka_panda_moveit" type="follower.py" output="screen"/>
-    <!-- follower.py script -->
-    <node name="panda_follower" pkg="franka_panda_moveit" type="follower.py" output="screen"/>
     <!-- collision_detector.py script -->
     <node name="collision_detector" pkg="franka_panda_moveit" type="collision_detector.py" output="screen"/>
  </launch>
