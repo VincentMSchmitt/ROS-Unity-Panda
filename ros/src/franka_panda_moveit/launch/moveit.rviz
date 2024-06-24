@@ -5,7 +5,6 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /MotionPlanning1
-        - /MotionPlanning1/Planned Path1
       Splitter Ratio: 0.5009174346923828
     Tree Height: 445
   - Class: rviz/Help
@@ -138,7 +137,7 @@ Visualization Manager:
         Robot Alpha: 0.5
         Robot Color: 255; 0; 0
         Show Robot Collision: false
-        Show Robot Visual: true
+        Show Robot Visual: false
         Show Trail: false
         State Display Time: 0.05 s
         Trail Step Size: 1
@@ -264,7 +263,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 2.594630718231201
+      Distance: 2.3482275009155273
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -272,17 +271,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.75
       Focal Point:
-        X: 0.15707692503929138
-        Y: 0.4792102873325348
-        Z: 0.18542084097862244
+        X: 0.33637675642967224
+        Y: 0.650465726852417
+        Z: 0.6372122764587402
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.46000003814697266
+      Pitch: 0.4700000286102295
       Target Frame: world
-      Yaw: 5.279943466186523
+      Yaw: 0.17178095877170563
     Saved: ~
 Window Geometry:
   Displays:

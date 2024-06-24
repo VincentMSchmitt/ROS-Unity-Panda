@@ -9,7 +9,7 @@
 
   <author email="schmittv@hs-pforzheim.de">Vincent Schmitt</author>
   <maintainer email="schmittv@hs-pforzheim.de">Vincent Schmitt</maintainer>
-  <license>BSD</license>
+  <license>TODO</license>
 
   <!-- Custom Messages -->
   <build_depend>message_generation</build_depend>

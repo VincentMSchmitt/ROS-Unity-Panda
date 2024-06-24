@@ -44,7 +44,7 @@ moveit::planning_interface::MoveGroupInterface::Plan plan_trajectory(moveit::pla
 
     move_group.setPoseTarget(destination_pose);
     moveit::planning_interface::MoveGroupInterface::Plan plan;
-    bool success = (move_group.plan(plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+    bool success = (move_group.plan(plan) == moveit::core::MoveItErrorCode::SUCCESS);
 
     if (!success) {
         std::stringstream ss;

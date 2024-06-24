@@ -3,7 +3,8 @@
 import sys
 import rospy
 import moveit_commander
-import geometry_msgs.msg
+
+import positions
 
 def main():
     moveit_commander.roscpp_initialize(sys.argv)
@@ -35,50 +36,69 @@ def main():
         move_group_hand.go(joint_goal, wait=True)
         move_group_hand.stop()
     
-    # Define the target positions -----------------------------------------------------------------
-    pose1 = geometry_msgs.msg.Pose()
-    pose1.orientation.w = 1.0
-    pose1.position.x = 0.4
-    pose1.position.y = 0.1
-    pose1.position.z = 0.4
-
-    pose2 = geometry_msgs.msg.Pose()
-    pose2.orientation.w = 1.0
-    pose2.position.x = 0.4
-    pose2.position.y = -0.1
-    pose2.position.z = 0.4
-    
     # plan and exectue  ---------------------------------------------------------------------------
     # Move to pose1
-    move_group_arm.set_pose_target(pose1)
+    move_group_arm.set_pose_target(positions.pose1)
     plan = move_group_arm.plan()
     if plan[0]:  # Check if planning was successful
         plan1 = plan[1]
         move_group_arm.execute(plan1, wait=True)
         move_group_arm.stop()
         move_group_arm.clear_pose_targets()
-        
-        # Open the gripper
-        set_gripper_percentage(80) # 80% open
     else:
         rospy.logerr("Planning to pose1 failed")
 
     # Move to pose2
-    move_group_arm.set_pose_target(pose2)
+    move_group_arm.set_pose_target(positions.pose2)
     plan = move_group_arm.plan()
     if plan[0]:  # Check if planning was successful
         plan2 = plan[1]
         move_group_arm.execute(plan2, wait=True)
         move_group_arm.stop()
         move_group_arm.clear_pose_targets()
-        
-        # close the gripper
-        set_gripper_percentage(0) # 0% open
+        set_gripper_percentage(25) # 25% open
     else:
         rospy.logerr("Planning to pose2 failed")
+        
+    # Move to pose3
+    move_group_arm.set_pose_target(positions.pose3)
+    plan = move_group_arm.plan()
+    if plan[0]:  # Check if planning was successful
+        plan3 = plan[1]
+        move_group_arm.execute(plan3, wait=True)
+        move_group_arm.stop()
+        move_group_arm.clear_pose_targets()
+    
+    else:
+        rospy.logerr("Planning to pose2 failed")
+        
+    # Move to pose4
+    move_group_arm.set_pose_target(positions.pose4)
+    plan = move_group_arm.plan()
+    if plan[0]:  # Check if planning was successful
+        plan4 = plan[1]
+        move_group_arm.execute(plan4, wait=True)
+        move_group_arm.stop()
+        move_group_arm.clear_pose_targets()
+        set_gripper_percentage(100) # 100% open
+    
+    else:
+        rospy.logerr("Planning to pose2 failed")
+    
+    # Move to home
+    move_group_arm.set_named_target("home")
+    plan = move_group_arm.plan()
+    if plan[0]:  # Check if planning was successful
+        plan_home = plan[1]
+        move_group_arm.execute(plan_home, wait=True)
+        move_group_arm.stop()
+        move_group_arm.clear_pose_targets()
+    else:
+        rospy.logerr("Planning to home position failed")
 
     print("All movements completed")
 
+    # end program  --------------------------------------------------------------------------------
     moveit_commander.roscpp_shutdown()
     
 if __name__ == "__main__":

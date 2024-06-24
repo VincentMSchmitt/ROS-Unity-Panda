@@ -1,0 +1,5 @@
+PandaMoveitJoints joints_input
+PandaMoveitOffset offset
+geometry_msgs/Pose target_pose
+---
+moveit_msgs/RobotTrajectory[] trajectories

@@ -49,14 +49,14 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(${PROJECT_NAME}_node scripts/mover.cpp)
+add_executable(${PROJECT_NAME}_node scripts/testarea/mover.cpp)
 target_link_libraries(${PROJECT_NAME}_node
   ${catkin_LIBRARIES}
   moveit_visual_tools
   rviz_visual_tools
 )
 
-add_executable(test_node scripts/test_cpp.cpp)
+add_executable(test_node scripts/testarea/test_cpp.cpp)
 target_link_libraries(test_node
   ${catkin_LIBRARIES}
   moveit_visual_tools
@@ -66,8 +66,9 @@ target_link_libraries(test_node
 catkin_install_python(PROGRAMS
   scripts/mover.py
   scripts/follower.py
-  scripts/trajectory_subscriber.py
   scripts/collision_detector.py
+  scripts/testarea/trajectory_subscriber.py
+  scripts/testarea/test.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

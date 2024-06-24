@@ -15,6 +15,7 @@ franka_panda_moveit
 /Users/vincent/ROS/ws_panda/ros/devel/.private/franka_panda_moveit/lib/franka_panda_moveit/test_node /Users/vincent/ROS/ws_panda/ros/devel/lib/franka_panda_moveit/test_node
 /Users/vincent/ROS/ws_panda/ros/devel/.private/franka_panda_moveit/lib/franka_panda_moveit/follower.py /Users/vincent/ROS/ws_panda/ros/devel/lib/franka_panda_moveit/follower.py
 /Users/vincent/ROS/ws_panda/ros/devel/.private/franka_panda_moveit/lib/franka_panda_moveit/franka_panda_moveit_node /Users/vincent/ROS/ws_panda/ros/devel/lib/franka_panda_moveit/franka_panda_moveit_node
+/Users/vincent/ROS/ws_panda/ros/devel/.private/franka_panda_moveit/lib/franka_panda_moveit/test.py /Users/vincent/ROS/ws_panda/ros/devel/lib/franka_panda_moveit/test.py
 /Users/vincent/ROS/ws_panda/ros/devel/.private/franka_panda_moveit/lib/franka_panda_moveit/collision_detector.py /Users/vincent/ROS/ws_panda/ros/devel/lib/franka_panda_moveit/collision_detector.py
 /Users/vincent/ROS/ws_panda/ros/devel/.private/franka_panda_moveit/lib/franka_panda_moveit/cmake.lock /Users/vincent/ROS/ws_panda/ros/devel/lib/franka_panda_moveit/cmake.lock
 /Users/vincent/ROS/ws_panda/ros/devel/.private/franka_panda_moveit/lib/pkgconfig/franka_panda_moveit.pc /Users/vincent/ROS/ws_panda/ros/devel/lib/pkgconfig/franka_panda_moveit.pc
