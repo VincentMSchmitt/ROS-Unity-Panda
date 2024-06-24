@@ -14,6 +14,8 @@ from frankaCtrlClass import MoveControl
 class MoverService(Service):
     def __init__(self, tag_name: str, tag_description: str, fake_hw:bool):
         super().__init__(tag_name, tag_description)
+        
+        # load controller if not fake hardware
         if fake_hw is False:
             rospy.loginfo('Waiting for controller_manager/load_controller')
             load_controller = rospy.ServiceProxy('controller_manager/load_controller',controller_manager_msgs.srv.LoadController)
@@ -21,10 +23,11 @@ class MoverService(Service):
 
             for controller_name in ['position_joint_trajectory_controller','effort_joint_trajectory_controller']:
                 if not load_controller(controller_name):
-                    rospy.logerr('Could not load {}', controller_name)
+                    rospy.logerr(f"Could not load {controller_name}. Shutting off.")
                     sys.exit(1)
-
         rospy.loginfo('Loaded controllers')
+        
+        # ros related
         group = moveit_commander.MoveGroupCommander('panda_manipulator')
         robot = moveit_commander.RobotCommander('robot_description')
         scene = moveit_commander.PlanningSceneInterface(synchronous = True)
@@ -65,23 +68,27 @@ class MoverService(Service):
         ### add procedure to service
         self.add_procedure(movejoints_rel2base_procedure)
         self.add_procedure(moveposquat_rel2base_procedure)
-        
-
+    
+    ## IDLE ---------------------------------------------------------------------------------------
     def idle(self):
         """
         Idle state.
         :return:
         """
         if self.procedure_control.get_procedure_cur() != 0:
-            print(f"Service: {self.tag_name} with Procedure: {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Idle State!")
-        
+            print(f"Service: {self.tag_name} with Procedure: 
+                  {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Idle State!")
+    
+    ## STARTING -----------------------------------------------------------------------------------
     def starting(self):
         """
         Starting state.
         :return:
         """
-        print(f"Service: {self.tag_name} with Procedure: {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Starting State!")
+        print(f"Service: {self.tag_name} with Procedure: 
+              {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Starting State!")
 
+        # handle procedure cur
         if self.procedure_control.get_procedure_cur() == 1:
             self.procedures[1].procedure_parameters['Joint1'].set_v_out()
             self.procedures[1].procedure_parameters['Joint2'].set_v_out()
@@ -99,7 +106,7 @@ class MoverService(Service):
             self.procedures[2].procedure_parameters['QZ-Quaternion'].set_v_out()
             self.procedures[2].procedure_parameters['QW-Quaternion'].set_v_out()
         else:
-            print("no valid Procedure ID")
+            print(f"Not a valid Procedure ID: {self.procedure_control.get_procedure_cur()}")
 
         new_pos = []
         new_rot = []
@@ -128,12 +135,16 @@ class MoverService(Service):
         self.state_change()
         return  
     
+    ## EXECUTE ------------------------------------------------------------------------------------
     def execute(self):
         """
         Execute state.
         :return:
         """
-        print(f"Service: {self.tag_name} with Procedure: {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Execute State!")
+        print(f"Service: {self.tag_name} with Procedure: 
+              {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Execute State!")
+        
+        # handle procedure cur
         if self.procedure_control.get_procedure_cur() == 1:
             self.movetask.reach_pose_via_joints()
             self.state_change()
@@ -141,119 +152,146 @@ class MoverService(Service):
             self.movetask.reach_pose_via_posquat()
             self.state_change()
         else:
-            print("no valid Procedure ID")
+            print(f"Not a valid Procedure ID: {self.procedure_control.get_procedure_cur()}")
 
         return
-        
+    
+    ## COMPLETEING --------------------------------------------------------------------------------
     def completing(self):
         """
         Completing state.
         :return:
         """
-        print(f"Service: {self.tag_name} with Procedure: {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Completing State!")
+        print(f"Service: {self.tag_name} with Procedure: 
+              {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Completing State!")
         self.state_change()
         return
-        
+    
+    ## COMPLETED ----------------------------------------------------------------------------------
     def completed(self):
         """
         Completed state.
         :return:
         """
-        print(f"Service: {self.tag_name} with Procedure: {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Completed State!")
+        print(f"Service: {self.tag_name} with Procedure: 
+              {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Completed State!")
         return
-        
+    
+    ## PAUSING ------------------------------------------------------------------------------------
     def pausing(self):
         """
         Pausing state.
         :return:
         """
-        print(f"Service: {self.tag_name} with Procedure: {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Pausing State!")
+        print(f"Service: {self.tag_name} with Procedure: 
+              {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Pausing State!")
         self.state_change()
         return
-          
+    
+    ## PAUSED -------------------------------------------------------------------------------------
     def paused(self):
         """
         Paused state.
         :return:
         """
-        print(f"Service: {self.tag_name} with Procedure: {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Paused State!")
+        print(f"Service: {self.tag_name} with Procedure: 
+              {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Paused State!")
         return
-          
+    
+    ## RESUMING -----------------------------------------------------------------------------------
     def resuming(self):
         """
         Resuming state.
         :return:
         """
-        print(f"Service: {self.tag_name} with Procedure: {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Resuming State!")
+        print(f"Service: {self.tag_name} with Procedure: 
+              {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Resuming State!")
         self.state_change()
         return
-        
+    
+    ## HOLDING ------------------------------------------------------------------------------------
     def holding(self):
         """
         Holding state.
         :return:
         """
-        print(f"Service: {self.tag_name} with Procedure: {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Holding State!")
+        print(f"Service: {self.tag_name} with Procedure: 
+              {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Holding State!")
         self.state_change()
         return
-        
+    
+    ## HELD ---------------------------------------------------------------------------------------
     def held(self):
         """
         Held state.
         :return:
         """
-        print(f"Service: {self.tag_name} with Procedure: {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Held State!")
+        print(f"Service: {self.tag_name} with Procedure: 
+              {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Held State!")
         return
-        
+    
+    ## UNHOLDING ----------------------------------------------------------------------------------
     def unholding(self):
         """
         Unholding state.
         :return:
         """
-        print(f"Service: {self.tag_name} with Procedure: {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Unholding State!")
+        print(f"Service: {self.tag_name} with Procedure: 
+              {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Unholding State!")
         self.state_change()
         return
-        
+    
+    ## STOPPING -----------------------------------------------------------------------------------
     def stopping(self):
         """
         Stopping state.
         :return:
         """
-        print(f"Service: {self.tag_name} with Procedure: {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Stopping State!")
+        print(f"Service: {self.tag_name} with Procedure: 
+              {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Stopping State!")
         self.state_change()
         return
-        
+    
+    ## STOPPED ------------------------------------------------------------------------------------
     def stopped(self):
         """
         Stopped state.
         :return:
         """
-        print(f"Service: {self.tag_name} with Procedure: {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Stopped State!")
+        print(f"Service: {self.tag_name} with Procedure: 
+              {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Stopped State!")
         self.state_change()
         return
-        
+    
+    ## ABORTING -----------------------------------------------------------------------------------
     def aborting(self):
         """
         Aborting state.
         :return:
         """
-        print(f"Service: {self.tag_name} with Procedure: {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Aborting State!")
+        print(f"Service: {self.tag_name} with Procedure: 
+              {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Aborting State!")
         self.state_change()
         return
-        
+    
+    ## ABORTED ------------------------------------------------------------------------------------
     def aborted(self):
         """
         Aborted state.
         :return:
         """
-        print(f"Service: {self.tag_name} with Procedure: {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Aborted State!")
+        print(f"Service: {self.tag_name} with Procedure: 
+              {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Aborted State!")
         return
-        
+    
+    ## RESETTING ----------------------------------------------------------------------------------
     def resetting(self):
         """
         Resetting state.
         :return:
         """
-        print(f"Service: {self.tag_name} with Procedure: {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Resetting State!")
+        print(f"Service: {self.tag_name} with Procedure: 
+              {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Resetting State!")
         self.state_change()
         return
+# ENDCLASS MoverService
