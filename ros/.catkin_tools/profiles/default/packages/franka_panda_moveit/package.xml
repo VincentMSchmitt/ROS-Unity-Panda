@@ -2,13 +2,13 @@
 <package format="2">
   
   <name>franka_panda_moveit</name>
-  <version>0.3.0</version>
+  <version>0.3.1</version>
   <description>
      An automatically generated package with all the configuration and launch files for using the panda with the MoveIt Motion Planning Framework
   </description>
+
   <author email="schmittv@hs-pforzheim.de">Vincent Schmitt</author>
   <maintainer email="schmittv@hs-pforzheim.de">Vincent Schmitt</maintainer>
-
   <license>BSD</license>
 
   <!-- Custom Messages -->
@@ -60,10 +60,4 @@
   <exec_depend>moveit_ros_planning_interface</exec_depend>
   <exec_depend>std_srvs</exec_depend>
 
-
-  <!-- The export tag contains other, unspecified, tags -->
-  <export>
-    <!-- Other tools can request additional information be placed here -->
-
-  </export>
 </package>

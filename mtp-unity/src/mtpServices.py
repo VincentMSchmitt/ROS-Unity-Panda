@@ -4,7 +4,7 @@ import rospy
 import moveit_commander
 from mtppy.opcua_server_pea import OPCUAServerPEA
 from mtppy.mtp_generator import MTPGenerator
-from services.moverService import MoverService
+from services.moveService import MoveService
 #from services.followerService import FollowerService
 #from services.pickAndPlaceService import PickAndPlaceService
 
@@ -29,7 +29,7 @@ def main():
         rospy.init_node('mtp_panda_robot')
 
         ### A simple MoveService, moving the EE
-        move_service = MoverService(tag_name="Move-Service", tag_description='', fake_hw=True)
+        move_service = MoveService(tag_name="Move-Service", tag_description='', fake_hw=True)
 
         robot.add_service(move_service)
 

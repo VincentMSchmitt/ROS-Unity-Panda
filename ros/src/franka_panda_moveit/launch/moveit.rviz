@@ -1,13 +1,13 @@
 Panels:
   - Class: rviz/Displays
-    Help Height: 0
+    Help Height: 84
     Name: Displays
     Property Tree Widget:
       Expanded:
         - /MotionPlanning1
-        - /MotionPlanning1/Planning Request1
+        - /MotionPlanning1/Planned Path1
       Splitter Ratio: 0.5009174346923828
-    Tree Height: 226
+    Tree Height: 445
   - Class: rviz/Help
     Name: Help
   - Class: rviz/Views
@@ -15,11 +15,6 @@ Panels:
       - /Current View1
     Name: Views
     Splitter Ratio: 0.5
-  - Class: rviz_visual_tools/RvizVisualToolsGui
-    Name: RvizVisualToolsGui
-  - Class: rviz_plugin_tutorials/Teleop
-    Name: Teleop
-    Topic: ""
 Preferences:
   PromptSaveOnExit: true
 Toolbars:
@@ -45,7 +40,7 @@ Visualization Manager:
       Plane Cell Count: 10
       Reference Frame: <Fixed Frame>
       Value: true
-    - Acceleration_Scaling_Factor: 0.5
+    - Acceleration_Scaling_Factor: 1
       Class: moveit_rviz_plugin/MotionPlanning
       Enabled: true
       Move Group Namespace: ""
@@ -53,10 +48,10 @@ Visualization Manager:
       MoveIt_Allow_External_Program: false
       MoveIt_Allow_Replanning: false
       MoveIt_Allow_Sensor_Positioning: false
-      MoveIt_Planning_Attempts: 10
-      MoveIt_Planning_Time: 5
+      MoveIt_Planning_Attempts: 50
+      MoveIt_Planning_Time: 10
       MoveIt_Use_Cartesian_Path: false
-      MoveIt_Use_Constraint_Aware_IK: false
+      MoveIt_Use_Constraint_Aware_IK: true
       MoveIt_Workspace:
         Center:
           X: 0
@@ -140,7 +135,7 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
         Loop Animation: false
-        Robot Alpha: 1
+        Robot Alpha: 0.5
         Robot Color: 255; 0; 0
         Show Robot Collision: false
         Show Robot Visual: true
@@ -148,7 +143,7 @@ Visualization Manager:
         State Display Time: 0.05 s
         Trail Step Size: 1
         Trajectory Topic: move_group/display_planned_path
-        Use Sim Time: true
+        Use Sim Time: false
       Planning Metrics:
         Payload: 1
         Show Joint Torques: false
@@ -163,7 +158,7 @@ Visualization Manager:
         Interactive Marker Size: 0
         Joint Violation Color: 255; 0; 255
         Planning Group: panda_arm
-        Query Goal State: true
+        Query Goal State: false
         Query Start State: false
         Show Workspace: false
         Start State Alpha: 1
@@ -248,52 +243,11 @@ Visualization Manager:
             Alpha: 1
             Show Axes: false
             Show Trail: false
-        Robot Alpha: 0.5
+        Robot Alpha: 1
         Show Robot Collision: false
         Show Robot Visual: true
       Value: true
-      Velocity_Scaling_Factor: 0.5
-    - Class: rviz/MarkerArray
-      Enabled: true
-      Marker Topic: /move_group/display_grasp_markers
-      Name: MarkerArray
-      Namespaces:
-        {}
-      Queue Size: 100
-      Value: true
-    - Class: rviz/TF
-      Enabled: true
-      Filter (blacklist): ""
-      Filter (whitelist): ""
-      Frame Timeout: 15
-      Frames:
-        All Enabled: true
-        panda_hand:
-          Value: true
-        panda_link0:
-          Value: true
-        panda_link7:
-          Value: true
-        panda_link8:
-          Value: true
-        world:
-          Value: true
-      Marker Alpha: 1
-      Marker Scale: 1
-      Name: TF
-      Show Arrows: true
-      Show Axes: false
-      Show Names: false
-      Tree:
-        panda_link7:
-          panda_link8:
-            panda_hand:
-              {}
-        world:
-          panda_link0:
-            {}
-      Update Interval: 0
-      Value: true
+      Velocity_Scaling_Factor: 1
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -310,7 +264,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 0.46118608117103577
+      Distance: 2.594630718231201
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -318,22 +272,22 @@ Visualization Manager:
         Value: false
       Field of View: 0.75
       Focal Point:
-        X: 0.23563101887702942
-        Y: -1.479712963104248
-        Z: 0.9317066669464111
+        X: 0.15707692503929138
+        Y: 0.4792102873325348
+        Z: 0.18542084097862244
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.34999990463256836
+      Pitch: 0.46000003814697266
       Target Frame: world
-      Yaw: 4.554938316345215
+      Yaw: 5.279943466186523
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 919
+  Height: 1334
   Help:
     collapsed: false
   Hide Left Dock: false
@@ -342,13 +296,9 @@ Window Geometry:
     collapsed: false
   MotionPlanning - Trajectory Slider:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd00000001000000000000022300000350fc0200000009fb000000100044006900730070006c006100790073010000002c00000131000000e100fffffffb0000000800480065006c007000000001ef000000bb0000007a00fffffffb0000000a0056006900650077007300000001e4000000c6000000c600fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000374000001890000000000000000fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c0069006400650072010000015e000000960000004800fffffffb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e006701000001f5000001870000018700fffffffb00000024005200760069007a00560069007300750061006c0054006f006f006c007300470075006900000002f5000000500000005000fffffffb0000000c00540065006c0065006f00700000000297000000ad0000004f00ffffff000002140000035000000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
-  RvizVisualToolsGui:
-    collapsed: false
-  Teleop:
-    collapsed: false
+  QMainWindow State: 000000ff00000000fd000000010000000000000223000004effc0200000007fb000000100044006900730070006c006100790073010000002c00000260000000e300fffffffb0000000800480065006c00700000000342000000bb0000007a00fffffffb0000000a00560069006500770073000000010c000000a4000000c600fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000374000001890000000000000000fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000001800000018fb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e0067010000028d0000028e0000018700ffffff000007dc000004ef00000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: false
-  Width: 1080
-  X: 2560
-  Y: 688
+  Width: 2560
+  X: 0
+  Y: 25

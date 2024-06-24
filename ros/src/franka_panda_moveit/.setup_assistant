@@ -8,4 +8,4 @@ moveit_setup_assistant_config:
   CONFIG:
     author_name: Vincent Schmitt
     author_email: schmittv@hs-pforzheim.de
-    generated_timestamp: 1719215944
+    generated_timestamp: 1719234892

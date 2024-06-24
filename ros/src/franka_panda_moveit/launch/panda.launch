@@ -9,7 +9,7 @@
 	</node>
 
     <!-- MoveIt -->
-    <include file="$(find franka_panda_moveit)/launch/demo.launch"/>
+    <include file="$(find franka_panda_moveit)/launch/panda_moveit.launch"/>
     <!-- Mover.py script -->
     <node name="panda_mover" pkg="franka_panda_moveit" type="mover.py" output="screen"/>
     <!-- follower.py script -->

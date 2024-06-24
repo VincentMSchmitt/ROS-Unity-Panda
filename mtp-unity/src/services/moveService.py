@@ -11,7 +11,7 @@ from mtppy.operation_elements import AnaServParam
 import positions as positions
 from frankaCtrlClass import MoveControl
 
-class MoverService(Service):
+class MoveService(Service):
     def __init__(self, tag_name: str, tag_description: str, fake_hw:bool):
         super().__init__(tag_name, tag_description)
         
@@ -28,7 +28,7 @@ class MoverService(Service):
         rospy.loginfo('Loaded controllers')
         
         # ros related
-        group = moveit_commander.MoveGroupCommander('panda_manipulator')
+        group = moveit_commander.MoveGroupCommander('panda_arm')
         robot = moveit_commander.RobotCommander('robot_description')
         scene = moveit_commander.PlanningSceneInterface(synchronous = True)
         relMoveVel = 0.7
