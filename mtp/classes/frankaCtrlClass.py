@@ -89,9 +89,9 @@ class HandControl(FrankaControlBaseClass):
     def open(self):
         ''' Open the Gripper to desired distance.
 
-       Returns:
+        Returns:
            bool: True if the gripper can successfully open the fingers. False otherwise.
-       '''
+        '''
         self.group.set_joint_value_target(self.pose)
             
         success = False 
@@ -102,4 +102,3 @@ class HandControl(FrankaControlBaseClass):
 
         rospy.loginfo("Gripper opened!")  
         return success
-    
