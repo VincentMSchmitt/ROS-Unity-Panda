@@ -1,5 +1,5 @@
-panda_arm_controller:
-  type: effort_controllers/JointTrajectoryController
+arm_position_controller:
+  type: position_controllers/JointTrajectoryController
   joints:
     - panda_joint1
     - panda_joint2
@@ -44,18 +44,12 @@ panda_arm_controller:
       d: 1
       i: 1
       i_clamp: 1
-panda_hand_controller:
-  type: effort_controllers/JointTrajectoryController
+hand_position_controller:
+  type: position_controllers/JointTrajectoryController
   joints:
     - panda_finger_joint1
-    - panda_finger_joint2
   gains:
     panda_finger_joint1:
-      p: 100
-      d: 1
-      i: 1
-      i_clamp: 1
-    panda_finger_joint2:
       p: 100
       d: 1
       i: 1
