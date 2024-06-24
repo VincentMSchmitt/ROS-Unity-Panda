@@ -12,7 +12,7 @@ from RobotServices import MoveService, HandService
 
 def main():
     try:
-        # MTP File Generation
+        ### MTP File Generation
         writer_info_dict = {
                              'WriterName': 'PforzheimUniversity/Engineerium', 'WriterID': 'PforzheimUniversity/Engineerium', 'WriterVendor': 'PforzheimUniversity',
                              'WriterVendorURL': 'www.hs-pforzheim.de',
@@ -23,13 +23,12 @@ def main():
         manifest_template_path = './aml/manifest_template.xml'  
         mtp_generator = MTPGenerator(writer_info_dict, export_manifest_path, manifest_template_path=manifest_template_path)
 
-        ### Defining a virtual PEA for the Franka Emika Robot
-        # PEA = process equipment assembly == modul
+        ### Defining a virtual PEA (process equipment assembly == modul) for the Franka Emika Robot
         robot = OPCUAServerPEA(mtp_generator=mtp_generator,endpoint='opc.tcp://127.0.0.1:4840/')
 
         ### Setting up ROS environment
         moveit_commander.roscpp_initialize(sys.argv)
-        rospy.init_node('robot')
+        rospy.init_node('mtp_panda_robot')
 
         ### A simple MoveService, moving the EE
         move_service = MoveService(tag_name="Move-Service", tag_description='', fake_hw=True)
@@ -39,7 +38,6 @@ def main():
         robot.add_service(hand_service)
 
         robot.run_opcua_server()
-
 
     except:
         if robot is not None:
