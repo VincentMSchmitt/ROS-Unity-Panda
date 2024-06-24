@@ -25,8 +25,9 @@ class Target:
         self.pose = pose
         self.size = size
 
-"""
-    Creates a pick and place plan using the four states below.
+def plan_pick_and_place(req):
+    """
+    Creates a pick and place plan using the five states below.
     
     1. Pre Grasp - position gripper directly above target object
     2. Grasp - lower gripper so that fingers are on either side of object
@@ -35,10 +36,9 @@ class Target:
     5. Place - lower gripper to desired placement position
 
     Gripper behaviour is handled outside of this trajectory planning on the unity side.
-"""
-def plan_pick_and_place(req):
-    # for reference see:
-    # https://moveit.github.io/moveit_tutorials/doc/move_group_python_interface/move_group_python_interface_tutorial.html
+    
+    Reference: https://moveit.github.io/moveit_tutorials/doc/move_group_python_interface/move_group_python_interface_tutorial.html
+    """
     response = MoverServiceResponse()
 
     group_name = "panda_arm"
@@ -111,10 +111,10 @@ def plan_pick_and_place(req):
     
     return response
 
-"""
-    Given the start angles of the robot, plan a trajectory that ends at the destination pose.
-"""
 def plan_trajectory(move_group, destination_pose, start_joint_angles):
+    """
+    Given the start angles of the robot, plan a trajectory that ends at the destination pose.
+    """
     # save current states of the joints defined above
     current_joint_state = JointState()
     current_joint_state.name = joint_names
@@ -140,10 +140,10 @@ def plan_trajectory(move_group, destination_pose, start_joint_angles):
     return plan[1]
 
 
-"""
-    Converts the Unity values of the target into ROS values so the target can be spawned in RViz
-"""
 def convert_target(target):
+    """
+    Converts the Unity values of the target into ROS values so the target can be spawned in RViz
+    """
     object_name = target.name
     # Create a PoseStamped message for the object
     object_pose = PoseStamped()
