@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>franka_panda_description</name>
-  <version>0.0.2</version>
+  <version>0.2.1</version>
   <description>
     Description of Panda Robot from Franka Emika. This package contains the URDF and meshes describing Panda for Unity simulation.
   </description>

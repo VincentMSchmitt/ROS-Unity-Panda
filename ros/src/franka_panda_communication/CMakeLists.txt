@@ -6,7 +6,6 @@ if(POLICY CMP0148)
 endif()
 
 find_package(catkin REQUIRED COMPONENTS
-  rospy
   message_generation
   std_msgs
   geometry_msgs
@@ -27,7 +26,11 @@ generate_messages(
 )
 
 catkin_package(
-  CATKIN_DEPENDS message_runtime rospy std_msgs geometry_msgs moveit_msgs
+  CATKIN_DEPENDS
+  message_runtime
+  std_msgs
+  geometry_msgs
+  moveit_msgs
 )
 
 # Install files in the share directory
