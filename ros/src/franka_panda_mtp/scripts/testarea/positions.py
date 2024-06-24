@@ -22,7 +22,7 @@ pose2.orientation.z = down_orientation_quaternion[2]
 pose2.orientation.w = down_orientation_quaternion[3]
 pose2.position.x = 0.5
 pose2.position.y = 0.5
-pose2.position.z = 0.01
+pose2.position.z = 0.1
 
 # pose 3
 pose3 = geometry_msgs.msg.Pose()
@@ -42,4 +42,4 @@ pose4.orientation.z = down_orientation_quaternion[2]
 pose4.orientation.w = down_orientation_quaternion[3]
 pose4.position.x = 0.5
 pose4.position.y = -0.5
-pose4.position.z = 0.01
+pose4.position.z = 0.1

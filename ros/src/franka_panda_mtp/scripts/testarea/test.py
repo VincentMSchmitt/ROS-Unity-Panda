@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+import copy
 import rospy
 import moveit_commander
 
@@ -49,17 +50,30 @@ def main():
         rospy.logerr("Planning to pose1 failed")
 
     # Move to pose2
-    move_group_arm.set_pose_target(positions.pose2)
-    plan = move_group_arm.plan()
-    if plan[0]:  # Check if planning was successful
-        plan2 = plan[1]
-        move_group_arm.execute(plan2, wait=True)
-        move_group_arm.stop()
-        move_group_arm.clear_pose_targets()
-        set_gripper_percentage(25) # 25% open
+    # Plan Cartesian Path from pose1 to pose2 along z-axis
+    pose2 = positions.pose2
+    waypoints = []
+    waypoints.append(move_group_arm.get_current_pose().pose)
+    wpose = move_group_arm.get_current_pose().pose
+    wpose.position.z = pose2.position.z  # Only change the z-axis
+    waypoints.append(copy.deepcopy(wpose))
+
+    # Compute Cartesian path
+    (plan, fraction) = move_group_arm.compute_cartesian_path(
+                                waypoints,   # waypoints to follow
+                                0.01,        # eef_step
+                                0.0)         # jump_threshold
+
+    # Check if a sufficient fraction of the path was planned
+    if fraction == 1:
+        success = move_group_arm.execute(plan, wait=True)
+        if success:
+            move_group_arm.stop()
+            move_group_arm.clear_pose_targets()
+            set_gripper_percentage(25) # 25% open
     else:
-        rospy.logerr("Planning to pose2 failed")
-        
+        rospy.logerr("Planning to pose3 failed")
+            
     # Move to pose3
     move_group_arm.set_pose_target(positions.pose3)
     plan = move_group_arm.plan()
@@ -68,22 +82,33 @@ def main():
         move_group_arm.execute(plan3, wait=True)
         move_group_arm.stop()
         move_group_arm.clear_pose_targets()
-    
     else:
-        rospy.logerr("Planning to pose2 failed")
-        
+        rospy.logerr("Planning to pose3 failed")
+    
     # Move to pose4
-    move_group_arm.set_pose_target(positions.pose4)
-    plan = move_group_arm.plan()
-    if plan[0]:  # Check if planning was successful
-        plan4 = plan[1]
-        move_group_arm.execute(plan4, wait=True)
-        move_group_arm.stop()
-        move_group_arm.clear_pose_targets()
-        set_gripper_percentage(100) # 100% open
-    
+    # Plan Cartesian Path from pose3 to pose4 along z-axis
+    pose4 = positions.pose4
+    waypoints = []
+    waypoints.append(move_group_arm.get_current_pose().pose)
+    wpose = move_group_arm.get_current_pose().pose
+    wpose.position.z = pose4.position.z  # Only change the z-axis
+    waypoints.append(copy.deepcopy(wpose))
+
+    # Compute Cartesian path
+    (plan, fraction) = move_group_arm.compute_cartesian_path(
+                                waypoints,   # waypoints to follow
+                                0.01,        # eef_step
+                                0.0)         # jump_threshold
+
+    # Check if a sufficient fraction of the path was planned
+    if fraction == 1:
+        success = move_group_arm.execute(plan, wait=True)
+        if success:
+            move_group_arm.stop()
+            move_group_arm.clear_pose_targets()
+            set_gripper_percentage(100) # 100% open
     else:
-        rospy.logerr("Planning to pose2 failed")
+        rospy.logerr("Planning to pose4 failed")
     
     # Move to home
     move_group_arm.set_named_target("home")
