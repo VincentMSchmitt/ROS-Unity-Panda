@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using RosMessageTypes.Geometry;
-using RosMessageTypes.FrankaPandaMoveit;
+using RosMessageTypes.FrankaPandaCommunication;
 using Unity.Robotics.ROSTCPConnector;
 using Unity.Robotics.ROSTCPConnector.ROSGeometry;
 using UnityEngine;

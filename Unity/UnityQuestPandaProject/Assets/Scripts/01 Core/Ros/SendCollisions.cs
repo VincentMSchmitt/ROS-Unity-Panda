@@ -1,4 +1,4 @@
-using RosMessageTypes.FrankaPandaMoveit;
+using RosMessageTypes.FrankaPandaCommunication;
 using RosMessageTypes.Geometry;
 using System.Collections.Generic;
 using Unity.Robotics.ROSTCPConnector;

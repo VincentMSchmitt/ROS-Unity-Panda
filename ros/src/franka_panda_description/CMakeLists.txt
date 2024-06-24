@@ -1,6 +1,9 @@
-cmake_minimum_required(VERSION 2.8.3)
-
+cmake_minimum_required(VERSION 3.5)
 project(franka_panda_description)
+
+if(POLICY CMP0148)
+  cmake_policy(SET CMP0148 OLD)
+endif()
 
 find_package(catkin REQUIRED)
 
