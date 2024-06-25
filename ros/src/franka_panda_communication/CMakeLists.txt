@@ -15,6 +15,8 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(DIRECTORY msg)
 
 add_service_files(DIRECTORY srv)
+add_service_files(DIRECTORY srv/FromRosToUnity)
+add_service_files(DIRECTORY srv/FromUnityToRos)
 
 add_action_files(DIRECTORY actions)
 

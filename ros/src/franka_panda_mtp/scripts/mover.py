@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import sys
 import copy
@@ -10,7 +10,7 @@ from moveit_msgs.msg import RobotState
 from moveit_commander import PlanningSceneInterface
 from geometry_msgs.msg import PoseStamped
 
-from franka_panda_communication.srv import MoverService, MoverServiceRequest, MoverServiceResponse
+from franka_panda_communication.srv import PickAndPlace, PickAndPlaceResponse
 
 joint_names = ['panda_joint1', 'panda_joint2', 'panda_joint3', 'panda_joint4', 'panda_joint5', 'panda_joint6', 'panda_joint7']
 
@@ -34,7 +34,7 @@ def plan_pick_and_place(req):
     
     Reference: https://moveit.github.io/moveit_tutorials/doc/move_group_python_interface/move_group_python_interface_tutorial.html
     """
-    response = MoverServiceResponse()
+    response = PickAndPlaceResponse()
 
     group_name = "panda_arm"
     move_group = moveit_commander.MoveGroupCommander(group_name)
@@ -160,7 +160,7 @@ def moveit_server():
     moveit_commander.roscpp_initialize(sys.argv)
     rospy.init_node('franka_panda_moveit_server')
 
-    s = rospy.Service('franka_panda_moveit', MoverService, plan_pick_and_place)
+    s = rospy.Service('franka_panda_moveit', PickAndPlace, plan_pick_and_place)
     print("Ready to plan")
     rospy.spin()
 

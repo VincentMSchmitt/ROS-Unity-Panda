@@ -8,9 +8,9 @@ using Unity.Robotics.ROSTCPConnector.MessageGeneration;
 namespace RosMessageTypes.FrankaPandaCommunication
 {
     [Serializable]
-    public class MoverServiceRequest : Message
+    public class PickAndPlaceRequest : Message
     {
-        public const string k_RosMessageName = "franka_panda_communication/MoverService";
+        public const string k_RosMessageName = "franka_panda_communication/PickAndPlace";
         public override string RosMessageName => k_RosMessageName;
 
         public ObjectInfoMsg target;
@@ -19,7 +19,7 @@ namespace RosMessageTypes.FrankaPandaCommunication
         public Geometry.PoseMsg pick_pose;
         public Geometry.PoseMsg place_pose;
 
-        public MoverServiceRequest()
+        public PickAndPlaceRequest()
         {
             this.target = new ObjectInfoMsg();
             this.joints_input = new PandaMoveitJointsMsg();
@@ -28,7 +28,7 @@ namespace RosMessageTypes.FrankaPandaCommunication
             this.place_pose = new Geometry.PoseMsg();
         }
 
-        public MoverServiceRequest(ObjectInfoMsg target, PandaMoveitJointsMsg joints_input, PandaMoveitOffsetMsg offset, Geometry.PoseMsg pick_pose, Geometry.PoseMsg place_pose)
+        public PickAndPlaceRequest(ObjectInfoMsg target, PandaMoveitJointsMsg joints_input, PandaMoveitOffsetMsg offset, Geometry.PoseMsg pick_pose, Geometry.PoseMsg place_pose)
         {
             this.target = target;
             this.joints_input = joints_input;
@@ -37,9 +37,9 @@ namespace RosMessageTypes.FrankaPandaCommunication
             this.place_pose = place_pose;
         }
 
-        public static MoverServiceRequest Deserialize(MessageDeserializer deserializer) => new MoverServiceRequest(deserializer);
+        public static PickAndPlaceRequest Deserialize(MessageDeserializer deserializer) => new PickAndPlaceRequest(deserializer);
 
-        private MoverServiceRequest(MessageDeserializer deserializer)
+        private PickAndPlaceRequest(MessageDeserializer deserializer)
         {
             this.target = ObjectInfoMsg.Deserialize(deserializer);
             this.joints_input = PandaMoveitJointsMsg.Deserialize(deserializer);
@@ -59,7 +59,7 @@ namespace RosMessageTypes.FrankaPandaCommunication
 
         public override string ToString()
         {
-            return "MoverServiceRequest: " +
+            return "PickAndPlaceRequest: " +
             "\ntarget: " + target.ToString() +
             "\njoints_input: " + joints_input.ToString() +
             "\noffset: " + offset.ToString() +

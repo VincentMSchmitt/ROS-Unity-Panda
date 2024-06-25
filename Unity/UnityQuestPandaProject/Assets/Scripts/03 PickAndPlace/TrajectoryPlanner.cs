@@ -38,7 +38,7 @@ namespace Panda.PickAndPlace {
 
             // Create ROS connection singelton static instance
             ros = ROSConnection.GetOrCreateInstance();
-            ros.RegisterRosService<MoverServiceRequest, MoverServiceResponse>(rosServiceName);
+            ros.RegisterRosService<PickAndPlaceRequest, PickAndPlaceResponse>(rosServiceName);
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace Panda.PickAndPlace {
         /// </summary>
         public void SendPlanRequest() {
             //---  init request ---
-            var request = new MoverServiceRequest();
+            var request = new PickAndPlaceRequest();
             request.joints_input = CurrentJointState();
             
             // --- make sure the orientation of the gripper is always correct while gripping ---
@@ -109,7 +109,7 @@ namespace Panda.PickAndPlace {
             request.offset = new PandaMoveitOffsetMsg(pickPoseOffset.y - gripperOffset);
 
             // --- send request and evaluate response ---
-            ros.SendServiceMessage<MoverServiceResponse>(rosServiceName, request, TrajectoryResponseHandler);
+            ros.SendServiceMessage<PickAndPlaceResponse>(rosServiceName, request, TrajectoryResponseHandler);
         }
 
         /// <summary>
@@ -160,7 +160,7 @@ namespace Panda.PickAndPlace {
             return msg;
         }
 
-        private void TrajectoryResponseHandler(MoverServiceResponse response) {
+        private void TrajectoryResponseHandler(PickAndPlaceResponse response) {
             StartCoroutine(TrajectoryResponse(response));
         }
 
@@ -168,7 +168,7 @@ namespace Panda.PickAndPlace {
         /// Check if the returned response is valid, then use ExecuteTrajectories as coroutine to start moving.
         /// </summary>
         /// <param name="response"> MoverServiceResponse received from franka_panda_moveit service running in ROS</param>
-        private IEnumerator TrajectoryResponse(MoverServiceResponse response) {
+        private IEnumerator TrajectoryResponse(PickAndPlaceResponse response) {
             if (response.trajectories.Length > 0) {
                 yield return StartCoroutine(ExecuteTrajectories(response));
             }
@@ -191,7 +191,7 @@ namespace Panda.PickAndPlace {
         /// </summary>
         /// <param name="response"> MoverServiceResponse received from franka_panda_moveit service running in ROS</param>
         /// <returns></returns>
-        private IEnumerator ExecuteTrajectories(MoverServiceResponse response) {
+        private IEnumerator ExecuteTrajectories(PickAndPlaceResponse response) {
             List<IMoveCommand> joints = RobotController.GetInstance.GetRevoluteJoints();
             IMoveCommand gripper = RobotController.GetInstance.GetGripper();
             if (response.trajectories != null) {

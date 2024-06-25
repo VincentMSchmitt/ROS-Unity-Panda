@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
     Subscribes to SourceDestination topic.
     Uses MoveIt to compute a trajectory from the target to the destination.

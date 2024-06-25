@@ -1,19 +1,19 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import rospy
 import moveit_commander
 from sensor_msgs.msg import JointState
 from moveit_msgs.msg import RobotState
 
-from franka_panda_communication.srv import FollowerService, FollowerServiceRequest, FollowerServiceResponse
+from franka_panda_communication.srv import Follower, FollowerResponse
 
 joint_names = ['panda_joint1', 'panda_joint2', 'panda_joint3', 'panda_joint4', 'panda_joint5', 'panda_joint6', 'panda_joint7']
         
-"""
-    Creates a follow plan
-"""
 def plan_follow(req):
-    response = FollowerServiceResponse()
+    """
+    Creates a follow plan
+    """
+    response = FollowerResponse()
 
     group_name = "panda_arm"
     move_group = moveit_commander.MoveGroupCommander(group_name)
@@ -34,11 +34,10 @@ def plan_follow(req):
 
     return response
 
-"""
-    Given the start angles of the robot, plan a trajectory that ends at the destination pose.
-"""
 def plan_trajectory(move_group, target_pose, joint_configuration):
-
+    """
+    Given the start angles of the robot, plan a trajectory that ends at the destination pose.
+    """
     current_joint_state = JointState()
     current_joint_state.name = joint_names
     current_joint_state.position = joint_configuration
@@ -61,6 +60,6 @@ def plan_trajectory(move_group, target_pose, joint_configuration):
 
 if __name__ == "__main__":
     rospy.init_node('follower_service')
-    service = rospy.Service('franka_panda_follower', FollowerService, plan_follow)
+    service = rospy.Service('franka_panda_follower', Follower, plan_follow)
     rospy.loginfo("Service franka_panda_follower ready")
     rospy.spin()

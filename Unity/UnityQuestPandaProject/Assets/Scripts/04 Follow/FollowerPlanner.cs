@@ -38,7 +38,7 @@ namespace Panda.Follower {
         void Start() {
             // Create ROS connection singleton static instance
             ros = ROSConnection.GetOrCreateInstance();
-            ros.RegisterRosService<FollowerServiceRequest, FollowerServiceResponse>(rosServiceName);
+            ros.RegisterRosService<FollowerRequest, FollowerResponse>(rosServiceName);
 
             // make sure, that speed is valid
             speed = Mathf.Clamp01(speed);
@@ -84,7 +84,7 @@ namespace Panda.Follower {
         /// Publishes the current joint states and target pose to the ROS service and waits for an response.
         /// </summary>
         public void SendPlanRequest() {
-            var request = new FollowerServiceRequest();
+            var request = new FollowerRequest();
             request.joints_input = CurrentJointState();
 
             // combine the rotations (y from the target - x, z from the m_PickOrientation)
@@ -96,7 +96,7 @@ namespace Panda.Follower {
             };
 
             // send request and evaluate response
-            ros.SendServiceMessage<FollowerServiceResponse>(rosServiceName, request, TrajectoryResponse);
+            ros.SendServiceMessage<FollowerResponse>(rosServiceName, request, TrajectoryResponse);
         }
 
         private PandaMoveitJointsMsg CurrentJointState() {
@@ -116,7 +116,7 @@ namespace Panda.Follower {
         /// Handles the response from the ROS service containing the planned trajectories.
         /// </summary>
         /// <param name="response">The response from the ROS service.</param>
-        void TrajectoryResponse(FollowerServiceResponse response) {
+        void TrajectoryResponse(FollowerResponse response) {
             if (response.trajectories.Length > 0) {
                 StartCoroutine(ExecuteTrajectories(response));
             }
@@ -130,7 +130,7 @@ namespace Panda.Follower {
         /// </summary>
         /// <param name="response">The response from the ROS service containing the trajectories.</param>
         /// <returns>An enumerator for coroutine handling.</returns>
-        private IEnumerator ExecuteTrajectories(FollowerServiceResponse response) {
+        private IEnumerator ExecuteTrajectories(FollowerResponse response) {
             isMoving = true;
             RobotController robotController = RobotController.GetInstance;
             if (response.trajectories != null) {

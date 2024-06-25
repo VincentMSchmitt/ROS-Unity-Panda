@@ -8,32 +8,32 @@ using Unity.Robotics.ROSTCPConnector.MessageGeneration;
 namespace RosMessageTypes.FrankaPandaCommunication
 {
     [Serializable]
-    public class FollowerServiceRequest : Message
+    public class FollowerRequest : Message
     {
-        public const string k_RosMessageName = "franka_panda_communication/FollowerService";
+        public const string k_RosMessageName = "franka_panda_communication/Follower";
         public override string RosMessageName => k_RosMessageName;
 
         public PandaMoveitJointsMsg joints_input;
         public PandaMoveitOffsetMsg offset;
         public Geometry.PoseMsg target_pose;
 
-        public FollowerServiceRequest()
+        public FollowerRequest()
         {
             this.joints_input = new PandaMoveitJointsMsg();
             this.offset = new PandaMoveitOffsetMsg();
             this.target_pose = new Geometry.PoseMsg();
         }
 
-        public FollowerServiceRequest(PandaMoveitJointsMsg joints_input, PandaMoveitOffsetMsg offset, Geometry.PoseMsg target_pose)
+        public FollowerRequest(PandaMoveitJointsMsg joints_input, PandaMoveitOffsetMsg offset, Geometry.PoseMsg target_pose)
         {
             this.joints_input = joints_input;
             this.offset = offset;
             this.target_pose = target_pose;
         }
 
-        public static FollowerServiceRequest Deserialize(MessageDeserializer deserializer) => new FollowerServiceRequest(deserializer);
+        public static FollowerRequest Deserialize(MessageDeserializer deserializer) => new FollowerRequest(deserializer);
 
-        private FollowerServiceRequest(MessageDeserializer deserializer)
+        private FollowerRequest(MessageDeserializer deserializer)
         {
             this.joints_input = PandaMoveitJointsMsg.Deserialize(deserializer);
             this.offset = PandaMoveitOffsetMsg.Deserialize(deserializer);
@@ -49,7 +49,7 @@ namespace RosMessageTypes.FrankaPandaCommunication
 
         public override string ToString()
         {
-            return "FollowerServiceRequest: " +
+            return "FollowerRequest: " +
             "\njoints_input: " + joints_input.ToString() +
             "\noffset: " + offset.ToString() +
             "\ntarget_pose: " + target_pose.ToString();

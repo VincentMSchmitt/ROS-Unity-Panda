@@ -24,8 +24,6 @@
   <build_depend>visualization_msgs</build_depend>
   <build_depend>franka_panda_communication</build_depend>
 
-  
-
   <!-- Execution dependencies -->
   <exec_depend>rospy</exec_depend>
   <exec_depend>roslaunch</exec_depend>

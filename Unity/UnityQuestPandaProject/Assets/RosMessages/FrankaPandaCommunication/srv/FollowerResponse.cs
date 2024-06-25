@@ -8,26 +8,26 @@ using Unity.Robotics.ROSTCPConnector.MessageGeneration;
 namespace RosMessageTypes.FrankaPandaCommunication
 {
     [Serializable]
-    public class MoverServiceResponse : Message
+    public class FollowerResponse : Message
     {
-        public const string k_RosMessageName = "franka_panda_communication/MoverService";
+        public const string k_RosMessageName = "franka_panda_communication/Follower";
         public override string RosMessageName => k_RosMessageName;
 
         public Moveit.RobotTrajectoryMsg[] trajectories;
 
-        public MoverServiceResponse()
+        public FollowerResponse()
         {
             this.trajectories = new Moveit.RobotTrajectoryMsg[0];
         }
 
-        public MoverServiceResponse(Moveit.RobotTrajectoryMsg[] trajectories)
+        public FollowerResponse(Moveit.RobotTrajectoryMsg[] trajectories)
         {
             this.trajectories = trajectories;
         }
 
-        public static MoverServiceResponse Deserialize(MessageDeserializer deserializer) => new MoverServiceResponse(deserializer);
+        public static FollowerResponse Deserialize(MessageDeserializer deserializer) => new FollowerResponse(deserializer);
 
-        private MoverServiceResponse(MessageDeserializer deserializer)
+        private FollowerResponse(MessageDeserializer deserializer)
         {
             deserializer.Read(out this.trajectories, Moveit.RobotTrajectoryMsg.Deserialize, deserializer.ReadLength());
         }
@@ -40,7 +40,7 @@ namespace RosMessageTypes.FrankaPandaCommunication
 
         public override string ToString()
         {
-            return "MoverServiceResponse: " +
+            return "FollowerResponse: " +
             "\ntrajectories: " + System.String.Join(", ", trajectories.ToList());
         }
 

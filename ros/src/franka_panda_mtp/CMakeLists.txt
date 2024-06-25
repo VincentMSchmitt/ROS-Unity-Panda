@@ -32,14 +32,17 @@ catkin_package(
   franka_panda_communication
 )
 
-install(DIRECTORY scripts/
+catkin_install_python(PROGRAMS
+  scripts/follower.py
+  scripts/mover.py
+  scripts/collision_detector.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-  USE_SOURCE_PERMISSIONS
 )
 
-install(DIRECTORY launch DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-  PATTERN "setup_assistant.launch" EXCLUDE)
-install(DIRECTORY config DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+install(DIRECTORY launch
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+  PATTERN "setup_assistant.launch" EXCLUDE
+)
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
