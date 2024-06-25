@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 
+import rospy
 import moveit_commander
 import geometry_msgs.msg
 from mtppy.service import Service
 from mtppy.procedure import Procedure
 from mtppy.operation_elements import AnaServParam
+
 import control.positions as positions
+from franka_panda_communication.srv import MoveService, MoveServiceRequest
 
 # -------------------------------------------------------------------------------------------------
 class MoveControl():
@@ -14,9 +17,23 @@ class MoveControl():
         self.group = group
         self.pose = pose
         self.name = name
+        self.planned_path = None
 
     def update_pose(self, new_pose):
         self.pose = new_pose
+    
+    def make_service_request(self, _trajectoriy):
+        print("constructing a move request...")
+        rospy.wait_for_service('move_service', timeout=10.0)
+        try:
+            move_service = rospy.ServiceProxy('move_service', MoveService)
+            request = MoveServiceRequest(trajectories=_trajectoriy)
+            request.trajectory_type = 1
+            response = move_service(request)
+            return response.success
+        except rospy.ServiceException as e:
+            rospy.logerr("Service call failed: %s" % e)
+            return False
 
     def reach_pose_via_joints(self):
         ''' Move the robot to the desired pose via joint values.
@@ -29,9 +46,16 @@ class MoveControl():
         success = False 
         while(success==False):
             self.planned_path = self.group.plan()
-            success = self.group.execute(self.planned_path[1],wait=True)
-        return success
-
+            if self.planned_path:
+                success = True
+            #self.group.execute(self.planned_path[1],wait=True)
+        
+        # TODO: send plan to unity for simulation, wait for it to finish executing in Unity
+        trajectory = self.planned_path[1]
+        if self.make_service_request(trajectory):
+            return True
+        return False
+        
     def reach_pose_via_posquat(self):
         ''' Move the robot to the desired pose via Position/Quaternion values.
 
@@ -43,18 +67,23 @@ class MoveControl():
         posquat.orientation = geometry_msgs.msg.Quaternion(w=self.pose[1][0],x=self.pose[1][1],y=self.pose[1][2],z=self.pose[1][3])
         self.group.set_pose_target(posquat)
 
+        # TODO: check if this stops after planning 50x
         success = False 
         while(success==False):
             self.planned_path = self.group.plan()
-            success = self.group.execute(self.planned_path[1],wait=True)
+            if self.planned_path:
+                success = True
+            self.group.execute(self.planned_path[1],wait=True)
+        
+        # TODO: send plan to unity for simulation, wait for it to finish executing in Unity 
+
         return success
 
 # -------------------------------------------------------------------------------------------------
 class MoveService(Service):
-    # Consturctor
     def __init__(self, tag_name: str, tag_description: str):
         super().__init__(tag_name, tag_description)
-    
+
         group = moveit_commander.MoveGroupCommander('panda_arm')
         robot = moveit_commander.RobotCommander('robot_description')
         group.set_max_velocity_scaling_factor(0.4)

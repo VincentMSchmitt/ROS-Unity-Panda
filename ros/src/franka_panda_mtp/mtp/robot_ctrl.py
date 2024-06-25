@@ -63,7 +63,7 @@ def opening_Hand(services:dict, width:float):
     print("Wait untill the Service is completed and reset the service to idle-Mode ...")
     node = client.get_node(services['Hand-Service']['state_machine']['StateCur']['NodeID'])
     while node.get_value() != stateCodes.completed:
-        time.sleep(1)
+        time.sleep(0.1)
     node = client.get_node(services['Hand-Service']['state_machine']['CommandOp']['NodeID'])
     node.set_value(commandCodes.reset)
     

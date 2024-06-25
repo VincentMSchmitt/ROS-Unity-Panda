@@ -1,2 +1,4 @@
-moveit_msgs/RobotTrajectory[] trajectories
+uint8 trajectory_type
+moveit_msgs/RobotTrajectory trajectory
 ---
+bool success
