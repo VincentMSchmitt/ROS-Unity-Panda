@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 
-import rospy
 import moveit_commander
-import actionlib_msgs.msg
-from moveit_msgs.srv import GetStateValidity
 from mtppy.service import Service
 from mtppy.procedure import Procedure
 from mtppy.operation_elements import AnaServParam

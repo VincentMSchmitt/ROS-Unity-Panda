@@ -1,6 +1,5 @@
-import rospy
-import actionlib_msgs.msg
-from moveit_msgs.srv import GetStateValidity
+#!/usr/bin/env python3
+
 import moveit_commander
 import geometry_msgs.msg
 from mtppy.service import Service
