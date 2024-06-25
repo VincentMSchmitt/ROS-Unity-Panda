@@ -58,6 +58,7 @@ class HandService(Service):
         group.set_planner_id("RRTConnect")
         group.set_planning_time(30)
         group.set_num_planning_attempts(45)
+        
         self.movetask = HandControl(robot=robot,group=group,name="target_1")
 
         ## Procedure Definition

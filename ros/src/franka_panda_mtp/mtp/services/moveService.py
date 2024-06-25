@@ -9,29 +9,19 @@ from mtppy.operation_elements import AnaServParam
 import control.positions as positions
 
 # -------------------------------------------------------------------------------------------------
-class FrankaControlBaseClass:
-    def __init__(self, robot, group, scene, pose, name):
-        rospy.loginfo('Waiting for move_group/status')
-        rospy.wait_for_message('move_group/status', actionlib_msgs.msg.GoalStatusArray)
-        
+class MoveControl():
+    def __init__(self, robot, group, pose, name):
         self.robot = robot
         self.group = group
-        self.scene = scene
         self.pose = pose
         self.name = name
 
-        self.plannedPath = None
-
+        rospy.wait_for_message('move_group/status', actionlib_msgs.msg.GoalStatusArray)
         rospy.wait_for_service('/check_state_validity')
         self.check_collision = rospy.ServiceProxy('/check_state_validity', GetStateValidity)
-    
+
     def update_pose(self, new_pose):
         self.pose = new_pose
-
-# -------------------------------------------------------------------------------------------------
-class MoveControl(FrankaControlBaseClass):
-    def __init__(self, robot, group, scene, pose, name):
-        super().__init__(robot=robot, group=group, scene=scene, pose=pose, name=name)
 
     def reach_pose_via_joints(self):
         ''' Move the robot to the desired pose via joint values.
@@ -70,11 +60,8 @@ class MoveService(Service):
     def __init__(self, tag_name: str, tag_description: str):
         super().__init__(tag_name, tag_description)
     
-        ### Ros
         group = moveit_commander.MoveGroupCommander('panda_arm')
         robot = moveit_commander.RobotCommander('robot_description')
-        scene = moveit_commander.PlanningSceneInterface(synchronous = True)
-        scene.clear()
         group.set_max_velocity_scaling_factor(0.4)
         group.set_max_acceleration_scaling_factor(0.2)
         group.set_planner_id("RRTConnect")
@@ -82,7 +69,7 @@ class MoveService(Service):
         group.set_num_planning_attempts(50)
         
         self.defaultpose = [positions.pos1, positions.rot1, positions.joints1]
-        self.movetask = MoveControl(robot=robot,group=group,scene=scene,pose=self.defaultpose,name="target_1")
+        self.movetask = MoveControl(robot=robot,group=group,pose=self.defaultpose,name="target_1")
 
         ### Procedure using joint values (j1 - j7) to move to a specific pose relative to the robots base
         movejoints_rel2base_procedure = Procedure(procedure_id=1, tag_name="MoveViaJoints",is_self_completing=True)

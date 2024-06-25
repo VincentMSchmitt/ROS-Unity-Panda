@@ -32,7 +32,6 @@ def get_service_nodes_as_dict(node, node_dict=None):
 
         # Add child_dict to node_dict
         node_dict[child_name] = child_dict
-
     return node_dict
 
 # opening hand ------------------------------------------------------------------------------------
