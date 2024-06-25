@@ -9,7 +9,6 @@ class FrankaControlBaseClass:
     def __init__(self, robot, group, scene, pose, name):
         rospy.wait_for_message('move_group/status', actionlib_msgs.msg.GoalStatusArray)
         rospy.wait_for_service('/check_state_validity')
-        self.check_collision = rospy.ServiceProxy('/check_state_validity', GetStateValidity)
         
         self.robot = robot
         self.group = group
@@ -17,6 +16,7 @@ class FrankaControlBaseClass:
         self.pose = pose
         self.name = name
         self.plannedPath = None
+        self.check_collision = rospy.ServiceProxy('/check_state_validity', GetStateValidity)
 
     def update_pose(self, new_pose):
         self.pose = new_pose
@@ -29,9 +29,9 @@ class MoveControl(FrankaControlBaseClass):
     def reach_pose_via_joints(self):
         ''' Move the robot to the desired pose via joint values.
 
-       Returns:
-           bool: True if the robot successfully reaches the pose, False otherwise.
-       '''
+        Returns:
+            bool: True if the robot successfully reaches the pose, False otherwise.
+        '''
         self.group.set_joint_value_target(self.pose[2])
         
         success = False 
@@ -43,9 +43,9 @@ class MoveControl(FrankaControlBaseClass):
     def reach_pose_via_posquat(self):
         ''' Move the robot to the desired pose via Position/Quaternion values.
 
-       Returns:
-           bool: True if the robot successfully reaches the pose, False otherwise.
-       '''
+        Returns:
+            bool: True if the robot successfully reaches the pose, False otherwise.
+        '''
         posquat = geometry_msgs.msg.Pose()
         posquat.position = geometry_msgs.msg.Point(x=self.pose[0][0],y=self.pose[0][1], z=self.pose[0][2])
         posquat.orientation = geometry_msgs.msg.Quaternion(w=self.pose[1][0],x=self.pose[1][1],y=self.pose[1][2],z=self.pose[1][3])
@@ -65,9 +65,9 @@ class HandControl(FrankaControlBaseClass):
     def grasp(self):
         ''' Close the Gripper to desired distance.
 
-       Returns:
-           bool: True if the gripper can successfully close the fingers. False otherwise.
-       '''
+        Returns:
+            bool: True if the gripper can successfully close the fingers. False otherwise.
+        '''
         self.group.set_joint_value_target(self.pose)
             
         success = False 
