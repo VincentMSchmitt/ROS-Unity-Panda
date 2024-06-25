@@ -1,35 +1,71 @@
-# ROS specific Libs
+#!/usr/bin/env python3
+
+import rospy
 import moveit_commander
-# MTP for Python specific Libs
+import actionlib_msgs.msg
+from moveit_msgs.srv import GetStateValidity
 from mtppy.service import Service
 from mtppy.procedure import Procedure
 from mtppy.operation_elements import AnaServParam
-# Own Libs
-import control.positions as positions
-from control.frankaCtrlClass import HandControl
 
+# -------------------------------------------------------------------------------------------------
+class HandControl():
+    def __init__(self, robot, group, name):        
+        self.robot = robot
+        self.group = group
+        self.name = name
+        
+        rospy.wait_for_message('move_group/status', actionlib_msgs.msg.GoalStatusArray)
+        rospy.wait_for_service('/check_state_validity')
+        self.check_collision = rospy.ServiceProxy('/check_state_validity', GetStateValidity)
+    
+    def update_pose(self, new_pose):
+        self.pose = new_pose
+
+    def _move_gripper(self) -> bool:
+        self.group.set_joint_value_target(self.pose)
+        self.planned_path = self.group.plan()
+        if self.planned_path[1]:  # Check if the plan is valid
+            success = self.group.execute(self.planned_path[1], wait=True)
+            return success
+        return False
+
+    def grasp(self) -> bool:
+        ''' Close the Gripper to desired distance.
+
+        Returns:
+            bool: True if the gripper can successfully close the fingers. False otherwise.
+        '''
+        return self._move_gripper()
+
+    def open(self) -> bool:
+        ''' Open the Gripper to desired distance.
+
+        Returns:
+           bool: True if the gripper can successfully open the fingers. False otherwise.
+        '''
+        return self._move_gripper()
+
+# -------------------------------------------------------------------------------------------------
 class HandService(Service):
     def __init__(self, tag_name: str, tag_description: str):
         super().__init__(tag_name, tag_description)
         
         group = moveit_commander.MoveGroupCommander('panda_hand')
         robot = moveit_commander.RobotCommander('robot_description')
-        scene = moveit_commander.PlanningSceneInterface(synchronous = True)
-        scene.clear()
         group.set_max_velocity_scaling_factor(0.4)
         group.set_max_acceleration_scaling_factor(0.2)
         group.set_planner_id("RRTConnect")
         group.set_planning_time(30)
         group.set_num_planning_attempts(45)
-        self.defaultpose = [positions.width1/2, positions.width1/2]
-        self.movetask = HandControl(robot=robot,group=group,scene=scene,pose=self.defaultpose,name="target_1")
+        self.movetask = HandControl(robot=robot,group=group,name="target_1")
 
         ## Procedure Definition
         openProcedure = Procedure(procedure_id=1, tag_name="OpenGripper", tag_description='', is_self_completing=True)
         closeProcedure = Procedure(procedure_id=2, tag_name="CloseGripper", tag_description='', is_self_completing=True)
         ## Procedure Parameters
-        openProcedure.add_procedure_parameter(AnaServParam(tag_name='OpeningWidth', tag_description='', v_min=0.001, v_max=0.079, v_unit=1010))
-        closeProcedure.add_procedure_parameter(AnaServParam(tag_name='ClosingWidth', tag_description='', v_min=0.001, v_max=0.079, v_unit=1010))
+        openProcedure.add_procedure_parameter(AnaServParam(tag_name='OpeningWidth', tag_description='', v_min=0.0, v_max=0.08, v_unit=1010))
+        closeProcedure.add_procedure_parameter(AnaServParam(tag_name='ClosingWidth', tag_description='', v_min=0.0, v_max=0.08, v_unit=1010))
 
         ## Add Procedures to Service
         self.add_procedure(openProcedure)
