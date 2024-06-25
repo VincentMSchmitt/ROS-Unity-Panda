@@ -4,7 +4,10 @@ import sys
 import copy
 import rospy
 import moveit_commander
-
+# visulization
+from visualization_msgs.msg import Marker
+from geometry_msgs.msg import Point
+# predefined positions
 import positions
 
 def main():
@@ -15,16 +18,38 @@ def main():
     move_group_arm = moveit_commander.MoveGroupCommander("panda_arm")
     move_group_hand = moveit_commander.MoveGroupCommander("panda_hand")
     
-    move_group_arm.set_planning_time(10)
-    move_group_arm.set_num_planning_attempts(50)
-    move_group_arm.set_max_velocity_scaling_factor(1)
-    move_group_arm.set_max_acceleration_scaling_factor(1)
-    move_group_arm.set_planner_id("RRTConnect")
+    marker_pub = rospy.Publisher('visualization_marker', Marker, queue_size=10)
+    rospy.sleep(2)  # wait for rviz
     
-    move_group_hand.set_planning_time(10)
-    move_group_hand.set_num_planning_attempts(50)
-    move_group_hand.set_max_velocity_scaling_factor(1)
-    move_group_hand.set_max_acceleration_scaling_factor(1)
+    # Function to initialise marker for visulization ----------------------------------------------
+    def initialize_marker():
+        marker = Marker()
+        marker.header.frame_id = "world"
+        marker.type = marker.LINE_STRIP
+        marker.action = marker.ADD
+        marker.scale.x = 0.1
+        marker.color.a = 0.5
+        marker.color.r = 0.0
+        marker.color.g = 1.0
+        marker.color.b = 0.0
+        marker.lifetime = rospy.Duration(0)  # The marker remains in place
+        return marker
+
+    # Function to add a single point to the marker  ------------------------------------------------
+    def add_point_to_marker(pose, marker):
+        p = Point()
+        p.x = pose.position.x
+        p.y = pose.position.y
+        p.z = pose.position.z
+        marker.points.append(p)
+        marker_pub.publish(marker)
+    
+    # Function to add the complete trajectory to the marker  --------------------------------------
+    def add_trajectory_to_marker(trajectory, marker):
+        for point in trajectory.joint_trajectory.points:
+            pose = move_group_arm.get_current_pose().pose
+            print("TCP Pose at this point:", pose)
+            add_point_to_marker(pose, marker)
     
     # Function to move gripper  -------------------------------------------------------------------
     def set_gripper_percentage(opening_percentage):
@@ -36,8 +61,27 @@ def main():
         joint_goal[1] = opening_width / 2.0  # Sets the value for panda_finger_joint2
         move_group_hand.go(joint_goal, wait=True)
         move_group_hand.stop()
+        
+    # Setup moveit --------------------------------------------------------------------------------
+    marker = initialize_marker()
+    
+    # arm
+    move_group_arm.set_planning_time(10)
+    move_group_arm.set_num_planning_attempts(50)
+    move_group_arm.set_max_velocity_scaling_factor(1)
+    move_group_arm.set_max_acceleration_scaling_factor(1)
+    move_group_arm.set_planner_id("RRTConnect")
+    # hand
+    move_group_hand.set_planning_time(10)
+    move_group_hand.set_num_planning_attempts(50)
+    move_group_hand.set_max_velocity_scaling_factor(1)
+    move_group_hand.set_max_acceleration_scaling_factor(1)
     
     # plan and exectue  ---------------------------------------------------------------------------
+    # remove all leftover markers from the scene
+    marker.DELETEALL
+    marker_pub.publish(marker)
+    
     # Move to pose1
     move_group_arm.set_pose_target(positions.pose1)
     plan = move_group_arm.plan()
@@ -46,6 +90,7 @@ def main():
         move_group_arm.execute(plan1, wait=True)
         move_group_arm.stop()
         move_group_arm.clear_pose_targets()
+        add_trajectory_to_marker(plan1, marker)
     else:
         rospy.logerr("Planning to pose1 failed")
 
@@ -54,9 +99,9 @@ def main():
     pose2 = positions.pose2
     waypoints = []
     waypoints.append(move_group_arm.get_current_pose().pose)
-    wpose = move_group_arm.get_current_pose().pose
-    wpose.position.z = pose2.position.z  # Only change the z-axis
-    waypoints.append(copy.deepcopy(wpose))
+    plan2 = move_group_arm.get_current_pose().pose
+    plan2.position.z = pose2.position.z  # Only change the z-axis
+    waypoints.append(copy.deepcopy(plan2))
 
     # Compute Cartesian path
     (plan, fraction) = move_group_arm.compute_cartesian_path(
@@ -71,6 +116,7 @@ def main():
             move_group_arm.stop()
             move_group_arm.clear_pose_targets()
             set_gripper_percentage(25) # 25% open
+            #add_trajectory_to_marker(plan, marker)
     else:
         rospy.logerr("Planning to pose3 failed")
             
@@ -82,6 +128,7 @@ def main():
         move_group_arm.execute(plan3, wait=True)
         move_group_arm.stop()
         move_group_arm.clear_pose_targets()
+        #add_trajectory_to_marker(plan, marker)
     else:
         rospy.logerr("Planning to pose3 failed")
     
@@ -90,9 +137,9 @@ def main():
     pose4 = positions.pose4
     waypoints = []
     waypoints.append(move_group_arm.get_current_pose().pose)
-    wpose = move_group_arm.get_current_pose().pose
-    wpose.position.z = pose4.position.z  # Only change the z-axis
-    waypoints.append(copy.deepcopy(wpose))
+    plan4 = move_group_arm.get_current_pose().pose
+    plan4.position.z = pose4.position.z  # Only change the z-axis
+    waypoints.append(copy.deepcopy(plan4))
 
     # Compute Cartesian path
     (plan, fraction) = move_group_arm.compute_cartesian_path(
@@ -107,6 +154,7 @@ def main():
             move_group_arm.stop()
             move_group_arm.clear_pose_targets()
             set_gripper_percentage(100) # 100% open
+            #add_trajectory_to_marker(plan, marker)
     else:
         rospy.logerr("Planning to pose4 failed")
     
@@ -118,6 +166,7 @@ def main():
         move_group_arm.execute(plan_home, wait=True)
         move_group_arm.stop()
         move_group_arm.clear_pose_targets()
+        #add_trajectory_to_marker(plan, marker)
     else:
         rospy.logerr("Planning to home position failed")
 

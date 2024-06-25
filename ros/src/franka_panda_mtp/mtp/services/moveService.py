@@ -1,62 +1,37 @@
-import sys
-### ROS specific Libs
-import rospy
+# ROS specific Libs
 import moveit_commander
-import controller_manager_msgs.srv
-### MTP for Python specific Libs
+# MTP for Python specific Libs
 from mtppy.service import Service
 from mtppy.procedure import Procedure
 from mtppy.operation_elements import AnaServParam
-### Own Libs
-import positions as positions
-from frankaCtrlClass import MoveControl
+# Own Libs
+import control.positions as positions
+from control.frankaCtrlClass import MoveControl
 
 class MoveService(Service):
-    def __init__(self, tag_name: str, tag_description: str, fake_hw:bool):
+    # Consturctor
+    def __init__(self, tag_name: str, tag_description: str):
         super().__init__(tag_name, tag_description)
-        
-        # load controller if not fake hardware
-        if fake_hw is False:
-            rospy.loginfo('Waiting for controller_manager/load_controller')
-            load_controller = rospy.ServiceProxy('controller_manager/load_controller',controller_manager_msgs.srv.LoadController)
-            load_controller.wait_for_service()
-
-            for controller_name in ['position_joint_trajectory_controller','effort_joint_trajectory_controller']:
-                if not load_controller(controller_name):
-                    rospy.logerr(f"Could not load {controller_name}. Shutting off.")
-                    sys.exit(1)
-        rospy.loginfo('Loaded controllers')
-        
-        # ros related
+    
+        ### Ros
         group = moveit_commander.MoveGroupCommander('panda_arm')
         robot = moveit_commander.RobotCommander('robot_description')
         scene = moveit_commander.PlanningSceneInterface(synchronous = True)
         relMoveVel = 0.7
         relMoveAcc = 0.2
-        moveSettings= [relMoveVel, relMoveAcc]
+        moveSettings = [relMoveVel, relMoveAcc]
         scene.clear()
         group.set_max_velocity_scaling_factor(0.4)
         group.set_max_acceleration_scaling_factor(0.2)
         group.set_planner_id("RRTConnect")
         group.set_planning_time(30)
         group.set_num_planning_attempts(50)
-        self.defaultpose = [positions.pos1, positions.rot1, positions.joints1]
         
+        self.defaultpose = [positions.pos1, positions.rot1, positions.joints1]
         self.movetask = MoveControl(robot=robot,group=group,scene=scene,pose=self.defaultpose,moveSettings=moveSettings,name="target_1")
 
         ### Procedure using joint values (j1 - j7) to move to a specific pose relative to the robots base
         movejoints_rel2base_procedure = Procedure(procedure_id=1, tag_name="MoveViaJoints",is_self_completing=True)
-        ### Procedure using Position (x,y,z) and Quaternion(qx,qy,qz,qw) to move to a specific pose relative to the robots base
-        moveposquat_rel2base_procedure = Procedure(procedure_id=2, tag_name="MoveViaPosQuat",is_self_completing=True)
-
-        ### Required procedure parameters
-        moveposquat_rel2base_procedure.add_procedure_parameter(AnaServParam(tag_name="X-Coordinate",  tag_description='', v_min=-0.845, v_max=0.845))
-        moveposquat_rel2base_procedure.add_procedure_parameter(AnaServParam(tag_name="Y-Coordinate",  tag_description='', v_min=-0.350, v_max=1.180))
-        moveposquat_rel2base_procedure.add_procedure_parameter(AnaServParam(tag_name="Z-Coordinate",  tag_description='', v_min=-0.845, v_max=0.845))
-        moveposquat_rel2base_procedure.add_procedure_parameter(AnaServParam(tag_name="QX-Quaternion", tag_description='', v_min=-1000, v_max=1000))
-        moveposquat_rel2base_procedure.add_procedure_parameter(AnaServParam(tag_name="QY-Quaternion", tag_description='', v_min=-1000, v_max=1000))
-        moveposquat_rel2base_procedure.add_procedure_parameter(AnaServParam(tag_name="QZ-Quaternion", tag_description='', v_min=-1000, v_max=1000))
-        moveposquat_rel2base_procedure.add_procedure_parameter(AnaServParam(tag_name="QW-Quaternion", tag_description='', v_min=-1000, v_max=1000))
         movejoints_rel2base_procedure.add_procedure_parameter(AnaServParam(tag_name="Joint1", tag_description='', v_min=-2.8963, v_max=2.8963))
         movejoints_rel2base_procedure.add_procedure_parameter(AnaServParam(tag_name="Joint2", tag_description='', v_min=-1.7618, v_max=1.7618))
         movejoints_rel2base_procedure.add_procedure_parameter(AnaServParam(tag_name="Joint3", tag_description='', v_min=-2.8963, v_max=2.8963))
@@ -64,6 +39,16 @@ class MoveService(Service):
         movejoints_rel2base_procedure.add_procedure_parameter(AnaServParam(tag_name="Joint5", tag_description='', v_min=-2.8963, v_max=2.8963))
         movejoints_rel2base_procedure.add_procedure_parameter(AnaServParam(tag_name="Joint6", tag_description='', v_min=-0.0165, v_max=3.7515))
         movejoints_rel2base_procedure.add_procedure_parameter(AnaServParam(tag_name="Joint7", tag_description='', v_min=-2.8963, v_max=2.8963))
+        
+        ### Procedure using Position (x,y,z) and Quaternion(qx,qy,qz,qw) to move to a specific pose relative to the robots base
+        moveposquat_rel2base_procedure = Procedure(procedure_id=2, tag_name="MoveViaPosQuat",is_self_completing=True)
+        moveposquat_rel2base_procedure.add_procedure_parameter(AnaServParam(tag_name="X-Coordinate",  tag_description='', v_min=-0.845, v_max=0.845))
+        moveposquat_rel2base_procedure.add_procedure_parameter(AnaServParam(tag_name="Y-Coordinate",  tag_description='', v_min=-0.350, v_max=1.180))
+        moveposquat_rel2base_procedure.add_procedure_parameter(AnaServParam(tag_name="Z-Coordinate",  tag_description='', v_min=-0.845, v_max=0.845))
+        moveposquat_rel2base_procedure.add_procedure_parameter(AnaServParam(tag_name="QX-Quaternion", tag_description='', v_min=-1000, v_max=1000))
+        moveposquat_rel2base_procedure.add_procedure_parameter(AnaServParam(tag_name="QY-Quaternion", tag_description='', v_min=-1000, v_max=1000))
+        moveposquat_rel2base_procedure.add_procedure_parameter(AnaServParam(tag_name="QZ-Quaternion", tag_description='', v_min=-1000, v_max=1000))
+        moveposquat_rel2base_procedure.add_procedure_parameter(AnaServParam(tag_name="QW-Quaternion", tag_description='', v_min=-1000, v_max=1000))
 
         ### add procedure to service
         self.add_procedure(movejoints_rel2base_procedure)
@@ -76,8 +61,7 @@ class MoveService(Service):
         :return:
         """
         if self.procedure_control.get_procedure_cur() != 0:
-            print(f"Service: {self.tag_name} with Procedure: 
-                  {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Idle State!")
+            print(f"Service: {self.tag_name} with Procedure: {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Idle State!")
     
     ## STARTING -----------------------------------------------------------------------------------
     def starting(self):
@@ -85,8 +69,7 @@ class MoveService(Service):
         Starting state.
         :return:
         """
-        print(f"Service: {self.tag_name} with Procedure: 
-              {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Starting State!")
+        print(f"Service: {self.tag_name} with Procedure: {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Starting State!")
 
         # handle procedure cur
         if self.procedure_control.get_procedure_cur() == 1:
@@ -141,8 +124,7 @@ class MoveService(Service):
         Execute state.
         :return:
         """
-        print(f"Service: {self.tag_name} with Procedure: 
-              {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Execute State!")
+        print(f"Service: {self.tag_name} with Procedure: {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Execute State!")
         
         # handle procedure cur
         if self.procedure_control.get_procedure_cur() == 1:
@@ -162,8 +144,7 @@ class MoveService(Service):
         Completing state.
         :return:
         """
-        print(f"Service: {self.tag_name} with Procedure: 
-              {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Completing State!")
+        print(f"Service: {self.tag_name} with Procedure: {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Completing State!")
         self.state_change()
         return
     
@@ -173,8 +154,7 @@ class MoveService(Service):
         Completed state.
         :return:
         """
-        print(f"Service: {self.tag_name} with Procedure: 
-              {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Completed State!")
+        print(f"Service: {self.tag_name} with Procedure: {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Completed State!")
         return
     
     ## PAUSING ------------------------------------------------------------------------------------
@@ -183,8 +163,7 @@ class MoveService(Service):
         Pausing state.
         :return:
         """
-        print(f"Service: {self.tag_name} with Procedure: 
-              {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Pausing State!")
+        print(f"Service: {self.tag_name} with Procedure: {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Pausing State!")
         self.state_change()
         return
     
@@ -194,8 +173,7 @@ class MoveService(Service):
         Paused state.
         :return:
         """
-        print(f"Service: {self.tag_name} with Procedure: 
-              {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Paused State!")
+        print(f"Service: {self.tag_name} with Procedure: {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Paused State!")
         return
     
     ## RESUMING -----------------------------------------------------------------------------------
@@ -204,8 +182,7 @@ class MoveService(Service):
         Resuming state.
         :return:
         """
-        print(f"Service: {self.tag_name} with Procedure: 
-              {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Resuming State!")
+        print(f"Service: {self.tag_name} with Procedure: {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Resuming State!")
         self.state_change()
         return
     
@@ -215,8 +192,7 @@ class MoveService(Service):
         Holding state.
         :return:
         """
-        print(f"Service: {self.tag_name} with Procedure: 
-              {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Holding State!")
+        print(f"Service: {self.tag_name} with Procedure: {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Holding State!")
         self.state_change()
         return
     
@@ -226,8 +202,7 @@ class MoveService(Service):
         Held state.
         :return:
         """
-        print(f"Service: {self.tag_name} with Procedure: 
-              {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Held State!")
+        print(f"Service: {self.tag_name} with Procedure: {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Held State!")
         return
     
     ## UNHOLDING ----------------------------------------------------------------------------------
@@ -236,8 +211,7 @@ class MoveService(Service):
         Unholding state.
         :return:
         """
-        print(f"Service: {self.tag_name} with Procedure: 
-              {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Unholding State!")
+        print(f"Service: {self.tag_name} with Procedure: {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Unholding State!")
         self.state_change()
         return
     
@@ -247,8 +221,7 @@ class MoveService(Service):
         Stopping state.
         :return:
         """
-        print(f"Service: {self.tag_name} with Procedure: 
-              {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Stopping State!")
+        print(f"Service: {self.tag_name} with Procedure: {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Stopping State!")
         self.state_change()
         return
     
@@ -258,8 +231,7 @@ class MoveService(Service):
         Stopped state.
         :return:
         """
-        print(f"Service: {self.tag_name} with Procedure: 
-              {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Stopped State!")
+        print(f"Service: {self.tag_name} with Procedure: {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Stopped State!")
         self.state_change()
         return
     
@@ -269,8 +241,7 @@ class MoveService(Service):
         Aborting state.
         :return:
         """
-        print(f"Service: {self.tag_name} with Procedure: 
-              {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Aborting State!")
+        print(f"Service: {self.tag_name} with Procedure: {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Aborting State!")
         self.state_change()
         return
     
@@ -280,8 +251,7 @@ class MoveService(Service):
         Aborted state.
         :return:
         """
-        print(f"Service: {self.tag_name} with Procedure: 
-              {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Aborted State!")
+        print(f"Service: {self.tag_name} with Procedure: {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Aborted State!")
         return
     
     ## RESETTING ----------------------------------------------------------------------------------
@@ -290,8 +260,7 @@ class MoveService(Service):
         Resetting state.
         :return:
         """
-        print(f"Service: {self.tag_name} with Procedure: 
-              {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Resetting State!")
+        print(f"Service: {self.tag_name} with Procedure: {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Resetting State!")
         self.state_change()
         return
 # ENDCLASS MoverService

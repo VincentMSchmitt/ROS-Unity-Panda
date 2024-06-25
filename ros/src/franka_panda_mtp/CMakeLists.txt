@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   moveit_msgs
   geometry_msgs
+  visualization_msgs
   franka_panda_communication
 )
 
@@ -27,6 +28,7 @@ catkin_package(
   sensor_msgs
   moveit_msgs
   geometry_msgs
+  visualization_msgs
   franka_panda_communication
 )
 
