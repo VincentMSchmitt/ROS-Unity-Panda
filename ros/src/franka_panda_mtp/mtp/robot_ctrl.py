@@ -54,9 +54,9 @@ def opening_Hand(services:dict, width:float):
     node.set_value(width)
 
     # Start the service
-    print("Starting the the service ...")
+    print("Starting opening hand service ...")
     input("Press Enter to start!")
-    print("====================================================================================================")
+    print("=========================================================================================================")
     node = client.get_node(services['Hand-Service']['state_machine']['CommandOp']['NodeID'])
     node.set_value(commandCodes.start)
 
@@ -69,7 +69,7 @@ def opening_Hand(services:dict, width:float):
     node.set_value(commandCodes.reset)
     
     print("Opening Hand completed!")
-    print("====================================================================================================")
+    print("=========================================================================================================")
 
 # closing hand ------------------------------------------------------------------------------------
 def closing_Hand(services:dict, width:float):
@@ -90,9 +90,9 @@ def closing_Hand(services:dict, width:float):
     node.set_value(width)
 
     # Start the service
-    print("Starting the service...")
+    print("Starting closing hand service...")
     input("Press Enter to start!")
-    print("====================================================================================================")
+    print("=========================================================================================================")
     node = client.get_node(services['Hand-Service']['state_machine']['CommandOp']['NodeID'])
     node.set_value(commandCodes.start)
 
@@ -104,7 +104,7 @@ def closing_Hand(services:dict, width:float):
     node = client.get_node(services['Hand-Service']['state_machine']['CommandOp']['NodeID'])
     node.set_value(commandCodes.reset)
     print("Closing Hand completed!")
-    print("====================================================================================================")
+    print("=========================================================================================================")
 
 # move robot via joints ---------------------------------------------------------------------------
 def moving_robot_via_joints(services:dict, joint_values:list):
@@ -149,9 +149,9 @@ def moving_robot_via_joints(services:dict, joint_values:list):
     node.set_value(joint_values[6])
 
     # Start the service
-    print("Starting the service...")
+    print("Starting move via joints service...")
     input("Press Enter to start!")
-    print("====================================================================================================")
+    print("=========================================================================================================")
     node = client.get_node(services['Move-Service']['state_machine']['CommandOp']['NodeID'])
     node.set_value(commandCodes.start)
 
@@ -164,7 +164,7 @@ def moving_robot_via_joints(services:dict, joint_values:list):
     node.set_value(commandCodes.reset)
     
     print("Moving arm via joints completed!")
-    print("====================================================================================================")
+    print("=========================================================================================================")
 
 # move robot via posquat --------------------------------------------------------------------------
 def moving_robot_via_posquat(services:dict, pos:list, quat:list):
@@ -209,9 +209,9 @@ def moving_robot_via_posquat(services:dict, pos:list, quat:list):
     node.set_value(quat[3])
 
     # Start the service
-    print("Starting the service...")
+    print("Starting move via posequat service...")
     input("Press Enter to start!")
-    print("====================================================================================================")
+    print("=========================================================================================================")
     node = client.get_node(services['Move-Service']['state_machine']['CommandOp']['NodeID'])
     node.set_value(commandCodes.start)
 
@@ -224,7 +224,7 @@ def moving_robot_via_posquat(services:dict, pos:list, quat:list):
     node.set_value(commandCodes.reset)
     
     print("Moving arm via posquat completed!")
-    print("====================================================================================================")
+    print("=========================================================================================================")
 
 # main --------------------------------------------------------------------------------------------
 def main():
@@ -233,11 +233,11 @@ def main():
         client.connect()
 
         # Browse the server's objects
-        print("====================================================================================================")
+        print("=========================================================================================================")
         print("Objects node-IDs:")
         for obj in client.get_objects_node().get_children():
             print(obj)
-        print("====================================================================================================")
+        print("=========================================================================================================")
 
         # Get the services of the module as nested dict
         services_id = "ns=3;s=services"
@@ -259,7 +259,7 @@ def main():
         opening_Hand(services, width=robot_values.width2)
 
         # Running all commands to prepare and run the Move-Service with joint based procedure
-        print("Returning to starting pose! Note, that the joints can have different values compared to the beginning, because we use the PosQuat Procedure which uses backwards-kinematic!")
+        print("Returning to starting pose!")
         moving_robot_via_posquat(services, robot_values.pos2, robot_values.rot2)
 
         input("Finished! Press Enter to exit...")
