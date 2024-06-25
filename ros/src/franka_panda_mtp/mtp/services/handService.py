@@ -50,7 +50,6 @@ class HandService(Service):
         :return:
         """
         print(f"Service: {self.tag_name} with Procedure: {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Starting State!")
-        print(f"Service: {self.tag_name}: Applying procedure parameters...")
         if self.procedure_control.get_procedure_cur() == 1:
             anaserv = self.procedures[1].procedure_parameters['OpeningWidth']
             anaserv.set_v_out()

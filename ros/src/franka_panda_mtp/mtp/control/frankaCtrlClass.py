@@ -7,8 +7,9 @@ from moveit_msgs.srv import GetStateValidity
 # BaseClass ---------------------------------------------------------------------------------------
 class FrankaControlBaseClass:
     def __init__(self, robot, group, scene, pose, name):
-        rospy.loginfo('Waiting for move_group/status')
         rospy.wait_for_message('move_group/status', actionlib_msgs.msg.GoalStatusArray)
+        rospy.wait_for_service('/check_state_validity')
+        self.check_collision = rospy.ServiceProxy('/check_state_validity', GetStateValidity)
         
         self.robot = robot
         self.group = group
@@ -17,9 +18,6 @@ class FrankaControlBaseClass:
         self.name = name
         self.plannedPath = None
 
-        rospy.wait_for_service('/check_state_validity')
-        self.check_collision = rospy.ServiceProxy('/check_state_validity', GetStateValidity)
-    
     def update_pose(self, new_pose):
         self.pose = new_pose
 
@@ -40,8 +38,6 @@ class MoveControl(FrankaControlBaseClass):
         while(success==False):
             self.planned_path = self.group.plan()
             success = self.group.execute(self.planned_path[1],wait=True)
-
-        rospy.loginfo(self.name + " reached!")
         return success
 
     def reach_pose_via_posquat(self):
@@ -59,7 +55,6 @@ class MoveControl(FrankaControlBaseClass):
         while(success==False):
             self.planned_path = self.group.plan()
             success = self.group.execute(self.planned_path[1],wait=True)
-        rospy.loginfo(self.name + " reached!") 
         return success
 
 # HandControl -------------------------------------------------------------------------------------
@@ -79,7 +74,6 @@ class HandControl(FrankaControlBaseClass):
         while(success==False):
             self.planned_path = self.group.plan()
             success = self.group.execute(self.planned_path[1],wait=True)
-        rospy.loginfo(self.name + " gripper closed!")  
         return success
     
     def open(self):
@@ -94,5 +88,4 @@ class HandControl(FrankaControlBaseClass):
         while(success==False):
             self.planned_path = self.group.plan()
             success = self.group.execute(self.planned_path[1],wait=True)
-        rospy.loginfo(self.name + " gripper opend!")  
         return success
