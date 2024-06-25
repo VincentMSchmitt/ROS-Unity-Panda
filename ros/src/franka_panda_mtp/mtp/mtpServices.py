@@ -41,7 +41,6 @@ def main():
 
     except:
         if robot is not None:
-            # TODO: this function dosent exist! Find the needed function
             robot.stop_opcua_server()
             rospy.logerr("There is no active OPCUA-Server PEA for the robot.")
         sys.exit(1)
