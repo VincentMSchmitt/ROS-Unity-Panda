@@ -16,10 +16,6 @@ class MoveControl():
         self.pose = pose
         self.name = name
 
-        rospy.wait_for_message('move_group/status', actionlib_msgs.msg.GoalStatusArray)
-        rospy.wait_for_service('/check_state_validity')
-        self.check_collision = rospy.ServiceProxy('/check_state_validity', GetStateValidity)
-
     def update_pose(self, new_pose):
         self.pose = new_pose
 
