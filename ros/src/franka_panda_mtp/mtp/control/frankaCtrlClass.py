@@ -6,7 +6,7 @@ from moveit_msgs.srv import GetStateValidity
 
 # BaseClass ---------------------------------------------------------------------------------------
 class FrankaControlBaseClass:
-    def __init__(self, robot, group, scene, pose, moveSettings, name):
+    def __init__(self, robot, group, scene, pose, name):
         rospy.loginfo('Waiting for move_group/status')
         rospy.wait_for_message('move_group/status', actionlib_msgs.msg.GoalStatusArray)
         
@@ -14,7 +14,6 @@ class FrankaControlBaseClass:
         self.group = group
         self.scene = scene
         self.pose = pose
-        self.moveSettings = moveSettings
         self.name = name
         self.plannedPath = None
 
@@ -26,8 +25,8 @@ class FrankaControlBaseClass:
 
 # MoveControl -------------------------------------------------------------------------------------
 class MoveControl(FrankaControlBaseClass):
-    def __init__(self, robot, group, scene, pose, moveSettings, name):
-        super().__init__(robot=robot, group=group, scene=scene, pose=pose,moveSettings=moveSettings, name=name)
+    def __init__(self, robot, group, scene, pose, name):
+        super().__init__(robot=robot, group=group, scene=scene, pose=pose, name=name)
 
     def reach_pose_via_joints(self):
         ''' Move the robot to the desired pose via joint values.
@@ -42,7 +41,7 @@ class MoveControl(FrankaControlBaseClass):
             self.planned_path = self.group.plan()
             success = self.group.execute(self.planned_path[1],wait=True)
 
-        rospy.loginfo(self.name + "reached!")
+        rospy.loginfo(self.name + " reached!")
         return success
 
     def reach_pose_via_posquat(self):
@@ -60,13 +59,13 @@ class MoveControl(FrankaControlBaseClass):
         while(success==False):
             self.planned_path = self.group.plan()
             success = self.group.execute(self.planned_path[1],wait=True)
-        rospy.loginfo(self.name + "reached!") 
+        rospy.loginfo(self.name + " reached!") 
         return success
 
 # HandControl -------------------------------------------------------------------------------------
 class HandControl(FrankaControlBaseClass):
-    def __init__(self, robot, group, scene, pose, moveSettings, name):
-        super().__init__(robot=robot, group=group, scene=scene, pose=pose,moveSettings=moveSettings, name=name)
+    def __init__(self, robot, group, scene, pose, name):
+        super().__init__(robot=robot, group=group, scene=scene, pose=pose, name=name)
 
     def grasp(self):
         ''' Close the Gripper to desired distance.
@@ -80,7 +79,7 @@ class HandControl(FrankaControlBaseClass):
         while(success==False):
             self.planned_path = self.group.plan()
             success = self.group.execute(self.planned_path[1],wait=True)
-        rospy.loginfo("Gripper closed!")  
+        rospy.loginfo(self.name + " gripper closed!")  
         return success
     
     def open(self):
@@ -95,5 +94,5 @@ class HandControl(FrankaControlBaseClass):
         while(success==False):
             self.planned_path = self.group.plan()
             success = self.group.execute(self.planned_path[1],wait=True)
-        rospy.loginfo("Gripper opend!")  
+        rospy.loginfo(self.name + " gripper opend!")  
         return success

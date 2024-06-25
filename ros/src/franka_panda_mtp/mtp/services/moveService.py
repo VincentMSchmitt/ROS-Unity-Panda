@@ -17,9 +17,6 @@ class MoveService(Service):
         group = moveit_commander.MoveGroupCommander('panda_arm')
         robot = moveit_commander.RobotCommander('robot_description')
         scene = moveit_commander.PlanningSceneInterface(synchronous = True)
-        relMoveVel = 0.7
-        relMoveAcc = 0.2
-        moveSettings = [relMoveVel, relMoveAcc]
         scene.clear()
         group.set_max_velocity_scaling_factor(0.4)
         group.set_max_acceleration_scaling_factor(0.2)
@@ -28,7 +25,7 @@ class MoveService(Service):
         group.set_num_planning_attempts(50)
         
         self.defaultpose = [positions.pos1, positions.rot1, positions.joints1]
-        self.movetask = MoveControl(robot=robot,group=group,scene=scene,pose=self.defaultpose,moveSettings=moveSettings,name="target_1")
+        self.movetask = MoveControl(robot=robot,group=group,scene=scene,pose=self.defaultpose,name="target_1")
 
         ### Procedure using joint values (j1 - j7) to move to a specific pose relative to the robots base
         movejoints_rel2base_procedure = Procedure(procedure_id=1, tag_name="MoveViaJoints",is_self_completing=True)

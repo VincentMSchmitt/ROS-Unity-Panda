@@ -15,9 +15,6 @@ class HandService(Service):
         group = moveit_commander.MoveGroupCommander('panda_hand')
         robot = moveit_commander.RobotCommander('robot_description')
         scene = moveit_commander.PlanningSceneInterface(synchronous = True)
-        relMoveVel = 0.7
-        relMoveAcc = 0.2
-        moveSettings= [relMoveVel, relMoveAcc]
         scene.clear()
         group.set_max_velocity_scaling_factor(0.4)
         group.set_max_acceleration_scaling_factor(0.2)
@@ -25,7 +22,7 @@ class HandService(Service):
         group.set_planning_time(30)
         group.set_num_planning_attempts(45)
         self.defaultpose = [positions.width1/2, positions.width1/2]
-        self.movetask = HandControl(robot=robot,group=group,scene=scene,pose=self.defaultpose,moveSettings=moveSettings,name="target_1")
+        self.movetask = HandControl(robot=robot,group=group,scene=scene,pose=self.defaultpose,name="target_1")
 
         ## Procedure Definition
         openProcedure = Procedure(procedure_id=1, tag_name="OpenGripper", tag_description='', is_self_completing=True)
@@ -84,14 +81,10 @@ class HandService(Service):
         """
         print(f"Service: {self.tag_name} with Procedure: {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Execute State!")
         if self.procedure_control.get_procedure_cur() == 1:
-            print("Starting movetask1")
             self.movetask.open()
-            print("HERE1")
             self.state_change()
         elif self.procedure_control.get_procedure_cur() == 2:
-            print("Starting movetask2")
             self.movetask.grasp()
-            print("HERE2")
             self.state_change()
         else:
             print("no valid Procedure ID")

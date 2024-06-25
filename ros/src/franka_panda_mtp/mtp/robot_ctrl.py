@@ -54,10 +54,9 @@ def opening_Hand(services:dict, width:float):
     node.set_value(width)
 
     # Start the service
-    
     print("Starting the the service ...")
     input("Press Enter to start!")
-    print("==============================")
+    print("====================================================================================================")
     node = client.get_node(services['Hand-Service']['state_machine']['CommandOp']['NodeID'])
     node.set_value(commandCodes.start)
 
@@ -65,13 +64,12 @@ def opening_Hand(services:dict, width:float):
     print("Wait untill the Service is completed and reset the service to idle-Mode ...")
     node = client.get_node(services['Hand-Service']['state_machine']['StateCur']['NodeID'])
     while node.get_value() != stateCodes.completed:
-        print("Not completed yet... retrying")
         time.sleep(1)
     node = client.get_node(services['Hand-Service']['state_machine']['CommandOp']['NodeID'])
     node.set_value(commandCodes.reset)
     
     print("Opening Hand completed!")
-    print("==============================")
+    print("====================================================================================================")
 
 # closing hand ------------------------------------------------------------------------------------
 def closing_Hand(services:dict, width:float):
@@ -94,7 +92,7 @@ def closing_Hand(services:dict, width:float):
     # Start the service
     print("Starting the service...")
     input("Press Enter to start!")
-    print("==============================")
+    print("====================================================================================================")
     node = client.get_node(services['Hand-Service']['state_machine']['CommandOp']['NodeID'])
     node.set_value(commandCodes.start)
 
@@ -106,7 +104,7 @@ def closing_Hand(services:dict, width:float):
     node = client.get_node(services['Hand-Service']['state_machine']['CommandOp']['NodeID'])
     node.set_value(commandCodes.reset)
     print("Closing Hand completed!")
-    print("==============================")
+    print("====================================================================================================")
 
 # move robot via joints ---------------------------------------------------------------------------
 def moving_robot_via_joints(services:dict, joint_values:list):
@@ -153,7 +151,7 @@ def moving_robot_via_joints(services:dict, joint_values:list):
     # Start the service
     print("Starting the service...")
     input("Press Enter to start!")
-    print("==============================")
+    print("====================================================================================================")
     node = client.get_node(services['Move-Service']['state_machine']['CommandOp']['NodeID'])
     node.set_value(commandCodes.start)
 
@@ -166,7 +164,7 @@ def moving_robot_via_joints(services:dict, joint_values:list):
     node.set_value(commandCodes.reset)
     
     print("Moving arm via joints completed!")
-    print("==============================")
+    print("====================================================================================================")
 
 # move robot via posquat --------------------------------------------------------------------------
 def moving_robot_via_posquat(services:dict, pos:list, quat:list):
@@ -213,7 +211,7 @@ def moving_robot_via_posquat(services:dict, pos:list, quat:list):
     # Start the service
     print("Starting the service...")
     input("Press Enter to start!")
-    print("==============================")
+    print("====================================================================================================")
     node = client.get_node(services['Move-Service']['state_machine']['CommandOp']['NodeID'])
     node.set_value(commandCodes.start)
 
@@ -226,7 +224,7 @@ def moving_robot_via_posquat(services:dict, pos:list, quat:list):
     node.set_value(commandCodes.reset)
     
     print("Moving arm via posquat completed!")
-    print("==============================")
+    print("====================================================================================================")
 
 # main --------------------------------------------------------------------------------------------
 def main():
@@ -235,11 +233,11 @@ def main():
         client.connect()
 
         # Browse the server's objects
-        print("==============================")
+        print("====================================================================================================")
         print("Objects node-IDs:")
         for obj in client.get_objects_node().get_children():
             print(obj)
-        print("==============================")
+        print("====================================================================================================")
 
         # Get the services of the module as nested dict
         services_id = "ns=3;s=services"
