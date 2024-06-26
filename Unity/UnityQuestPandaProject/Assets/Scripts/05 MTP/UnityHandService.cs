@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -45,11 +44,7 @@ namespace Panda.MTP {
 
         private IEnumerator ExecuteTrajectories(HandServiceRequest request, System.Action onComplete) {
             RobotController robotController = RobotController.GetInstance;
-
             List<IMoveCommand> handJoints = robotController.GetHandJoints();
-            Debug.Log("number of handJoints: " + handJoints.Count);
-            Debug.Log("number of targets: " + request.gripper_targets.ToList<double>().Count);
-
             foreach (float point in request.gripper_targets) {
                 yield return StartCoroutine(handJoints[0].MoveToTarget(point, speed));
             }
