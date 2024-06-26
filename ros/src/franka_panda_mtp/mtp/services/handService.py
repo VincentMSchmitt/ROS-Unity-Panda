@@ -40,7 +40,7 @@ class HandControl():
         return self._move_gripper()
 
 # -------------------------------------------------------------------------------------------------
-class HandService(Service):
+class mtpHandService(Service):
     def __init__(self, tag_name: str, tag_description: str):
         super().__init__(tag_name, tag_description)
         

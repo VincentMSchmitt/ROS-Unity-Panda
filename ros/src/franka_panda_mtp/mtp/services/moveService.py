@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from enum import Enum
+import numpy as np
 import rospy
 import moveit_commander
 import geometry_msgs.msg
@@ -9,6 +11,31 @@ from mtppy.operation_elements import AnaServParam
 
 import control.positions as positions
 from franka_panda_communication.srv import MoveService, MoveServiceRequest
+
+class TrajectoryType(Enum):
+    ARM = 1
+    HAND = 2
+
+# -------------------------------------------------------------------------------------------------
+class ROSClient:
+    def __init__(self):
+        # Initialize the ROS node if not already initialized
+        if not rospy.get_node_uri():
+            rospy.init_node('mtp_panda_robot', anonymous=True)
+
+    def make_service_request(self, _trajectory_type, _trajectory):
+        rospy.wait_for_service('move_service', 5.0)
+        try:
+            move_service = rospy.ServiceProxy('move_service', MoveService)
+            # convert enum-value (int) in uint8
+            trajectory_type_uint8 = np.uint8(_trajectory_type.value)
+            request = MoveServiceRequest(trajectory_type=trajectory_type_uint8, trajectory=_trajectory)
+            response = move_service(request)
+            rospy.loginfo("Service call successful: %s", response.success)
+            return response.success
+        except rospy.ServiceException as e:
+            rospy.logerr("Service call failed: %s", e)
+            return False
 
 # -------------------------------------------------------------------------------------------------
 class MoveControl():
@@ -21,19 +48,6 @@ class MoveControl():
 
     def update_pose(self, new_pose):
         self.pose = new_pose
-    
-    def make_service_request(self, _trajectoriy):
-        print("constructing a move request...")
-        rospy.wait_for_service('move_service', timeout=10.0)
-        try:
-            move_service = rospy.ServiceProxy('move_service', MoveService)
-            request = MoveServiceRequest(trajectories=_trajectoriy)
-            request.trajectory_type = 1
-            response = move_service(request)
-            return response.success
-        except rospy.ServiceException as e:
-            rospy.logerr("Service call failed: %s" % e)
-            return False
 
     def reach_pose_via_joints(self):
         ''' Move the robot to the desired pose via joint values.
@@ -42,18 +56,20 @@ class MoveControl():
             bool: True if the robot successfully reaches the pose, False otherwise.
         '''
         self.group.set_joint_value_target(self.pose[2])
+        self.planned_path = self.group.plan()
         
-        success = False 
-        while(success==False):
-            self.planned_path = self.group.plan()
-            if self.planned_path:
-                success = True
-            #self.group.execute(self.planned_path[1],wait=True)
-        
-        # TODO: send plan to unity for simulation, wait for it to finish executing in Unity
-        trajectory = self.planned_path[1]
-        if self.make_service_request(trajectory):
-            return True
+        # if the planing was successful, send message to unity and wait for its to complete
+        if self.planned_path:
+            trajectory = self.planned_path[1]
+            client = ROSClient()
+            success = client.make_service_request(TrajectoryType.ARM, trajectory)
+            if success:
+                rospy.loginfo("Trajectory execution successful.")
+                return True
+            else:
+                rospy.logerr("Trajectory execution failed.")
+                return False
+        rospy.logerr("Planning the joint goal failed.")
         return False
         
     def reach_pose_via_posquat(self):
@@ -66,21 +82,24 @@ class MoveControl():
         posquat.position = geometry_msgs.msg.Point(x=self.pose[0][0],y=self.pose[0][1], z=self.pose[0][2])
         posquat.orientation = geometry_msgs.msg.Quaternion(w=self.pose[1][0],x=self.pose[1][1],y=self.pose[1][2],z=self.pose[1][3])
         self.group.set_pose_target(posquat)
+        self.planned_path = self.group.plan()
 
-        # TODO: check if this stops after planning 50x
-        success = False 
-        while(success==False):
-            self.planned_path = self.group.plan()
-            if self.planned_path:
-                success = True
-            self.group.execute(self.planned_path[1],wait=True)
-        
-        # TODO: send plan to unity for simulation, wait for it to finish executing in Unity 
-
-        return success
+        # if the planing was successful, send message to unity and wait for its to complete
+        if self.planned_path:
+            trajectory = self.planned_path[1]
+            client = ROSClient()
+            success = client.make_service_request(TrajectoryType.ARM, trajectory)
+            if success:
+                rospy.loginfo("Trajectory execution successful.")
+                return True
+            else:
+                rospy.logerr("Trajectory execution failed.")
+                return False
+        rospy.logerr("Planning the joint goal failed.")
+        return False
 
 # -------------------------------------------------------------------------------------------------
-class MoveService(Service):
+class mtpMoveService(Service):
     def __init__(self, tag_name: str, tag_description: str):
         super().__init__(tag_name, tag_description)
 

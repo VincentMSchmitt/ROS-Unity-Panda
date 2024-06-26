@@ -4,8 +4,8 @@ import rospy
 import moveit_commander
 from mtppy.opcua_server_pea import OPCUAServerPEA
 from mtppy.mtp_generator import MTPGenerator
-from services.moveService import MoveService
-from services.handService import HandService
+from services.moveService import mtpMoveService
+from services.handService import mtpHandService
 #from services.followerService import FollowerService
 #from services.pickAndPlaceService import PickAndPlaceService
 
@@ -30,14 +30,15 @@ def main():
         rospy.init_node('mtp_panda_robot')
 
         ### Add services
-        move_service = MoveService(tag_name="Move-Service", tag_description='')
-        hand_service = HandService(tag_name="Hand-Service", tag_description='')
+        move_service = mtpMoveService(tag_name="Move-Service", tag_description='')
+        hand_service = mtpHandService(tag_name="Hand-Service", tag_description='')
 
         robot.add_service(move_service)
         robot.add_service(hand_service)
 
         ### run the server
         robot.run_opcua_server()
+        rospy.spin()
 
     except:
         if robot is not None:
