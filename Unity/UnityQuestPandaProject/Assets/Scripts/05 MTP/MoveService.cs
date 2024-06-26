@@ -1,12 +1,17 @@
-using RosMessageTypes.FrankaPandaCommunication;
-using System;
+using System.Linq;
 using System.Collections;
-using Unity.Robotics.ROSTCPConnector;
+using System.Collections.Generic;
 using UnityEngine;
+using Unity.Robotics.ROSTCPConnector;
+
+using Panda.Core.Controller;
+using RosMessageTypes.FrankaPandaCommunication;
+
 
 namespace Panda.MTP {
     enum MoveServiceType { Arm = 1, Hand = 2 }
     public class MoveService : MonoBehaviour {
+        [Tooltip("Percentage of the max speed")] public float speed = 1f;
         private string rosServiceName = "move_service";
         private ROSConnection ros;
 
@@ -20,13 +25,12 @@ namespace Panda.MTP {
         }
 
         private MoveServiceResponse ServiceRequestHandler(MoveServiceRequest request) {
-            // You can add logic to handle different types of movement here
-            if (request.trajectory_type == (int)MoveServiceType.Arm) {
-                // TODO: implement movement
-                Debug.Log("Moving the arm with trajectory data.");
-            } else if (request.trajectory_type == (int)MoveServiceType.Hand) {
-                // TODO: implement movement
-                Debug.Log("Moving the hand with trajectory data.");
+            if (request.trajectory != null) {
+                Debug.Log("Move trajectory request received from " + rosServiceName + ".");
+                StartCoroutine(ExecuteTrajectories(request));
+            }
+            else {
+                Debug.LogError("No trajectory returned from MoveService.");
             }
 
             // Create and return the response
@@ -35,15 +39,30 @@ namespace Panda.MTP {
             return response;
         }
 
-        private IEnumerator TrajectoryResponse(MoveServiceRequest request) {
+        private IEnumerator WaitForAllCoroutines(List<Coroutine> coroutines) {
+            foreach (var coroutine in coroutines) {
+                yield return coroutine;
+            }
+        }
+
+        private IEnumerator ExecuteTrajectories(MoveServiceRequest request) {
+            RobotController robotController = RobotController.GetInstance;
+
             if (request.trajectory != null) {
-                throw new NotImplementedException("This method is not implemented yet.");
+                foreach (var point in request.trajectory.joint_trajectory.points) {
+                    var jointPositions = point.positions;
+                    var result = jointPositions.Select(r => (float)r * Mathf.Rad2Deg).ToArray();
+
+                    // coroutines for joints movements
+                    List<Coroutine> jointCoroutines = new List<Coroutine>();
+                    List<IMoveCommand> revoluteJoints = robotController.GetRevoluteJoints();
+                    for (int i = 0; i < jointPositions.Length; ++i) {
+                        jointCoroutines.Add(StartCoroutine(revoluteJoints[i].MoveToTarget(result[i], speed)));
+                    }
+                    // wait, until every joint is where he is supposed to be
+                    yield return StartCoroutine(WaitForAllCoroutines(jointCoroutines));
+                }
             }
-            else {
-                Debug.LogError("No trajectory returned from MoverService.");
-                
-            }
-            yield break;
         }
     }
 }
