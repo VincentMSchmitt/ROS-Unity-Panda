@@ -241,9 +241,6 @@ def main():
         # Get the services of the module as nested dict
         services_id = "ns=3;s=services"
         services = get_service_nodes_as_dict(client.get_node(services_id))
-        
-        # Running all commands to prepare and run the Hand-Service with opening procedure
-        opening_Hand(services, width=robot_values.width0)
 
         # Running all commands to prepare and run the Move-Service with joint based procedure
         moving_robot_via_joints(services, robot_values.joints1)

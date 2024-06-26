@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-from enum import Enum
-import numpy as np
 import rospy
 import moveit_commander
 from mtppy.service import Service
@@ -11,24 +9,17 @@ from mtppy.operation_elements import AnaServParam
 from franka_panda_communication.srv import HandService, HandServiceRequest
 
 # -------------------------------------------------------------------------------------------------
-class TrajectoryType(Enum):
-    ARM = 1
-    HAND = 2
-
-# -------------------------------------------------------------------------------------------------
-class ROSClient:
+class HandControlROSClient:
     def __init__(self):
         # Initialize the ROS node if not already initialized
         if not rospy.get_node_uri():
             rospy.init_node('mtp_panda_robot', anonymous=True)
 
-    def make_service_request(self, _trajectory_type, _trajectory):
-        rospy.wait_for_service('unity_mtp_services', 5.0)
+    def make_service_request(self, _gripper_targets):
+        rospy.wait_for_service('unity_hand_service', 5.0)
         try:
-            move_service = rospy.ServiceProxy('unity_mtp_services', HandService)
-            # convert enum-value (int) in uint8
-            trajectory_type_uint8 = np.uint8(_trajectory_type.value)
-            request = HandServiceRequest(trajectory_type=trajectory_type_uint8, trajectory=_trajectory)
+            move_service = rospy.ServiceProxy('unity_hand_service', HandService)
+            request = HandServiceRequest(gripper_targets=_gripper_targets)
             response = move_service(request)
             rospy.loginfo("Service call successful: %s", response.success)
             return response.success
@@ -48,13 +39,14 @@ class HandControl():
 
     def _move_gripper(self) -> bool:
         self.group.set_joint_value_target(self.pose)
-        self.planned_path = self.group.plan()
-        
-        # if the planing was successful, send message to unity and wait for its to complete
-        if self.planned_path:
-            trajectory = self.planned_path[1]
-            client = ROSClient()
-            success = client.make_service_request(TrajectoryType.HAND, trajectory)
+        plan_success, self.planned_path, planning_time, error_code = self.group.plan()
+
+        # if the planning was successful, send message to unity and wait for its to complete
+        if plan_success:
+            gripper_targets = [point.positions for point in self.planned_path.joint_trajectory.points]
+            gripper_targets = [item for sublist in gripper_targets for item in sublist]  # Flatten the list of lists
+            client = HandControlROSClient()
+            success = client.make_service_request(gripper_targets)
             if success:
                 rospy.loginfo("Trajectory execution successful.")
                 return True
@@ -65,19 +57,9 @@ class HandControl():
         return False
 
     def grasp(self) -> bool:
-        ''' Close the Gripper to desired distance.
-
-        Returns:
-            bool: True if the gripper can successfully close the fingers. False otherwise.
-        '''
         return self._move_gripper()
 
     def open(self) -> bool:
-        ''' Open the Gripper to desired distance.
-
-        Returns:
-           bool: True if the gripper can successfully open the fingers. False otherwise.
-        '''
         return self._move_gripper()
 
 # -------------------------------------------------------------------------------------------------

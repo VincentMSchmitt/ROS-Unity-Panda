@@ -1,4 +1,3 @@
-uint8 trajectory_type
-moveit_msgs/RobotTrajectory trajectory
+float64[] gripper_targets 
 ---
 bool success

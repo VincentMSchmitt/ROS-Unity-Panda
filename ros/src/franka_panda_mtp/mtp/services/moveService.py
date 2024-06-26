@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-from enum import Enum
-import numpy as np
 import rospy
 import moveit_commander
 import geometry_msgs.msg
@@ -13,24 +11,17 @@ import control.positions as positions
 from franka_panda_communication.srv import MoveService, MoveServiceRequest
 
 # -------------------------------------------------------------------------------------------------
-class TrajectoryType(Enum):
-    ARM = 1
-    HAND = 2
-
-# -------------------------------------------------------------------------------------------------
-class ROSClient:
+class MoveControlROSClient:
     def __init__(self):
         # Initialize the ROS node if not already initialized
         if not rospy.get_node_uri():
             rospy.init_node('mtp_panda_robot', anonymous=True)
 
-    def make_service_request(self, _trajectory_type, _trajectory):
-        rospy.wait_for_service('unity_mtp_services', 5.0)
+    def make_service_request(self, _trajectory):
+        rospy.wait_for_service('unity_move_service', 5.0)
         try:
-            move_service = rospy.ServiceProxy('unity_mtp_services', MoveService)
-            # convert enum-value (int) in uint8
-            trajectory_type_uint8 = np.uint8(_trajectory_type.value)
-            request = MoveServiceRequest(trajectory_type=trajectory_type_uint8, trajectory=_trajectory)
+            move_service = rospy.ServiceProxy('unity_move_service', MoveService)
+            request = MoveServiceRequest(trajectory=_trajectory)
             response = move_service(request)
             rospy.loginfo("Service call successful: %s", response.success)
             return response.success
@@ -62,8 +53,8 @@ class MoveControl():
         # if the planing was successful, send message to unity and wait for its to complete
         if self.planned_path:
             trajectory = self.planned_path[1]
-            client = ROSClient()
-            success = client.make_service_request(TrajectoryType.ARM, trajectory)
+            client = MoveControlROSClient()
+            success = client.make_service_request(trajectory)
             if success:
                 rospy.loginfo("Trajectory execution successful.")
                 return True
@@ -88,8 +79,8 @@ class MoveControl():
         # if the planing was successful, send message to unity and wait for its to complete
         if self.planned_path:
             trajectory = self.planned_path[1]
-            client = ROSClient()
-            success = client.make_service_request(TrajectoryType.ARM, trajectory)
+            client = MoveControlROSClient()
+            success = client.make_service_request(trajectory)
             if success:
                 rospy.loginfo("Trajectory execution successful.")
                 return True

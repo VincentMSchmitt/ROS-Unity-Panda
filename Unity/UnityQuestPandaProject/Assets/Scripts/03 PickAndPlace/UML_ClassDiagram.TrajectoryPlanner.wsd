@@ -8,7 +8,6 @@
 ' * Factory Pattern for Trajectory requests
 ' * State Pattern for Robot states
 
-
 namespace Panda.PickAndPlace {
     enum Poses {
         PreGrasp

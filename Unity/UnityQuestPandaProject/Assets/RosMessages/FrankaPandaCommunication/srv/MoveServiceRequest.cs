@@ -13,18 +13,15 @@ namespace RosMessageTypes.FrankaPandaCommunication
         public const string k_RosMessageName = "franka_panda_communication/MoveService";
         public override string RosMessageName => k_RosMessageName;
 
-        public byte trajectory_type;
         public Moveit.RobotTrajectoryMsg trajectory;
 
         public MoveServiceRequest()
         {
-            this.trajectory_type = 0;
             this.trajectory = new Moveit.RobotTrajectoryMsg();
         }
 
-        public MoveServiceRequest(byte trajectory_type, Moveit.RobotTrajectoryMsg trajectory)
+        public MoveServiceRequest(Moveit.RobotTrajectoryMsg trajectory)
         {
-            this.trajectory_type = trajectory_type;
             this.trajectory = trajectory;
         }
 
@@ -32,20 +29,17 @@ namespace RosMessageTypes.FrankaPandaCommunication
 
         private MoveServiceRequest(MessageDeserializer deserializer)
         {
-            deserializer.Read(out this.trajectory_type);
             this.trajectory = Moveit.RobotTrajectoryMsg.Deserialize(deserializer);
         }
 
         public override void SerializeTo(MessageSerializer serializer)
         {
-            serializer.Write(this.trajectory_type);
             serializer.Write(this.trajectory);
         }
 
         public override string ToString()
         {
             return "MoveServiceRequest: " +
-            "\ntrajectory_type: " + trajectory_type.ToString() +
             "\ntrajectory: " + trajectory.ToString();
         }
 

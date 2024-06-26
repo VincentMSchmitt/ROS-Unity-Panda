@@ -13,40 +13,35 @@ namespace RosMessageTypes.FrankaPandaCommunication
         public const string k_RosMessageName = "franka_panda_communication/HandService";
         public override string RosMessageName => k_RosMessageName;
 
-        public byte trajectory_type;
-        public Moveit.RobotTrajectoryMsg trajectory;
+        public double[] gripper_targets;
 
         public HandServiceRequest()
         {
-            this.trajectory_type = 0;
-            this.trajectory = new Moveit.RobotTrajectoryMsg();
+            this.gripper_targets = new double[0];
         }
 
-        public HandServiceRequest(byte trajectory_type, Moveit.RobotTrajectoryMsg trajectory)
+        public HandServiceRequest(double[] gripper_targets)
         {
-            this.trajectory_type = trajectory_type;
-            this.trajectory = trajectory;
+            this.gripper_targets = gripper_targets;
         }
 
         public static HandServiceRequest Deserialize(MessageDeserializer deserializer) => new HandServiceRequest(deserializer);
 
         private HandServiceRequest(MessageDeserializer deserializer)
         {
-            deserializer.Read(out this.trajectory_type);
-            this.trajectory = Moveit.RobotTrajectoryMsg.Deserialize(deserializer);
+            deserializer.Read(out this.gripper_targets, sizeof(double), deserializer.ReadLength());
         }
 
         public override void SerializeTo(MessageSerializer serializer)
         {
-            serializer.Write(this.trajectory_type);
-            serializer.Write(this.trajectory);
+            serializer.WriteLength(this.gripper_targets);
+            serializer.Write(this.gripper_targets);
         }
 
         public override string ToString()
         {
             return "HandServiceRequest: " +
-            "\ntrajectory_type: " + trajectory_type.ToString() +
-            "\ntrajectory: " + trajectory.ToString();
+            "\ngripper_targets: " + System.String.Join(", ", gripper_targets.ToList());
         }
 
 #if UNITY_EDITOR

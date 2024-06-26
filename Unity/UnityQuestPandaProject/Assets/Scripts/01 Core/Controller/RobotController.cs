@@ -174,6 +174,20 @@ namespace Panda.Core.Controller {
         /// <summary>
         /// Gets all the revolute joints.
         /// </summary>
+        /// <returns>The joints of all revolute joints in the robot as list of IMoveCommand.</returns>
+        public List<IMoveCommand> GetHandJoints() {
+            List<IMoveCommand> joints = new();
+            foreach (var joint in selectionObserver.GetJoints()) {
+                if (joint.JointType() == ArticulationJointType.PrismaticJoint) {
+                    joints.Add(joint);
+                }
+            }
+            return joints;
+        }
+
+        /// <summary>
+        /// Gets all the revolute joints.
+        /// </summary>
         /// <returns>The joints of the gripper of the robot as IMoveCommand.</returns>
         public IMoveCommand GetGripper() {
             foreach (var joint in selectionObserver.GetJoints()) {
