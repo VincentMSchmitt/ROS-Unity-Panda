@@ -13,35 +13,40 @@ namespace RosMessageTypes.FrankaPandaCommunication
         public const string k_RosMessageName = "franka_panda_communication/HandService";
         public override string RosMessageName => k_RosMessageName;
 
-        public Moveit.RobotTrajectoryMsg[] trajectories;
+        public byte trajectory_type;
+        public Moveit.RobotTrajectoryMsg trajectory;
 
         public HandServiceRequest()
         {
-            this.trajectories = new Moveit.RobotTrajectoryMsg[0];
+            this.trajectory_type = 0;
+            this.trajectory = new Moveit.RobotTrajectoryMsg();
         }
 
-        public HandServiceRequest(Moveit.RobotTrajectoryMsg[] trajectories)
+        public HandServiceRequest(byte trajectory_type, Moveit.RobotTrajectoryMsg trajectory)
         {
-            this.trajectories = trajectories;
+            this.trajectory_type = trajectory_type;
+            this.trajectory = trajectory;
         }
 
         public static HandServiceRequest Deserialize(MessageDeserializer deserializer) => new HandServiceRequest(deserializer);
 
         private HandServiceRequest(MessageDeserializer deserializer)
         {
-            deserializer.Read(out this.trajectories, Moveit.RobotTrajectoryMsg.Deserialize, deserializer.ReadLength());
+            deserializer.Read(out this.trajectory_type);
+            this.trajectory = Moveit.RobotTrajectoryMsg.Deserialize(deserializer);
         }
 
         public override void SerializeTo(MessageSerializer serializer)
         {
-            serializer.WriteLength(this.trajectories);
-            serializer.Write(this.trajectories);
+            serializer.Write(this.trajectory_type);
+            serializer.Write(this.trajectory);
         }
 
         public override string ToString()
         {
             return "HandServiceRequest: " +
-            "\ntrajectories: " + System.String.Join(", ", trajectories.ToList());
+            "\ntrajectory_type: " + trajectory_type.ToString() +
+            "\ntrajectory: " + trajectory.ToString();
         }
 
 #if UNITY_EDITOR

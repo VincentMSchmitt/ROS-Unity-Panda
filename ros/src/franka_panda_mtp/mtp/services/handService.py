@@ -1,9 +1,40 @@
 #!/usr/bin/env python3
 
+from enum import Enum
+import numpy as np
+import rospy
 import moveit_commander
 from mtppy.service import Service
 from mtppy.procedure import Procedure
 from mtppy.operation_elements import AnaServParam
+
+from franka_panda_communication.srv import HandService, HandServiceRequest
+
+# -------------------------------------------------------------------------------------------------
+class TrajectoryType(Enum):
+    ARM = 1
+    HAND = 2
+
+# -------------------------------------------------------------------------------------------------
+class ROSClient:
+    def __init__(self):
+        # Initialize the ROS node if not already initialized
+        if not rospy.get_node_uri():
+            rospy.init_node('mtp_panda_robot', anonymous=True)
+
+    def make_service_request(self, _trajectory_type, _trajectory):
+        rospy.wait_for_service('unity_mtp_services', 5.0)
+        try:
+            move_service = rospy.ServiceProxy('unity_mtp_services', HandService)
+            # convert enum-value (int) in uint8
+            trajectory_type_uint8 = np.uint8(_trajectory_type.value)
+            request = HandServiceRequest(trajectory_type=trajectory_type_uint8, trajectory=_trajectory)
+            response = move_service(request)
+            rospy.loginfo("Service call successful: %s", response.success)
+            return response.success
+        except rospy.ServiceException as e:
+            rospy.logerr("Service call failed: %s", e)
+            return False
 
 # -------------------------------------------------------------------------------------------------
 class HandControl():
@@ -18,9 +49,19 @@ class HandControl():
     def _move_gripper(self) -> bool:
         self.group.set_joint_value_target(self.pose)
         self.planned_path = self.group.plan()
-        if self.planned_path[1]:  # Check if the plan is valid
-            success = self.group.execute(self.planned_path[1], wait=True)
-            return success
+        
+        # if the planing was successful, send message to unity and wait for its to complete
+        if self.planned_path:
+            trajectory = self.planned_path[1]
+            client = ROSClient()
+            success = client.make_service_request(TrajectoryType.HAND, trajectory)
+            if success:
+                rospy.loginfo("Trajectory execution successful.")
+                return True
+            else:
+                rospy.logerr("Trajectory execution failed.")
+                return False
+        rospy.logerr("Planning the joint goal failed.")
         return False
 
     def grasp(self) -> bool:

@@ -13,7 +13,7 @@ namespace Panda.MTP {
     enum MoveServiceType { Arm = 1, Hand = 2 }
     public class MtpServices : MonoBehaviour {
         [Tooltip("Percentage of the max speed")] public float speed = 1f;
-        private string rosServiceName = "move_service";
+        private string rosServiceName = "unity_mtp_services";
         private ROSConnection ros;
 
         void Start() {
