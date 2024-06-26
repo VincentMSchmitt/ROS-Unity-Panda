@@ -50,6 +50,8 @@ namespace Panda.MTP {
 
         private IEnumerator ExecuteTrajectories(MoveServiceRequest request, System.Action onComplete) {
             RobotController robotController = RobotController.GetInstance;
+            // set to foce control
+            robotController.SetControlTypeMoveit();
 
             foreach (var point in request.trajectory.joint_trajectory.points) {
                 var jointPositions = point.positions;

@@ -44,6 +44,8 @@ namespace Panda.MTP {
 
         private IEnumerator ExecuteTrajectories(HandServiceRequest request, System.Action onComplete) {
             RobotController robotController = RobotController.GetInstance;
+            // set to foce control
+            robotController.SetControlTypeMoveit();
             List<IMoveCommand> handJoints = robotController.GetHandJoints();
             foreach (float point in request.gripper_targets) {
                 yield return StartCoroutine(handJoints[0].MoveToTarget(point, speed));
