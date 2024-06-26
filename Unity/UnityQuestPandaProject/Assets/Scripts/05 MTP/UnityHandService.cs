@@ -43,27 +43,15 @@ namespace Panda.MTP {
             return tcs.Task;
         }
 
-        private IEnumerator WaitForAllCoroutines(List<Coroutine> coroutines) {
-            foreach (var coroutine in coroutines) {
-                yield return coroutine;
-            }
-        }
-
         private IEnumerator ExecuteTrajectories(HandServiceRequest request, System.Action onComplete) {
             RobotController robotController = RobotController.GetInstance;
 
-            foreach (var point in request.gripper_targets) {
-                Debug.Log("Current target: " + point);
-                yield return 0.1;
+            List<IMoveCommand> handJoints = robotController.GetHandJoints();
+            Debug.Log("number of handJoints: " + handJoints.Count);
+            Debug.Log("number of targets: " + request.gripper_targets.ToList<double>().Count);
 
-                // // coroutines for joints movements
-                // List<Coroutine> jointCoroutines = new List<Coroutine>();
-                // List<IMoveCommand> revoluteJoints = robotController.GetHandJoints();
-                // for (int i = 0; i < jointPositions.Length; ++i) {
-                //     jointCoroutines.Add(StartCoroutine(revoluteJoints[i].MoveToTarget(result[i], speed)));
-                // }
-                // // wait, until every joint is where he is supposed to be
-                // yield return StartCoroutine(WaitForAllCoroutines(jointCoroutines));
+            foreach (float point in request.gripper_targets) {
+                yield return StartCoroutine(handJoints[0].MoveToTarget(point, speed));
             }
             onComplete?.Invoke();
         }
