@@ -47,7 +47,12 @@ namespace Panda.MTP {
             // set to foce control
             robotController.SetControlTypeMoveit();
             List<IMoveCommand> handJoints = robotController.GetHandJoints();
+            if (handJoints.Count < 1) {
+                Debug.LogError("No hand joints found.");
+            }
             foreach (float point in request.gripper_targets) {
+                // assume gripper targets are identical, so only first one is used here since both grippers are joint
+                // together 
                 yield return StartCoroutine(handJoints[0].MoveToTarget(point, speed));
             }
             onComplete?.Invoke();

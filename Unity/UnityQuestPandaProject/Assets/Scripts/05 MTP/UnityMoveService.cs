@@ -60,12 +60,10 @@ namespace Panda.MTP {
                 // coroutines for joints movements
                 List<Coroutine> jointCoroutines = new List<Coroutine>();
                 List<IMoveCommand> revoluteJoints = robotController.GetRevoluteJoints();
-
                 if (jointPositions.Length > revoluteJoints.Count) {
                     Debug.LogError("Number of joint positions is greater than number of revolute joints.");
                     yield break;
                 }
-
                 for (int i = 0; i < jointPositions.Length; ++i) {
                     jointCoroutines.Add(StartCoroutine(revoluteJoints[i].MoveToTarget(result[i], speed)));
                 }

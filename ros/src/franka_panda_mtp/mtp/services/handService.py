@@ -21,7 +21,7 @@ class HandControlROSClient:
             move_service = rospy.ServiceProxy('unity_hand_service', HandService)
             request = HandServiceRequest(gripper_targets=_gripper_targets)
             response = move_service(request)
-            rospy.loginfo("Service call successful: %s", response.success)
+            #rospy.loginfo("Service call successful: %s", response.success)
             return response.success
         except rospy.ServiceException as e:
             rospy.logerr("Service call failed: %s", e)
@@ -48,13 +48,11 @@ class HandControl():
             client = HandControlROSClient()
             success = client.make_service_request(gripper_targets)
             if success:
-                rospy.loginfo("Trajectory execution successful.")
+                #rospy.logerr("Planning the joint goal succeeded.")
                 return True
             else:
-                rospy.logerr("Trajectory execution failed.")
+                rospy.logerr("Planning the joint goal failed.")
                 return False
-        rospy.logerr("Planning the joint goal failed.")
-        return False
 
     def grasp(self) -> bool:
         return self._move_gripper()

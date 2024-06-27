@@ -23,7 +23,7 @@ class MoveControlROSClient:
             move_service = rospy.ServiceProxy('unity_move_service', MoveService)
             request = MoveServiceRequest(trajectory=_trajectory)
             response = move_service(request)
-            rospy.loginfo("Service call successful: %s", response.success)
+            #rospy.loginfo("Service call successful: %s", response.success)
             return response.success
         except rospy.ServiceException as e:
             rospy.logerr("Service call failed: %s", e)
@@ -56,13 +56,11 @@ class MoveControl():
             client = MoveControlROSClient()
             success = client.make_service_request(trajectory)
             if success:
-                rospy.loginfo("Trajectory execution successful.")
+                #rospy.logerr("Planning the joint goal succeeded.")
                 return True
             else:
-                rospy.logerr("Trajectory execution failed.")
+                rospy.logerr("Planning the joint goal failed.")
                 return False
-        rospy.logerr("Planning the joint goal failed.")
-        return False
         
     def reach_pose_via_posquat(self):
         ''' Move the robot to the desired pose via Position/Quaternion values.
@@ -82,7 +80,7 @@ class MoveControl():
             client = MoveControlROSClient()
             success = client.make_service_request(trajectory)
             if success:
-                rospy.loginfo("Trajectory execution successful.")
+                #rospy.loginfo("Trajectory execution successful.")
                 return True
             else:
                 rospy.logerr("Trajectory execution failed.")
