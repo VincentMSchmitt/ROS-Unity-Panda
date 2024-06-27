@@ -1,13 +1,13 @@
-![Maintenance](https://img.shields.io/badge/Maintained%3F-Yes-green.svg) ![Status](https://img.shields.io/badge/Status-Experimental-yellow?logoColor=yellow&logoSize=auto)
+![Maintenance](https://img.shields.io/badge/Maintained%3F-Yes-green.svg) ![Status](https://img.shields.io/badge/Status-Beta-yellow?logoColor=yellow&logoSize=auto)
 
 <p align="center"><img src="misc/videos/PandaUnity_pick_and_place.gif"/></p>
 
 # ROS-Unity-Panda
-This repository contains all files to simulate the Franka Emika Panda robotic arm-manipulator in Unity. It can be controlled using MoveIt and ROS-Noetic. This is being achived with the help of the ROS-TCP-Connector ROS-package from Unity-Robotics-Hub. It aims to recreate the [pick and place tutorial](https://github.com/Unity-Technologies/Unity-Robotics-Hub/tree/main/tutorials/pick_and_place "Unity-Robotics-Hub") from Unity-Robotics-Hub as a starting point and adds functionality on that basis. To fully understand this documentation, reading their documentation is strongly advised.
+This repository contains all files to simulate the Franka Emika Panda robotic arm-manipulator in Unity. It can be controlled via MTP using MoveIt 1.0! and ROS-Noetic. This is being achived with the help of the ROS-TCP-Connector ROS-package from Unity-Robotics-Hub. It aims to recreate the [pick and place tutorial](https://github.com/Unity-Technologies/Unity-Robotics-Hub/tree/main/tutorials/pick_and_place "Unity-Robotics-Hub") from Unity-Robotics-Hub as a starting point and adds functionality on that basis. To fully understand this documentation, reading their documentation is strongly advised.
 
 ---
 
-### Table of Contents
+## Table of Contents
 1. [Credits](#credits)
 2. [Installation](#installation)
 3. [Setup](#setup)
@@ -17,27 +17,35 @@ This repository contains all files to simulate the Franka Emika Panda robotic ar
 
 ---
 
-### 1. Credits <a name="credits"></a>
-This repository consists of the following ROS-packages:
-* **franka_panda_description** (taken from [franka_panda_description](https://github.com/justagist/franka_panda_description "justagist's GitHub"), modified for my needs)
-* **franka_panda_moveit** (created with the Setup Assistant [Moveit Setup Assistant](https://github.com/moveit/moveit/tree/master/moveit_setup_assistant "Setup Assistant GitHub") from the franka_panda_description package, heavily modified)
-* **moveit_msgs** (taken from [MoveitMsg](https://github.com/moveit/moveit_msgs "MoveitMsg GitHub"))
-* **ros_tcp_endpoint** (taken from [Unity-Robotics-Hub](https://github.com/Unity-Technologies/ROS-TCP-Endpoint "Unity-Robotics-Hub"))
+## 1. Credits <a name="credits"></a>
+All used software and libarys are found in the [NOTICE](NOTICE).
 
-> It also includes the Unity-Project used for experimenting with these packages. The Unity Projec is build on top of the [Pick and Place Demo Project](https://github.com/Unity-Technologies/Unity-Robotics-Hub/tree/main/tutorials/pick_and_place "Unity-Robotics-Hub") from Unity-Robotics-Hub.
+> It also includes the Unity-Project used for demonstrating the work. The Unity Projec is build on top of the [Pick and Place Demo Project](https://github.com/Unity-Technologies/Unity-Robotics-Hub/tree/main/tutorials/pick_and_place "Unity-Robotics-Hub") from Unity-Robotics-Hub. It was heavily modified.
 
 ---
 
-### 2. Installation <a name="installation"></a>
+## 2. Installation <a name="installation"></a>
 
-#### I. Unity
+### I. Unity
 To use this project, an installation of [Unity](https://unity.com/download "Download Unity") is needed. This project is build on Unity 2022.3.19f1 an should be compatible with every 2022 release (not tested).
 > The URDF-Importer needs a Unity Editor version of [2020.2.0](https://unity3d.com/unity/whats-new/2020.2.0 "Unity whats new 2020.2.0")+
 
 To use the project, the given Unity project can be used. For those who want to build the project from scratch, the [pick and place demo project](https://github.com/Unity-Technologies/Unity-Robotics-Hub/tree/main/tutorials/pick_and_place "Unity-Robotics-Hub") has a detailed installation guide.
 
-#### II. ROS
-The project is build for ROS Noetic Ninjemys. Therefore, a fitting ROS instaltion is needed. Refer to the [ROS Noetic Documentation](http://wiki.ros.org/noetic "Noetic Ninjemys"). The project has been tested on MacOS 14.5 using the [RoboStack](https://robostack.github.io "robostack.github.io") bundeling and on Ubuntu 20.04. Other installations should work just as well. After having an up-to-date installtion of ROS Noetic, following steps must be completed:
+### II. ROS
+The project is build for ROS Noetic Ninjemys. Therefore, a fitting ROS instaltion is needed. 
+
+#### Installing from source
+Refer to the [ROS Noetic Documentation](http://wiki.ros.org/noetic "Noetic Ninjemys"). The project has been tested on MacOS 14.5 using the [RoboStack](https://robostack.github.io "robostack.github.io") bundeling and natively on Ubuntu 20.04. Other installations should work just as well.
+
+#### Installing with docker
+The documentation is under construction.
+<!-- TODO: add this documentation -->
+
+#### Finishing installation
+<!-- TODO: add install script -->
+<!-- TODO: update documentation -->
+After having an up-to-date installtion of ROS Noetic, following steps must be completed:
 
 1. Navigate to `<installation>/pick_and_place/ROS`.
    - This directory will be used as the [ROS catkin workspace](http://wiki.ros.org/catkin/Tutorials/using_a_workspace).
@@ -63,11 +71,10 @@ The project is build for ROS Noetic Ninjemys. Therefore, a fitting ROS instaltio
 
 ---
 
-### 3. Setup <a name="setup"></a>
-
+## 3. Setup <a name="setup"></a>
 After Unity and ROS have been installed correctly, a simple project can be run to check the installation.
 
-#### I. Opening the Unity Project
+### I. Opening the Unity Project
 To add the Project into Unity, click on `Add project from disk`.
 <p align="center"><img src="misc/pictures/UnityPanda01.png"/></p>
 
@@ -99,7 +106,7 @@ As a last step, open the movit_mgs `msg`dropdown and search for `RobotTrajectory
 
 ---
 
-### 4. Launching <a name="launching"></a>
+## 4. Launching <a name="launching"></a>
 To launch a demo project, following steps are requiered:
 1. Run the Unity project **UnityPandaProject**
 2. On your ROS machine, navigte to `<installation>/ws_panda/pick_and_place/ROS`
@@ -120,9 +127,7 @@ This general process is always the same for launching different demos. There are
 
 ---
 
-### 5. TODO: <a name="todo"></a>
-- [ ] Investigate the Unity to ROS coordinate transformation and fix a bug in the collision-sender related to that
-- [ ] Add AR support with the Meta-SDK (Quest 3)
+## 5. TODO: <a name="todo"></a>
 - [ ] Fix the FK of the panda and the drawing of the 3D splines
 - [ ] Build an Interface for basic operation like `moveto()`, `moveto_grab()`, `moveto_place()` etc.
 - [x] ~~fix the grabbing offset~~
@@ -134,11 +139,14 @@ This general process is always the same for launching different demos. There are
 - [x] ~~Update services to pass the `m_PickPoseOffset` varaible from Unity to ROS~~
 - [x] ~~Fix a bug where MoveIt ignores the floor and plans its trajectory through it~~
 - [x] ~~Containerise the entire project (Docker)~~
+- [x] ~~Add AR support with the Meta-SDK (Quest 3)~~
+- [x] ~~Include MTP/OPC-UA into the project~~
+- [x] ~~Investigate the Unity to ROS coordinate transformation and fix a bug in the collision-sender related to that~~
 
 
 ---
 
-### Additional Resources <a name="resources"></a>
+## Additional Resources <a name="resources"></a>
 - [ROS Installation](http://wiki.ros.org/ROS/Installation)
 - [ROS Setup](http://wiki.ros.org/ROS/Tutorials/InstallingandConfiguringROSEnvironment)
 - [Catkin](http://wiki.ros.org/catkin/Tutorials)

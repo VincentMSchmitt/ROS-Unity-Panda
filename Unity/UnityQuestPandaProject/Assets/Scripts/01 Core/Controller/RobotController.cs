@@ -1,3 +1,12 @@
+/* Copyright (C) 2024 Vincent Schmitt - All Rights Reserved
+ * You may use, distribute and modify this code under the
+ * terms of the Educational Community License (ECL), Version 2.0.
+ *
+ * You should have received a copy of the ECL license with
+ * this file. If not, please write to: schmittv@hs-pforzheim.de,
+ * or visit: https://opensource.org/licenses/ECL-2.0
+ */
+
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -165,6 +174,20 @@ namespace Panda.Core.Controller {
             List<IMoveCommand> joints = new();
             foreach (var joint in selectionObserver.GetJoints()) {
                 if (joint.JointType() == ArticulationJointType.RevoluteJoint) {
+                    joints.Add(joint);
+                }
+            }
+            return joints;
+        }
+
+        /// <summary>
+        /// Gets all the revolute joints.
+        /// </summary>
+        /// <returns>The joints of all revolute joints in the robot as list of IMoveCommand.</returns>
+        public List<IMoveCommand> GetHandJoints() {
+            List<IMoveCommand> joints = new();
+            foreach (var joint in selectionObserver.GetJoints()) {
+                if (joint.JointType() == ArticulationJointType.PrismaticJoint) {
                     joints.Add(joint);
                 }
             }

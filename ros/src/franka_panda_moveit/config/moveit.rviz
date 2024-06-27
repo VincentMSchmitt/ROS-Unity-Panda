@@ -5,9 +5,8 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /MotionPlanning1
-        - /MotionPlanning1/Planning Request1
       Splitter Ratio: 0.5009174346923828
-    Tree Height: 226
+    Tree Height: 261
   - Class: rviz/Help
     Name: Help
   - Class: rviz/Views
@@ -45,7 +44,7 @@ Visualization Manager:
       Plane Cell Count: 10
       Reference Frame: <Fixed Frame>
       Value: true
-    - Acceleration_Scaling_Factor: 0.5
+    - Acceleration_Scaling_Factor: 0.1
       Class: moveit_rviz_plugin/MotionPlanning
       Enabled: true
       Move Group Namespace: ""
@@ -163,7 +162,7 @@ Visualization Manager:
         Interactive Marker Size: 0
         Joint Violation Color: 255; 0; 255
         Planning Group: panda_arm
-        Query Goal State: true
+        Query Goal State: false
         Query Start State: false
         Show Workspace: false
         Start State Alpha: 1
@@ -252,7 +251,7 @@ Visualization Manager:
         Show Robot Collision: false
         Show Robot Visual: true
       Value: true
-      Velocity_Scaling_Factor: 0.5
+      Velocity_Scaling_Factor: 0.1
     - Class: rviz/MarkerArray
       Enabled: true
       Marker Topic: /move_group/display_grasp_markers
@@ -270,11 +269,27 @@ Visualization Manager:
         All Enabled: true
         panda_hand:
           Value: true
+        panda_leftfinger:
+          Value: true
         panda_link0:
+          Value: true
+        panda_link1:
+          Value: true
+        panda_link2:
+          Value: true
+        panda_link3:
+          Value: true
+        panda_link4:
+          Value: true
+        panda_link5:
+          Value: true
+        panda_link6:
           Value: true
         panda_link7:
           Value: true
         panda_link8:
+          Value: true
+        panda_rightfinger:
           Value: true
         world:
           Value: true
@@ -285,13 +300,21 @@ Visualization Manager:
       Show Axes: false
       Show Names: false
       Tree:
-        panda_link7:
-          panda_link8:
-            panda_hand:
-              {}
         world:
           panda_link0:
-            {}
+            panda_link1:
+              panda_link2:
+                panda_link3:
+                  panda_link4:
+                    panda_link5:
+                      panda_link6:
+                        panda_link7:
+                          panda_link8:
+                            panda_hand:
+                              panda_leftfinger:
+                                {}
+                              panda_rightfinger:
+                                {}
       Update Interval: 0
       Value: true
   Enabled: true
@@ -326,23 +349,23 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.34999990463256836
+      Pitch: 0.34499990940093994
       Target Frame: world
-      Yaw: 4.554938316345215
+      Yaw: 4.544938087463379
     Saved: ~
 Window Geometry:
   Displays:
-    collapsed: false
+    collapsed: true
   Height: 919
   Help:
     collapsed: false
-  Hide Left Dock: false
+  Hide Left Dock: true
   Hide Right Dock: false
   MotionPlanning:
-    collapsed: false
+    collapsed: true
   MotionPlanning - Trajectory Slider:
-    collapsed: false
-  QMainWindow State: 000000ff00000000fd00000001000000000000022300000350fc0200000009fb000000100044006900730070006c006100790073010000002c00000131000000e100fffffffb0000000800480065006c007000000001ef000000bb0000007a00fffffffb0000000a0056006900650077007300000001e4000000c6000000c600fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000374000001890000000000000000fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c0069006400650072010000015e000000960000004800fffffffb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e006701000001f5000001870000018700fffffffb00000024005200760069007a00560069007300750061006c0054006f006f006c007300470075006900000002f5000000500000005000fffffffb0000000c00540065006c0065006f00700000000297000000ad0000004f00ffffff000002140000035000000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+    collapsed: true
+  QMainWindow State: 000000ff00000000fd00000001000000000000022300000350fc0200000009fb000000100044006900730070006c006100790073000000002c00000154000000e300fffffffb0000000800480065006c007000000001ef000000bb0000007a00fffffffb0000000a0056006900650077007300000001e4000000c6000000c600fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000374000001890000000000000000fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000181000000480000001800000018fb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e006700000001ca000001b20000018700fffffffb00000024005200760069007a00560069007300750061006c0054006f006f006c007300470075006900000002f5000000500000005000fffffffb0000000c00540065006c0065006f00700000000297000000ad0000004f00ffffff000004380000035000000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   RvizVisualToolsGui:
     collapsed: false
   Teleop:
@@ -351,4 +374,4 @@ Window Geometry:
     collapsed: false
   Width: 1080
   X: 2560
-  Y: 688
+  Y: 716

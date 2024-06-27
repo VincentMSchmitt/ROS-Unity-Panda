@@ -1,0 +1,3 @@
+float64[] gripper_targets 
+---
+bool success
