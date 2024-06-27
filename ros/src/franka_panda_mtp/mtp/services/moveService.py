@@ -19,6 +19,7 @@ from franka_panda_communication.srv import MoveService, MoveServiceRequest
 
 # -------------------------------------------------------------------------------------------------
 class MoveControlROSClient:
+    # reference: http://wiki.ros.org/rospy/Overview/Services
     def __init__(self):
         # Initialize the ROS node if not already initialized
         if not rospy.get_node_uri():
