@@ -35,19 +35,41 @@ To use the project, the given Unity project can be used. For those who want to b
 ### II. ROS
 The project is build for ROS Noetic Ninjemys. Therefore, a fitting ROS instaltion is needed. 
 
+#### Installing with docker
+> This documentation takes inspiration from the [Pick and Place Demo Project](https://github.com/Unity-Technologies/Unity-Robotics-Hub/tree/main/tutorials/pick_and_place "Unity-Robotics-Hub") from Unity-Robotics-Hub. The Docker-related files (Dockerfile, setup scripts) are located in the [`docker/`](docker/) directory.
+1. Follow the steps to install [Docker Engine](https://docs.docker.com/engine/install/) for your platform if it is not already installed.
+
+1. Build the provided ROS Docker image:
+
+    ```zsh
+    cd /PATH/TO/ws_panda &&
+    git submodule update --init --recursive &&
+    docker build -t unity-robotics:pick-and-place -f docker/Dockerfile .
+    ```
+
+    > Note: The provided Dockerfile uses the [ROS Noetic base Image](https://hub.docker.com/_/ros/). Building the image will install the necessary packages, copy the [provided ROS packages and submodules](ROS/) to the container, and build the catkin workspace. The usage of a dokercontainer requieres the user to change the ROS-IP in the Unity-Robotics Hub ROS-TCP Connector
+    package. This is documented in their repository.
+
+1. Start the newly built Docker container:
+
+    ```docker
+    docker run -it --rm -p 10000:10000 panda_ws /bin/bash
+    ```
+
+    When this is complete, it will print: `Successfully tagged panda_ws`. This console should open into a bash shell at the ROS workspace root, e.g. `root@8d88ed579657:/panda_ws`.
+
+The ROS workspace is now ready to accept commands!
+<!-- TODO: add this documentation -->
+
 #### Installing from source
 Refer to the [ROS Noetic Documentation](http://wiki.ros.org/noetic "Noetic Ninjemys"). The project has been tested on MacOS 14.5 using the [RoboStack](https://robostack.github.io "robostack.github.io") bundeling and natively on Ubuntu 20.04. Other installations should work just as well.
 
-#### Installing with docker
-The documentation is under construction.
-<!-- TODO: add this documentation -->
-
-#### Finishing installation
+##### Finishing installation
 <!-- TODO: add install script -->
 <!-- TODO: update documentation -->
 After having an up-to-date installtion of ROS Noetic, following steps must be completed:
 
-1. Navigate to `<installation>/pick_and_place/ROS`.
+1. Navigate to `<installation>/ros`.
    - This directory will be used as the [ROS catkin workspace](http://wiki.ros.org/catkin/Tutorials/using_a_workspace).
    - Copy or download this directory to your ROS operating system. This will not be needed if the ROS installation is on the same computer as the Unity installation.
     > Note: This contains the ROS packages for the pick-and-place task: *[ROS TCP Endpoint](https://github.com/Unity-Technologies/ROS-TCP-Endpoint)*, *[MoveIt Msgs](https://github.com/ros-planning/moveit_msgs)*, *franka_panda_moveit* and *franka_panda_description*.
@@ -74,7 +96,7 @@ After having an up-to-date installtion of ROS Noetic, following steps must be co
 ## 3. Setup <a name="setup"></a>
 After Unity and ROS have been installed correctly, a simple project can be run to check the installation.
 
-### I. Opening the Unity Project
+#### I. Opening the Unity Project
 To add the Project into Unity, click on `Add project from disk`.
 <p align="center"><img src="misc/pictures/UnityPanda01.png"/></p>
 
@@ -92,7 +114,7 @@ After opening a scene, the serialised field propertys need to be populated for t
 These should allready be build for the given project, but in case they're not, they can be build through the menu bar like this:
 <p align="center"><img src="misc/pictures/UnityPanda04.png"/></p>
 
-Next click `browse` and then navigate to `<installation>/pick_and_place/ROS/src` and chose that folder as the location. If you did everything correctly, you can see the dropdown `src`. Leave the build message path on RosMessages. That is the folder in the Assets, that the .cs files will be build into.
+Next click `browse` and then navigate to `<installation>/panda_ws/ROS/src` and chose that folder as the location. If you did everything correctly, you can see the dropdown `src`. Leave the build message path on RosMessages. That is the folder in the Assets, that the .cs files will be build into.
 <p align="center"><img src="misc/pictures/UnityPanda05.png"/></p>
 
 Open the `franka_panda_ros` dropdown and build all messages and services in there. These are custom made for this project. They exist on the ROS side aswell.
@@ -109,21 +131,22 @@ As a last step, open the movit_mgs `msg`dropdown and search for `RobotTrajectory
 ## 4. Launching <a name="launching"></a>
 To launch a demo project, following steps are requiered:
 1. Run the Unity project **UnityPandaProject**
-2. On your ROS machine, navigte to `<installation>/ws_panda/pick_and_place/ROS`
+2. On your ROS machine, navigte to `<installation>/ws_panda/ros`
 2. Run the demo launchfile:
     ```
     source ./devel/setup.zsh #or setup.bash if you don't use zsh
-    roslaunch franka_panda_moveit panda.launch
+    roslaunch franka_panda_mtp panda.launch
     ```
 3. Start the Unity-Scene **PandaPart03_pick_and_place**
 4. Press the **Publish** button in the gameview
 
 > The robot should move to the **target**, pick it up and drop it at the **target placement** location. Make sure all the GameObjects are assined in the used scripts (drag and drop the GameObject in the corresponding box).
 
-This general process is always the same for launching different demos. There are three launchfiles:
-* `panda.launch` for basic pick and place (basic launchfile)
-* `panda_collision.launch` for pick and place with collision detection (Scene `PandaPart04_update_and_collision_detection`)
-* `panda_collision_follow.launch` for a follower implementation (Scene `PandaPart07_follow_target`)
+There are two general purpose launchfiles:
+* `panda.launch` complete launchfile (mtp included)
+* `panda_moveit.launch` for pick and place with collision detection (included in pakage `franka_panda_moveit`)
+
+The project includes more launchfiles that require more ROS knowlege to use. These are not documented, but included.
 
 ---
 

@@ -13,10 +13,6 @@ using UnityEngine;
 namespace Panda.Core.Controller {
     public class SelectionObserver : ISelectionObserver {
         public List<ICombinedInterface> joints { get; private set; }
-        public SelectionObserver(Color selectionColor) {
-            this.selectionColor = selectionColor;
-            joints = new();
-        }
         private int selectedJointIndex = -1;
         private Color selectionColor;
         private Color[] previousColor;
@@ -27,6 +23,11 @@ namespace Panda.Core.Controller {
                 } 
                 return null;
             }    
+        }
+
+        public SelectionObserver(Color selectionColor) {
+            this.selectionColor = selectionColor;
+            joints = new();
         }
 
          public void SetSelectionColor(Color color) {

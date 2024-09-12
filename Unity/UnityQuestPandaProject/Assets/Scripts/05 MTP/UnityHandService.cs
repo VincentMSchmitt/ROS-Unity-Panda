@@ -56,8 +56,8 @@ namespace Panda.MTP {
             robotController.SetControlTypeMoveit();
             IMoveCommand gripper = robotController.GetGripper();
             foreach (float point in request.gripper_targets) {
-                // assume gripper targets are identical, so only first one is used here since both grippers are joint
-                // together 
+                // assume gripper targets are identical, so only first one is used here since both grippers are
+                // operated together 
                 yield return StartCoroutine(gripper.MoveToTarget(point, speed));
             }
             onComplete?.Invoke();

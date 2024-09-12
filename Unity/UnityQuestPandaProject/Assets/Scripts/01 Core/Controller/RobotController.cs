@@ -33,6 +33,8 @@ namespace Panda.Core.Controller {
                                                  ).ToList<ArticulationBody>();
             }
         }
+        private static RobotController instance;
+
         public static RobotController GetInstance { // Singelton
             get {
                 if (instance == null) {
@@ -49,8 +51,6 @@ namespace Panda.Core.Controller {
                 return instance;
             }
         }
-        private static RobotController instance;
-
         RobotController() {
             selectionObserver = new SelectionObserver(selectionColor);
         }
