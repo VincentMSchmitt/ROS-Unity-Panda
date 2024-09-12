@@ -31,7 +31,7 @@ def main():
         manifest_template_path = '../aml/manifest_template.xml'  
         mtp_generator = MTPGenerator(writer_info_dict, export_manifest_path, manifest_template_path=manifest_template_path)
 
-        ### Defining a virtual PEA (process equipment assembly == modul) for the Franka Emika Robot
+        ### Defining a virtual PEA (process equipment assembly) for the Franka Emika Robot
         robot = OPCUAServerPEA(mtp_generator=mtp_generator,endpoint='opc.tcp://127.0.0.1:4840/')
 
         ### Setting up ROS environment

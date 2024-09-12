@@ -80,7 +80,7 @@ namespace Panda.Core.Controller {
                     xDrive.target = CalculateTarget(xDrive.target, num, joint.linearLockX, xDrive.upperLimit, xDrive.lowerLimit);
                     break;
                 default:
-                    Debug.LogAssertion("An error has ourrured while trying to the joint: " + joint.name);
+                    Debug.LogAssertion("An error has ourrured while trying to move the joint: " + joint.name);
                     return;
             }
             joint.xDrive = xDrive;

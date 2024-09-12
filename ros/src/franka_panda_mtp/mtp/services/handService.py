@@ -229,7 +229,7 @@ class mtpHandService(Service):
         
     def stopped(self):
         """
-        Stopped state.
+        Stopped state.‘
         :return:
         """
         print(f"Service: {self.tag_name} with Procedure: {self.procedures[self.procedure_control.get_procedure_cur()].tag_name} in Stopped State!")

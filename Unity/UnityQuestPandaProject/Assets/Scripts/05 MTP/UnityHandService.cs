@@ -8,7 +8,6 @@
  */
 
 using System.Collections;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using Unity.Robotics.ROSTCPConnector;
@@ -55,14 +54,11 @@ namespace Panda.MTP {
             RobotController robotController = RobotController.GetInstance;
             // set to foce control
             robotController.SetControlTypeMoveit();
-            List<IMoveCommand> handJoints = robotController.GetHandJoints();
-            if (handJoints.Count < 1) {
-                Debug.LogError("No hand joints found.");
-            }
+            IMoveCommand gripper = robotController.GetGripper();
             foreach (float point in request.gripper_targets) {
-                // assume gripper targets are identical, so only first one is used here since both grippers are joint
-                // together 
-                yield return StartCoroutine(handJoints[0].MoveToTarget(point, speed));
+                // assume gripper targets are identical, so only first one is used here since both grippers are
+                // operated together 
+                yield return StartCoroutine(gripper.MoveToTarget(point, speed));
             }
             onComplete?.Invoke();
         }

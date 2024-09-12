@@ -33,6 +33,8 @@ namespace Panda.Core.Controller {
                                                  ).ToList<ArticulationBody>();
             }
         }
+        private static RobotController instance;
+
         public static RobotController GetInstance { // Singelton
             get {
                 if (instance == null) {
@@ -49,8 +51,6 @@ namespace Panda.Core.Controller {
                 return instance;
             }
         }
-        private static RobotController instance;
-
         RobotController() {
             selectionObserver = new SelectionObserver(selectionColor);
         }
@@ -181,21 +181,7 @@ namespace Panda.Core.Controller {
         }
 
         /// <summary>
-        /// Gets all the revolute joints.
-        /// </summary>
-        /// <returns>The joints of all revolute joints in the robot as list of IMoveCommand.</returns>
-        public List<IMoveCommand> GetHandJoints() {
-            List<IMoveCommand> joints = new();
-            foreach (var joint in selectionObserver.GetJoints()) {
-                if (joint.JointType() == ArticulationJointType.PrismaticJoint) {
-                    joints.Add(joint);
-                }
-            }
-            return joints;
-        }
-
-        /// <summary>
-        /// Gets all the revolute joints.
+        /// Gets the two gripper joints.
         /// </summary>
         /// <returns>The joints of the gripper of the robot as IMoveCommand.</returns>
         public IMoveCommand GetGripper() {
